@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: OnButton1
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1
@@ -574,7 +574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: OnButton2
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1

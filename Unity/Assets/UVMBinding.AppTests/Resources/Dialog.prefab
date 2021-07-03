@@ -192,7 +192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: No
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1
@@ -266,6 +266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsDeactivateInBehind: 1
+  m_Root: 0
 --- !u!114 &6871712555884433503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -686,7 +687,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: Ok
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1
@@ -983,7 +984,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: Ok
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1

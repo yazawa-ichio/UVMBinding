@@ -884,7 +884,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: Submit
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1

@@ -1,14 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UVMBinding.Arguments;
-using UVMBinding.Core;
 
 namespace UVMBinding
 {
 	public class EventButton : ViewEventBase, IHasEventArgument
 	{
-		[SerializeReference]
-		EventArgument m_Aargument = default;
+		[SerializeReference, UnityEngine.Serialization.FormerlySerializedAs("m_Aargument")]
+		EventArgument m_Argument = default;
 
 		protected virtual void Awake()
 		{
@@ -20,9 +19,9 @@ namespace UVMBinding
 
 		protected virtual void OnClick()
 		{
-			if (m_Aargument != null)
+			if (m_Argument != null)
 			{
-				m_Aargument.Do(this);
+				m_Argument.Do(this);
 			}
 			else
 			{
@@ -32,12 +31,12 @@ namespace UVMBinding
 
 		public override System.Type EventType()
 		{
-			return m_Aargument?.GetEventType() ?? null;
+			return m_Argument?.GetEventType() ?? null;
 		}
 
 		EventArgument IHasEventArgument.GetArgument()
 		{
-			return m_Aargument;
+			return m_Argument;
 		}
 	}
 

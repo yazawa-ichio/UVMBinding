@@ -114,6 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ReservationViewModel: UVMBinding.Tests.CollectionTestViewModel
+  m_UpdateOnAttach: 0
 --- !u!1 &7411922833077108226
 GameObject:
   m_ObjectHideFlags: 0

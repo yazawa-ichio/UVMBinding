@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: Input
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1
@@ -434,7 +434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: InputClear
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1
@@ -675,7 +675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: Dialog
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1

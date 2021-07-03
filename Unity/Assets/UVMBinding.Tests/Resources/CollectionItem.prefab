@@ -238,6 +238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ReservationViewModel: UVMBinding.Tests.CollectionItemViewModel
+  m_UpdateOnAttach: 0
 --- !u!114 &5167555046315415019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,7 +252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventName: Click
-  m_Aargument:
+  m_Argument:
     id: 0
   references:
     version: 1
