@@ -1,0 +1,19 @@
+{
+    "name": "UVMBinding.UI",
+    "rootNamespace": "",
+    "references": [
+        "UVMBinding",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "!UVMB_DISABLE_UGUI"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
