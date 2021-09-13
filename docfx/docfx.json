@@ -3,11 +3,14 @@
     {
       "src": [
         {
+          "src": "../Unity",
           "files": [
-            "src/**.csproj"
+            "UVMBinding.csproj",
+            "UVMBinding.UI.csproj"
           ]
         }
       ],
+      "filter": "filterConfig.yml",
       "dest": "api",
       "disableGitFeatures": false,
       "disableDefaultFilter": false
