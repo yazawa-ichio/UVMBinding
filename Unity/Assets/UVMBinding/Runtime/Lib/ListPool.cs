@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace UVMBinding.Core
 {
-	public static class ListPool<T>
+	internal static class ListPool<T>
 	{
 		public struct Scope : IDisposable
 		{

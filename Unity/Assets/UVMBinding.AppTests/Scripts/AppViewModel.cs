@@ -17,6 +17,8 @@ namespace AppTests
 	{
 		[Bind]
 		public string InputMessage { get; set; } = "";
+		[Bind]
+		public TestEnum Popup { get; set; } = TestEnum.Value3;
 		[Event]
 		public Action Dialog { get; set; }
 		[Event]
