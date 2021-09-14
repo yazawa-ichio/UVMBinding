@@ -19,7 +19,7 @@ namespace UVMBinding.Drawer
 			{
 				Type = type;
 				Name = type.FullName;
-				DispName = Name;
+				DispName = Name.Replace(".", "/");
 				var disp = type.GetCustomAttributes(typeof(DispNameAttribute), false).FirstOrDefault();
 				if (disp != null)
 				{
