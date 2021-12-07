@@ -2,7 +2,7 @@ using UVMBinding.Logger;
 
 namespace UVMBinding.Core
 {
-	public static class Assignable<TSrc, TDst>
+	internal static class Assignable<TSrc, TDst>
 	{
 		public static readonly bool Is = typeof(TDst).IsAssignableFrom(typeof(TSrc));
 		static Assignable()

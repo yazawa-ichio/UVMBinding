@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "com.unity.ide.visualstudio": "2.0.9",
+    "com.unity.ide.visualstudio": "2.0.11",
+    "com.unity.nuget.mono-cecil": "1.10.1-preview.1",
     "com.unity.test-framework": "1.1.26",
     "com.unity.testtools.codecoverage": "1.1.0",
     "com.unity.ugui": "1.0.0",
     "jp.yazawa-ichio.ilib-ui-control": "https://github.com/yazawa-ichio/ilib-ui-control.git",
-    "com.unity.nuget.mono-cecil": "1.10.1-preview.1",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",

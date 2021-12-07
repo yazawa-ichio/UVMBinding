@@ -106,6 +106,7 @@ namespace UVMBinding.CodeGen
 				SymbolStream = new MemoryStream(compiledAssembly.InMemoryAssembly.PdbData.ToArray()),
 				SymbolReaderProvider = new PortablePdbReaderProvider(),
 				AssemblyResolver = new PostProcessorAssemblyResolver(compiledAssembly.References),
+				ReflectionImporterProvider = new ReflectionImporterProvider(),
 				ReadingMode = ReadingMode.Immediate
 			};
 
