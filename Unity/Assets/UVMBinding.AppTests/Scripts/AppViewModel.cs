@@ -59,4 +59,14 @@ namespace AppTests
 		}
 	}
 
+	public class WarningViewModel
+	{
+		[Event]
+		public string Value { get; set; }
+		[Event]
+		public Action<bool> Safe { get; set; }
+		[Event]
+		public Action<bool, bool> Warning { get; set; }
+	}
+
 }

@@ -246,7 +246,7 @@ namespace UVMBinding.CodeGen
 			}
 			foreach (var property in m_TypeDefinition.Properties)
 			{
-				if (TryGetEventPath(property, out var path) && property.GetMethod != null)
+				if (TryGetEventPath(property, out var path) && IsEventProperty(property))
 				{
 					ProcessRegisterProcessAction(end, processor, property.GetMethod, path);
 				}
@@ -258,6 +258,28 @@ namespace UVMBinding.CodeGen
 					ProcessRegisterMethod(end, processor, eventMethod, path);
 				}
 			}
+		}
+
+		bool IsEventProperty(PropertyDefinition property)
+		{
+			if (property.GetMethod == null)
+			{
+				return false;
+			}
+			if (property.PropertyType.FullName == typeof(System.Action).FullName)
+			{
+				return true;
+			}
+			if (property.PropertyType.FullName.StartsWith("System.Action`1<"))
+			{
+				return true;
+			}
+			m_Diagnostics.Add(new DiagnosticMessage
+			{
+				DiagnosticType = DiagnosticType.Warning,
+				MessageData = $"not [Event] target. {property.FullName}"
+			});
+			return false;
 		}
 
 		void ProcessRegisterProcessAction(Instruction end, ILProcessor processor, MethodDefinition eventMethod, string path)
