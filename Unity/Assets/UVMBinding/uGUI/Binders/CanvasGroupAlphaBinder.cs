@@ -1,22 +1,11 @@
 using UnityEngine;
 namespace UVMBinding.Binders
 {
-	public class CanvasGroupAlphaBinder : Binder<float>
+	public class CanvasGroupAlphaBinder : Binder<float, CanvasGroup>
 	{
-
-		CanvasGroup m_Target;
-
-		protected override void OnBind()
-		{
-			TryGetComponent(out m_Target);
-		}
-
 		protected override void UpdateValue(float value)
 		{
-			if (m_Target != null)
-			{
-				m_Target.alpha = value;
-			}
+			Target.alpha = value;
 		}
 	}
 }

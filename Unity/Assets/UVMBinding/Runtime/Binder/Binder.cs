@@ -143,5 +143,30 @@ namespace UVMBinding
 
 	}
 
+	public abstract class Binder<TValue, TComponent> : Binder<TValue>
+	{
+		TComponent m_Target;
+
+		protected TComponent Target
+		{
+			get
+			{
+				TryInit();
+				return m_Target;
+			}
+		}
+
+		protected void TryInit()
+		{
+			if (m_Target == null && TryGetComponent(out m_Target))
+			{
+				OnInit(m_Target);
+			}
+		}
+
+		protected virtual void OnInit(TComponent target) { }
+
+	}
+
 
 }
