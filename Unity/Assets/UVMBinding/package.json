@@ -1,7 +1,7 @@
 {
   "name": "jp.ilib.uvmb",
   "displayName": "UVMBinding",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "unity": "2020.3",
   "description": "Unity DataBinding Package",
   "author": {
