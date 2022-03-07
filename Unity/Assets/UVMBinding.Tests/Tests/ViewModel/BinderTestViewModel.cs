@@ -34,12 +34,15 @@ namespace UVMBinding.Tests
 		[Bind]
 		public NestViewModel Nest { get; set; } = new NestViewModel();
 
+		public class NestViewModel : ViewModel
+		{
+			[Bind]
+			public string NestText { get; set; }
+			[Event]
+			public System.Action NestAction { get; set; }
+		}
+
 	}
 
-	public class NestViewModel : ViewModel
-	{
-		[Bind]
-		public string NestText { get; set; }
-	}
 
 }

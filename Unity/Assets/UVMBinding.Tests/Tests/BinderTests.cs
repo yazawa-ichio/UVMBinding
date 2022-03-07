@@ -130,6 +130,11 @@ namespace UVMBinding.Tests
 				Text2 = 22.22222f,
 			};
 			vm1.Nest.NestText = "NestTest:BB";
+			bool nestAction = false;
+			vm1.Nest.NestAction += () =>
+			{
+				nestAction = true;
+			};
 			var obj = Create("BinderTest1");
 			try
 			{
@@ -143,6 +148,10 @@ namespace UVMBinding.Tests
 				view.TryUpdate();
 
 				Assert.AreEqual("NestTest:BB", nestView.GetComponentInChildren<Text>().text);
+
+				Assert.IsFalse(nestAction);
+				nestView.GetComponentInChildren<Button>().onClick.Invoke();
+				Assert.IsTrue(nestAction);
 
 			}
 			finally
