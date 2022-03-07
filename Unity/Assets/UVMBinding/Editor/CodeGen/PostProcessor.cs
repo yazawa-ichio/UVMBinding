@@ -49,13 +49,7 @@ namespace UVMBinding.CodeGen
 			}
 			try
 			{
-				foreach (var typeDefinition in mainModule.Types)
-				{
-					if (TryGetViewModelReference(typeDefinition, out var vmReference))
-					{
-						new ViewModelPostProcessor(typeDefinition, vmReference, m_Diagnostics).Process();
-					}
-				}
+				Process(mainModule.Types);
 			}
 			catch (Exception error)
 			{
@@ -82,6 +76,27 @@ namespace UVMBinding.CodeGen
 			return new ILPostProcessResult(new InMemoryAssembly(pe.ToArray(), pdb.ToArray()), m_Diagnostics);
 		}
 
+		void Process(IEnumerable<TypeDefinition> types)
+		{
+			foreach (var typeDefinition in types)
+			{
+				if (TryGetViewModelReference(typeDefinition, out var vmReference))
+				{
+					/*
+						m_Diagnostics.Add(new DiagnosticMessage
+						{
+							DiagnosticType = DiagnosticType.Warning,
+							MessageData = typeDefinition.FullName,
+						});
+					*/
+					new ViewModelPostProcessor(typeDefinition, vmReference, m_Diagnostics).Process();
+				}
+				if (typeDefinition.NestedTypes.Any())
+				{
+					Process(typeDefinition.NestedTypes);
+				}
+			}
+		}
 
 		bool TryGetViewModelReference(TypeDefinition typeDefinition, out TypeReference vmReference)
 		{
