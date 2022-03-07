@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UVMBinding.Arguments;
 using UVMBinding.Core;
 
-namespace UVMBinding
+namespace UVMBinding.Events
 {
 	public class EventButton : ViewEventBase, IHasEventArgument
 	{

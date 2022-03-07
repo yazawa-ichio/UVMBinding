@@ -50,6 +50,7 @@ namespace AppTests
 		[Bind]
 		public Property<string> Input { get; private set; }
 
+		[Event]
 		public Action<string> OnSubmit { get; set; }
 
 		[Event]
