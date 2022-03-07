@@ -121,6 +121,7 @@ namespace UVMBinding.Drawer
 				var type = ConverterList.GetType(select);
 				if (typeof(ConcatenateConverter) == type)
 				{
+					GUILayout.Label("Input");
 					property = property.FindPropertyRelative("m_Converters");
 					for (int i = 0; i < property.arraySize; i++)
 					{
@@ -130,6 +131,7 @@ namespace UVMBinding.Drawer
 					{
 						property.InsertArrayElementAtIndex(property.arraySize);
 					}
+					GUILayout.Label("Output");
 				}
 				else
 				{
