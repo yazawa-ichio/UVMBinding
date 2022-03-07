@@ -1,8 +1,7 @@
 using UnityEngine;
-using UVMBinding.Core;
 using UVMBinding.Logger;
 
-namespace UVMBinding
+namespace UVMBinding.Core
 {
 	public abstract class ViewEventBase : MonoBehaviour, IViewEvent
 	{

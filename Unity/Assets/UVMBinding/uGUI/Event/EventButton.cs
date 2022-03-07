@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UVMBinding.Arguments;
+using UVMBinding.Core;
 
 namespace UVMBinding
 {
