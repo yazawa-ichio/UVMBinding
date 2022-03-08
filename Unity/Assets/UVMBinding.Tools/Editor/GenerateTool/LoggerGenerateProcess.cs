@@ -1,4 +1,4 @@
-namespace UVMBinding.Tools
+﻿namespace UVMBinding.Tools
 {
 	public class LoggerGenerateProcess
 	{

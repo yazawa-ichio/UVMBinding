@@ -1,4 +1,4 @@
-namespace UVMBinding.Arguments
+﻿namespace UVMBinding.Arguments
 {
 	public interface IHasEventArgument
 	{

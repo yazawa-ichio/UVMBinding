@@ -1,4 +1,4 @@
-using UVMBinding.Core;
+﻿using UVMBinding.Core;
 
 namespace UVMBinding.Binders
 {

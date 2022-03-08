@@ -1,4 +1,4 @@
-namespace UVMBinding.Drawer
+﻿namespace UVMBinding.Drawer
 {
 	public interface IElementViewer
 	{

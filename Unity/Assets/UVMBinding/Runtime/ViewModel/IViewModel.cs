@@ -1,4 +1,4 @@
-namespace UVMBinding.Core
+﻿namespace UVMBinding.Core
 {
 	[UnityEngine.Scripting.Preserve]
 	public interface IViewModel

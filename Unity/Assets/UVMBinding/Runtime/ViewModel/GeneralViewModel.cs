@@ -1,4 +1,4 @@
-namespace UVMBinding
+﻿namespace UVMBinding
 {
 
 	public class GeneralViewModel : ViewModel

@@ -1,4 +1,4 @@
-namespace UVMBinding.Converters
+﻿namespace UVMBinding.Converters
 {
 	[DispName("Core/BoolInverse")]
 	public class BoolInverse : ConverterBase<bool, bool>

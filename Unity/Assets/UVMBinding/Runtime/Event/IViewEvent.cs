@@ -1,4 +1,4 @@
-namespace UVMBinding.Core
+﻿namespace UVMBinding.Core
 {
 	public interface IViewEvent : IViewElement
 	{

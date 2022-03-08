@@ -1,4 +1,4 @@
-namespace UVMBinding.Tests
+﻿namespace UVMBinding.Tests
 {
 	public class CollectionTestViewModel : ViewModel
 	{

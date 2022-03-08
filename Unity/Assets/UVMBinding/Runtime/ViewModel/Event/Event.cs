@@ -1,4 +1,4 @@
-namespace UVMBinding
+﻿namespace UVMBinding
 {
 
 	[UnityEngine.Scripting.Preserve]

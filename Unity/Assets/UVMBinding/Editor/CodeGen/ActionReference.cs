@@ -1,4 +1,4 @@
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using System.Linq;
 
 namespace UVMBinding.CodeGen

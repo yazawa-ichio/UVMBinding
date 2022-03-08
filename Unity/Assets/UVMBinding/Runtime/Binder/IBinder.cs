@@ -1,4 +1,4 @@
-namespace UVMBinding.Core
+﻿namespace UVMBinding.Core
 {
 	internal interface IBinder : IViewElement
 	{

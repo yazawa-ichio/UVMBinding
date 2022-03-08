@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UVMBinding.Core;
 
 namespace UVMBinding.Arguments

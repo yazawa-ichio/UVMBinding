@@ -1,4 +1,4 @@
-namespace UVMBinding.Tests
+﻿namespace UVMBinding.Tests
 {
 	[DispName("BinderTest")]
 	public class BinderTestViewModel : ViewModel

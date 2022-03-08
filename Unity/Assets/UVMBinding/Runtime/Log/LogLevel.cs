@@ -1,4 +1,4 @@
-namespace UVMBinding.Logger
+﻿namespace UVMBinding.Logger
 {
 	public enum LogLevel
 	{

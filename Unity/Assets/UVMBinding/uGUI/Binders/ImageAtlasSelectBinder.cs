@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.U2D;
 using UnityEngine.UI;
 namespace UVMBinding.Binders

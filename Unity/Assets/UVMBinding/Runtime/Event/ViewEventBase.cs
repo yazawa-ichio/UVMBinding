@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UVMBinding.Logger;
 
 namespace UVMBinding.Core

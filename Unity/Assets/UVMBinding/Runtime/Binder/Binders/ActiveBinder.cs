@@ -1,4 +1,4 @@
-namespace UVMBinding.Binders
+﻿namespace UVMBinding.Binders
 {
 	public class ActiveBinder : Binder<bool>
 	{

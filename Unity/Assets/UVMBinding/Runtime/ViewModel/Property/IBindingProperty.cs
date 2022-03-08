@@ -1,4 +1,4 @@
-namespace UVMBinding
+﻿namespace UVMBinding
 {
 	internal interface IBindingProperty
 	{

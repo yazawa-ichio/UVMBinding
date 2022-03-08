@@ -1,4 +1,4 @@
-namespace UVMBinding.Converters
+﻿namespace UVMBinding.Converters
 {
 	public enum ComparisonOperatorType
 	{

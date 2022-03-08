@@ -1,4 +1,4 @@
-using UVMBinding.Binders;
+﻿using UVMBinding.Binders;
 
 namespace AppTests
 {

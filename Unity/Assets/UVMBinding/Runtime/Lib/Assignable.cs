@@ -1,4 +1,4 @@
-using UVMBinding.Logger;
+﻿using UVMBinding.Logger;
 
 namespace UVMBinding.Core
 {
