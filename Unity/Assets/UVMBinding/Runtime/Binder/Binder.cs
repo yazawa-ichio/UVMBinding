@@ -17,12 +17,9 @@ namespace UVMBinding
 
 		bool IBinder.IsActive => this != null;
 
-		IBindingProperty m_RootProperty;
 		IBindingProperty m_Property;
 		int m_Hash;
 		bool m_ForceUpdate;
-
-		protected virtual bool UpdateImmediate => false;
 
 		protected void Set(T val)
 		{
@@ -52,7 +49,6 @@ namespace UVMBinding
 		{
 			if (m_Converter != null && m_Converter.TryConvert(prop, ref m_Property))
 			{
-				m_RootProperty = prop;
 				InvokeBind();
 				return;
 			}
@@ -60,7 +56,6 @@ namespace UVMBinding
 			{
 				if (prop is IBindingProperty<T> ret)
 				{
-					m_RootProperty = prop;
 					m_Property = ret;
 					InvokeBind();
 				}
@@ -69,38 +64,23 @@ namespace UVMBinding
 			{
 				if (prop.IsAssignable<T>())
 				{
-					m_RootProperty = prop;
 					m_Property = prop;
 					InvokeBind();
 				}
 			}
-
 		}
 
 		void InvokeBind()
 		{
 			Log.Trace(this, "{0} Bind Property Path:{1}", this, m_Path);
-			if (UpdateImmediate)
-			{
-				Log.Trace(this, "{0} InvokeBind UpdateImmediate Path:{1} ", this, m_Path);
-				m_RootProperty.OnPostChanged += TryUpdate;
-			}
 			m_ForceUpdate = true;
 			OnBind();
-			if (UpdateImmediate)
-			{
-				TryUpdate();
-			}
 		}
 
 		protected virtual void OnBind() { }
 
 		void IBinder.Unbind()
 		{
-			if (m_RootProperty != null)
-			{
-				m_RootProperty.OnPostChanged -= TryUpdate;
-			}
 			if (m_Converter != null)
 			{
 				m_Converter.Unbind();

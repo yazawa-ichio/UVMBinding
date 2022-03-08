@@ -265,27 +265,5 @@ namespace UVMBinding.Tests
 			}
 		}
 
-
-		[Test]
-		public void 即時反映可能なBinder()
-		{
-			var obj = Create("UpdateImmediateText");
-			try
-			{
-				var view = obj.GetComponent<View>();
-				var text = obj.GetComponentInChildren<Text>();
-				var vm = view.Attach<GeneralViewModel>();
-				for (int i = 0; i < 10; i++)
-				{
-					vm.Set("Value", i);
-					Assert.AreEqual(i.ToString(), text.text);
-				}
-			}
-			finally
-			{
-				GameObject.Destroy(obj);
-			}
-		}
-
 	}
 }

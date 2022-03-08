@@ -11,13 +11,6 @@ namespace UVMBinding
 		public string Path { get; private set; }
 		public int Hash { get; protected set; }
 		internal BindingProperty Next;
-		protected Action m_OnPostChanged;
-
-		public event Action OnPostChanged
-		{
-			add => m_OnPostChanged += value;
-			remove => m_OnPostChanged -= value;
-		}
 
 		public BindingProperty(string path)
 		{
@@ -54,7 +47,6 @@ namespace UVMBinding
 				m_Value = value;
 				Hash++;
 				OnChanged?.Invoke(value);
-				m_OnPostChanged?.Invoke();
 			}
 		}
 
@@ -67,7 +59,6 @@ namespace UVMBinding
 			Log.Trace("BindingProperty<{0}> SetDitry Path:{1}", typeof(TValue), Path);
 			Hash++;
 			OnChanged?.Invoke(m_Value);
-			m_OnPostChanged?.Invoke();
 		}
 
 		public override Type GetBindType()

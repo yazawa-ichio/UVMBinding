@@ -2,7 +2,6 @@ namespace UVMBinding
 {
 	internal interface IBindingProperty
 	{
-		event System.Action OnPostChanged;
 		string Path { get; }
 		int Hash { get; }
 		object GetObject();
