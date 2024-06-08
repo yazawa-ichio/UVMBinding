@@ -1,9 +1,12 @@
 {
   "dependencies": {
-    "com.unity.ide.visualstudio": "2.0.12",
-    "com.unity.nuget.mono-cecil": "1.10.2",
-    "com.unity.test-framework": "1.1.30",
-    "com.unity.testtools.codecoverage": "1.1.0",
+    "com.unity.ai.navigation": "1.1.5",
+    "com.unity.ide.visualstudio": "2.0.22",
+    "com.unity.localization": "1.4.5",
+    "com.unity.nuget.mono-cecil": "1.11.4",
+    "com.unity.test-framework": "1.1.33",
+    "com.unity.testtools.codecoverage": "1.2.5",
+    "com.unity.textmeshpro": "3.0.9",
     "com.unity.ugui": "1.0.0",
     "jp.yazawa-ichio.ilib-ui-control": "https://github.com/yazawa-ichio/ilib-ui-control.git",
     "com.unity.modules.ai": "1.0.0",
