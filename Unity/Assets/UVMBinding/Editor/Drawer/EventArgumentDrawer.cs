@@ -10,6 +10,11 @@ namespace UVMBinding.Drawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
+			if (property.hasMultipleDifferentValues)
+			{
+				EditorGUI.LabelField(position, label, new GUIContent("Multiple different values not support"));
+				return;
+			}
 			var index = EventArgumentList.GetIndex(property.managedReferenceFullTypename);
 			var select = EditorGUI.Popup(GetPopupPosition(position), index, EventArgumentList.GetDispNames());
 			if (index != select)
@@ -24,12 +29,16 @@ namespace UVMBinding.Drawer
 					property.managedReferenceValue = null;
 				}
 			}
+			if (property.hasMultipleDifferentValues)
+			{
+				return;
+			}
 			EditorGUI.PropertyField(position, property, label, true);
 		}
 
 		private Rect GetPopupPosition(Rect currentPosition)
 		{
-			Rect popupPosition = new Rect(currentPosition);
+			Rect popupPosition = new(currentPosition);
 			popupPosition.width -= EditorGUIUtility.labelWidth;
 			popupPosition.x += EditorGUIUtility.labelWidth;
 			popupPosition.height = EditorGUIUtility.singleLineHeight;
@@ -38,6 +47,10 @@ namespace UVMBinding.Drawer
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
+			if (property.hasMultipleDifferentValues)
+			{
+				return EditorGUIUtility.singleLineHeight;
+			}
 			return EditorGUI.GetPropertyHeight(property, true);
 		}
 
