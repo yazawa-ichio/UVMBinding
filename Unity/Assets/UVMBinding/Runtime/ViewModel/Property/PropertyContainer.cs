@@ -9,7 +9,7 @@ namespace UVMBinding.Core
 	public class PropertyContainer
 	{
 
-		Dictionary<string, BindingProperty> m_Properties = new Dictionary<string, BindingProperty>();
+		Dictionary<string, BindingProperty> m_Properties = new();
 
 		internal event Action<IBindingProperty> OnNewProperty;
 
@@ -54,6 +54,17 @@ namespace UVMBinding.Core
 				m_Properties[path] = ret;
 				return ret;
 			}
+		}
+
+		internal bool TryGet(string path, out IBindingProperty property)
+		{
+			if (m_Properties.TryGetValue(path, out BindingProperty prop))
+			{
+				property = prop;
+				return true;
+			}
+			property = null;
+			return false;
 		}
 
 		BindingProperty<T> NewProperty<T>(string path)

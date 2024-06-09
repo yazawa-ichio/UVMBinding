@@ -6,7 +6,7 @@ using UVMBinding.Logger;
 namespace UVMBinding
 {
 
-	public class View : MonoBehaviour, IView
+	public class View : MonoBehaviour, IView, IAutoViewUpdate
 	{
 		[SerializeField]
 #pragma warning disable CS0414
@@ -21,6 +21,7 @@ namespace UVMBinding
 		IViewElement[] m_Elements;
 		bool m_IsActive = true;
 		IViewModel m_ViewModel;
+		List<IViewElement> m_ExtraElements;
 
 		public bool IsActive => m_IsActive && this != null && gameObject != null;
 
@@ -115,7 +116,7 @@ namespace UVMBinding
 
 		public T Attach<T>(System.Action<T> action = null) where T : IViewModel, new()
 		{
-			T vm = new T();
+			T vm = new();
 			action?.Invoke(vm);
 			Attach(vm);
 			return vm;
@@ -143,6 +144,31 @@ namespace UVMBinding
 			{
 				elements.Add(element);
 			}
+			if (m_ExtraElements != null)
+			{
+				foreach (var element in m_ExtraElements)
+				{
+					elements.Add(element);
+				}
+			}
+		}
+
+		public void Add(IViewElement elm)
+		{
+			Prepare();
+			if (m_Elements == null) return;
+			m_Binding?.Add(elm);
+			if (m_ExtraElements == null)
+			{
+				m_ExtraElements = new List<IViewElement>();
+			}
+			m_ExtraElements.Add(elm);
+		}
+
+		public void Remove(IViewElement elm)
+		{
+			m_Binding?.Remove(elm);
+			m_ExtraElements?.Remove(elm);
 		}
 
 	}

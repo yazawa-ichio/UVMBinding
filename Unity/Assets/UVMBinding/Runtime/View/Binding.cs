@@ -8,7 +8,7 @@ namespace UVMBinding.Core
 
 	public class Binding : IDisposable, IViewEventDispatcher
 	{
-		List<IBinder> m_Binding = new List<IBinder>();
+		List<IBinder> m_Binding = new();
 		IViewModel m_ViewModel;
 		bool m_Disposed;
 
@@ -17,16 +17,48 @@ namespace UVMBinding.Core
 			m_Binding = new List<IBinder>(elements.Length);
 			foreach (var elm in elements)
 			{
-				//イベントであれば登録
-				(elm as IViewEvent)?.Bind(this);
-				if (elm is IBinder binder)
+				AddImpl(elm);
+			}
+		}
+
+
+		void AddImpl(IViewElement elm)
+		{
+			//イベントであれば登録
+			(elm as IViewEvent)?.Bind(this);
+			if (elm is IBinder binder)
+			{
+				m_Binding.Add(binder);
+				Debug.AssertFormat(!string.IsNullOrEmpty(binder.Path), binder as UnityEngine.Object, "{0} Path Empty", binder);
+			}
+		}
+
+
+		public void Add(IViewElement elm)
+		{
+			if (m_Disposed) return;
+			AddImpl(elm);
+			if (m_ViewModel != null && elm is IBinder binder && binder.IsActive)
+			{
+				if (m_ViewModel.Property.TryGet(binder.Path, out var prop))
 				{
-					m_Binding.Add(binder);
-					Debug.AssertFormat(!string.IsNullOrEmpty(binder.Path), binder as UnityEngine.Object, "{0} Path Empty", binder);
+					binder.Bind(prop);
 				}
 			}
 		}
 
+		public void Remove(IViewElement elm)
+		{
+			if (m_Disposed) return;
+			if (elm is IBinder binder)
+			{
+				m_Binding.Remove(binder);
+				if (binder != null && binder.IsActive)
+				{
+					binder.Unbind();
+				}
+			}
+		}
 
 		static Predicate<IBinder> s_RemoveAll = (x) => !x.IsActive;
 

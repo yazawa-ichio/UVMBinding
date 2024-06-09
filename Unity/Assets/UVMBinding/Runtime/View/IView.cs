@@ -2,12 +2,19 @@
 
 namespace UVMBinding.Core
 {
-	public interface IView
+	public interface IAutoViewUpdate
 	{
 		bool IsActive { get; }
+		void TryUpdate();
+	}
+
+	public interface IView
+	{
 		IViewModel ViewModel { get; set; }
 		void Prepare(bool force = false);
-		void TryUpdate();
 		void GetElements(List<IViewElement> elements);
+		void Add(IViewElement elm);
+		void Remove(IViewElement elm);
+		void TryUpdate();
 	}
 }

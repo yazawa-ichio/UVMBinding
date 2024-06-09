@@ -4,7 +4,7 @@
 	{
 		public static void Run()
 		{
-			CodeEmitter emitter = new CodeEmitter();
+			CodeEmitter emitter = new();
 			emitter.WriteLine("// Generate [UVMBinding/Generate/CastGenerate]");
 			emitter.WriteLine("namespace UVMBinding.Converters");
 			using (emitter.Bracket())

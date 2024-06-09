@@ -21,7 +21,7 @@ namespace UVMBinding.Core
 			}
 		}
 
-		static Stack<List<T>> s_Pool = new Stack<List<T>>();
+		static Stack<List<T>> s_Pool = new();
 
 		public static List<T> Pop()
 		{

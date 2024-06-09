@@ -17,7 +17,7 @@ namespace UVMBinding.Binders
 		[SerializeField]
 		bool m_DisableAutoActive = false;
 
-		List<GameObject> m_Instance = new List<GameObject>();
+		List<GameObject> m_Instance = new();
 
 		protected override void UpdateValue(IList<IViewModel> value)
 		{

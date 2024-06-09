@@ -1,4 +1,4 @@
-// Generate [UVMBinding/Generate/CastGenerate]
+﻿// Generate [UVMBinding/Generate/CastGenerate]
 namespace UVMBinding.Converters
 {
 

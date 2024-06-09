@@ -17,6 +17,12 @@ namespace UVMBinding.Tools
 			CastGenerateProcess.Run();
 		}
 
+		[MenuItem("UVMBinding/Generate/BoolSwitchGenerate")]
+		static void BoolSwitchGenerate()
+		{
+			BoolSwitchProcess.Run();
+		}
+
 		[MenuItem("UVMBinding/Generate/LoggerGenerate")]
 		static void LoggerGenerate()
 		{

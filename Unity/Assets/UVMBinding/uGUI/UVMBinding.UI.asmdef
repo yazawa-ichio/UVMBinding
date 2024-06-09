@@ -12,8 +12,14 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "!UVMB_DISABLE_UGUI"
+        "UVMB_UGUI"
     ],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.ugui",
+            "expression": "",
+            "define": "UVMB_UGUI"
+        }
+    ],
     "noEngineReferences": false
 }

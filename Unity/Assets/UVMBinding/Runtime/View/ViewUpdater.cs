@@ -8,18 +8,19 @@ namespace UVMBinding.Core
 
 	public static class ViewUpdater
 	{
-		static List<IView> s_Views = new List<IView>();
-		static Predicate<IView> s_CheckRemove;
+		static List<IAutoViewUpdate> s_Views = new();
+		static Predicate<IAutoViewUpdate> s_CheckRemove;
 
 		public static bool IsUpdating { get; private set; }
 
 		static ViewUpdater()
 		{
+			Canvas.preWillRenderCanvases -= Update;
 			Canvas.preWillRenderCanvases += Update;
 			s_CheckRemove = (x) => !x.IsActive;
 		}
 
-		public static void Register(IView view)
+		public static void Register(IAutoViewUpdate view)
 		{
 			Log.Trace("Register ViewUpdater {0}", view);
 			s_Views.Add(view);

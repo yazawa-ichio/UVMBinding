@@ -15,7 +15,7 @@ namespace UVMBinding.Drawer
 			left.width -= 20;
 			right.x += left.width;
 			right.width = 20;
-			property.stringValue = EditorGUI.TextField(left, label, property.stringValue);
+			EditorGUI.PropertyField(left, property, label);
 			if (EditorGUI.DropdownButton(right, GUIContent.none, FocusType.Passive))
 			{
 				if (property.serializedObject.targetObject is MonoBehaviour component)

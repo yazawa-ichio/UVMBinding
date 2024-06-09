@@ -4,6 +4,7 @@ using UVMBinding.Logger;
 
 namespace UVMBinding
 {
+
 	public abstract class Binder<T> : MonoBehaviour, IBinder
 	{
 		static bool s_IsValueType = typeof(T).IsValueType;
@@ -41,8 +42,14 @@ namespace UVMBinding
 			}
 		}
 
-		bool IViewElement.CanUse(IView view) => CanUse(view);
-
+		bool IViewElement.CanUse(IView view)
+		{
+			if (TryGetComponent<IBindSourceProvider>(out var provider))
+			{
+				return false;
+			}
+			return CanUse(view);
+		}
 		protected virtual bool CanUse(IView view) => true;
 
 		void IBinder.Bind(IBindingProperty prop)
@@ -147,6 +154,5 @@ namespace UVMBinding
 		protected virtual void OnInit(TComponent target) { }
 
 	}
-
 
 }

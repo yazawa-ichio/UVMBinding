@@ -8,7 +8,7 @@ namespace UVMBinding
 	{
 		public EventBroker Event { get; private set; } = new EventBroker();
 
-		PropertyContainer m_Properties = new PropertyContainer();
+		PropertyContainer m_Properties = new();
 
 		PropertyContainer IViewModel.Property => m_Properties;
 
