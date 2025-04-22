@@ -2,12 +2,11 @@
 
 namespace UVMBinding.Binders
 {
-	public class ViewBinder : Binder<IViewModel, IView>
+	public class ViewBinder : Binder<object, IView>
 	{
-
-		protected override void UpdateValue(IViewModel value)
+		protected override void UpdateValue(object value)
 		{
-			Target.ViewModel = value;
+			Target.Bind(value);
 		}
 
 		protected override bool CanUse(IView view)
@@ -17,4 +16,5 @@ namespace UVMBinding.Binders
 		}
 
 	}
+
 }

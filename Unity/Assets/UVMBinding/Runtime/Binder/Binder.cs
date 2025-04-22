@@ -7,8 +7,6 @@ namespace UVMBinding
 
 	public abstract class Binder<T> : MonoBehaviour, IBinder
 	{
-		static bool s_IsValueType = typeof(T).IsValueType;
-
 		[SerializeField]
 		string m_Path = null;
 		[SerializeReference]
@@ -42,9 +40,26 @@ namespace UVMBinding
 			}
 		}
 
+		protected T Get()
+		{
+			if (m_Property != null)
+			{
+				if (m_Property is IBindingProperty<T> prop)
+				{
+					return prop.Value;
+				}
+				else
+				{
+					return (T)m_Property.GetObject();
+				}
+			}
+			Log.Warning(this, "Not Found BindingProperty {0}", m_Path);
+			return default;
+		}
+
 		bool IViewElement.CanUse(IView view)
 		{
-			if (TryGetComponent<IBindSourceProvider>(out var provider))
+			if (TryGetComponent<BindSourceProvider>(out var provider) && provider.IsTarget(this))
 			{
 				return false;
 			}
@@ -54,26 +69,25 @@ namespace UVMBinding
 
 		void IBinder.Bind(IBindingProperty prop)
 		{
+			Log.Debug(this, "{0} Bind Property Path:{1}", this, m_Path);
 			if (m_Converter != null && m_Converter.TryConvert(prop, ref m_Property))
 			{
 				InvokeBind();
 				return;
 			}
-			if (s_IsValueType)
+			if (prop is IBindingProperty<T> ret)
 			{
-				if (prop is IBindingProperty<T> ret)
-				{
-					m_Property = ret;
-					InvokeBind();
-				}
+				m_Property = ret;
+				InvokeBind();
+			}
+			else if (prop.IsAssignable<T>())
+			{
+				m_Property = prop;
+				InvokeBind();
 			}
 			else
 			{
-				if (prop.IsAssignable<T>())
-				{
-					m_Property = prop;
-					InvokeBind();
-				}
+				Log.Warning(this, "Not Found BindingProperty {0} Type:{1}", m_Path, prop.GetBindType());
 			}
 		}
 

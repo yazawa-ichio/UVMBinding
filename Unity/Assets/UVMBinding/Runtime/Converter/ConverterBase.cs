@@ -8,7 +8,6 @@ namespace UVMBinding.Converters
 	{
 		static readonly bool s_InputIsValueType = typeof(TInput).IsValueType;
 
-		public virtual bool IsActive => this != null;
 		BindingProperty<TOutput> m_Output;
 		IBindingProperty m_Input;
 		int m_Hash;
@@ -33,27 +32,23 @@ namespace UVMBinding.Converters
 
 		bool IConverter.TryConvert(IBindingProperty property, ref IBindingProperty output)
 		{
-			if (s_InputIsValueType)
+			if (!(property is IBindingProperty<TInput>) && !property.IsAssignable<TInput>())
 			{
-				if (!(property is IBindingProperty<TInput>))
-				{
-					Log.Debug("{0} Fail TryConvert {1} => {2}", this, typeof(TInput), typeof(TOutput));
-					return false;
-				}
-			}
-			else
-			{
-				if (!property.IsAssignable<TInput>())
-				{
-					Log.Debug("{0} Fail TryConvert {1} => {2}", this, typeof(TInput), typeof(TOutput));
-					return false;
-				}
+				Log.Debug("{0} Fail TryConvert {1} => {2}", this, typeof(TInput), typeof(TOutput));
+				return false;
 			}
 			Log.Trace("{0} Convert Success {1} => {2}", this, typeof(TInput), typeof(TOutput));
 			m_ForceUpdate = true;
 			if (m_Output == null)
 			{
-				m_Output = new BindingProperty<TOutput>(property.Path);
+				if (typeof(TOutput) == typeof(object))
+				{
+					m_Output = (BindingProperty<TOutput>)(object)new ObjectBindingProperty(property.Path);
+				}
+				else
+				{
+					m_Output = new BindingProperty<TOutput>(property.Path);
+				}
 				m_Output.OnChanged += OnChanged;
 			}
 			m_Input = property;
@@ -67,6 +62,11 @@ namespace UVMBinding.Converters
 			m_Input = null;
 		}
 
+		public void SetDirty()
+		{
+			m_ForceUpdate = true;
+		}
+
 		public void TryUpdate()
 		{
 			if (m_Output == null || m_Input == null) return;
@@ -76,6 +76,19 @@ namespace UVMBinding.Converters
 			}
 			m_ForceUpdate = false;
 			m_Hash = m_Input.Hash;
+			if (m_Input is IBindingProperty<TInput> input)
+			{
+				m_Output.Value = Convert(input.Value);
+			}
+			else
+			{
+				m_Output.Value = Convert((TInput)m_Input.GetObject());
+			}
+			m_Output.SetDirty();
+		}
+
+		protected void SetImmediate(TOutput output)
+		{
 			if (m_Input is IBindingProperty<TInput> input)
 			{
 				m_Output.Value = Convert(input.Value);

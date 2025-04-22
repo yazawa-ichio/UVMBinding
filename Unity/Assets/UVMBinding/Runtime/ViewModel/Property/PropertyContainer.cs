@@ -13,6 +13,8 @@ namespace UVMBinding.Core
 
 		internal event Action<IBindingProperty> OnNewProperty;
 
+		internal bool ShouldCreateProperty;
+
 		public SubscribeHandle<T> Subscribe<T>(string path, Action<T> notify)
 		{
 			Log.Debug("Property Subscribe<{0}> Path:{1}", typeof(T), path);
@@ -63,6 +65,12 @@ namespace UVMBinding.Core
 				property = prop;
 				return true;
 			}
+			if (ShouldCreateProperty)
+			{
+				var ret = NewProperty<object>(path);
+				property = m_Properties[path] = ret;
+				return true;
+			}
 			property = null;
 			return false;
 		}
@@ -70,9 +78,18 @@ namespace UVMBinding.Core
 		BindingProperty<T> NewProperty<T>(string path)
 		{
 			Log.Trace("Register New Property<{0}> Path:{1}", typeof(T), path);
-			var ret = new BindingProperty<T>(path);
-			OnNewProperty?.Invoke(ret);
-			return ret;
+			if (typeof(T) == typeof(object))
+			{
+				var ret = new ObjectBindingProperty(path);
+				OnNewProperty?.Invoke(ret);
+				return (BindingProperty<T>)(object)ret;
+			}
+			else
+			{
+				var ret = new BindingProperty<T>(path);
+				OnNewProperty?.Invoke(ret);
+				return ret;
+			}
 		}
 
 		public void SetDirty(string path)

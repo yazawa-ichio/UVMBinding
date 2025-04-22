@@ -11,5 +11,8 @@
 
 		void SetDirty(string path);
 		void SetAllDirty();
+
+		void OnBind();
+		void OnUnbind();
 	}
 }

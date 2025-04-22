@@ -1,21 +1,18 @@
 ﻿using UnityEngine;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 
 namespace UVMBinding.Binders
 {
 	[RequireComponent(typeof(LocalizeStringEvent))]
-	public class LocalizeVariableBinder : Binder<LocalizeTextKey, LocalizeStringEvent>
+	public class LocalizeVariableBinder : Binder<IVariable, LocalizeStringEvent>
 	{
 		[SerializeField]
 		string m_VariableName;
-		[SerializeField]
-		LocalizedString m_LocalizedString;
 
-		protected override void UpdateValue(LocalizeTextKey value)
+		protected override void UpdateValue(IVariable value)
 		{
-			Target.StringReference[m_VariableName] = m_LocalizedString;
+			Target.StringReference[m_VariableName] = value;
 		}
 	}
-
 }

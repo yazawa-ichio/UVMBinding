@@ -10,20 +10,25 @@ namespace UVMBinding.Binders
 		{
 			if (value.RawText)
 			{
-				Target.OnUpdateString?.Invoke(value.EntryName);
+				Target.OnUpdateString?.Invoke(value.Entry);
 			}
 			else
 			{
+				if (value.Dic != null)
+				{
+					Target.StringReference.Arguments = new object[] { value.Dic };
+				}
 				if (!string.IsNullOrEmpty(value.Table))
 				{
 					Target.SetTable(value.Table);
 				}
-				if (!string.IsNullOrEmpty(value.EntryName))
+				if (!string.IsNullOrEmpty(value.Entry))
 				{
-					Target.SetEntry(value.EntryName);
+					Target.SetEntry(value.Entry);
 				}
 			}
 		}
 	}
+
 
 }

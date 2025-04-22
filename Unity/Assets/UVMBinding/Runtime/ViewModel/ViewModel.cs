@@ -1,4 +1,5 @@
-﻿using UVMBinding.Core;
+﻿using UnityEngine;
+using UVMBinding.Core;
 using UVMBinding.Logger;
 
 namespace UVMBinding
@@ -13,6 +14,8 @@ namespace UVMBinding
 		PropertyContainer IViewModel.Property => m_Properties;
 
 		protected PropertyContainer Property => m_Properties;
+
+		int m_BindingCount;
 
 		T IViewModel.Get<T>(string path) => GetImpl<T>(path);
 
@@ -40,6 +43,31 @@ namespace UVMBinding
 			Log.Debug("{0} SetAllDirty", this);
 			m_Properties.SetAllDirty();
 		}
+
+		void IViewModel.OnBind()
+		{
+			m_BindingCount++;
+			Log.Debug("{0} OnBind BindingCount:{1}", this, m_BindingCount);
+			if (m_BindingCount == 1)
+			{
+				OnBind();
+			}
+		}
+
+		void IViewModel.OnUnbind()
+		{
+			m_BindingCount--;
+			Log.Debug("{0} OnUnbind BindingCount:{1}", this, m_BindingCount);
+			Debug.Assert(m_BindingCount >= 0, "Unbind called more than bind");
+			if (m_BindingCount == 0)
+			{
+				OnUnbind();
+			}
+		}
+
+		protected virtual void OnBind() { }
+
+		protected virtual void OnUnbind() { }
 
 	}
 

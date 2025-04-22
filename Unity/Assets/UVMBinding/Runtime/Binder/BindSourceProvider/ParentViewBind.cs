@@ -3,7 +3,7 @@ using UVMBinding.Core;
 
 namespace UVMBinding
 {
-	public class ParentViewBind : MonoBehaviour, IBindSourceProvider
+	public class ParentViewBind : BindSourceProvider
 	{
 		[SerializeField]
 		private int m_Depth = 1;

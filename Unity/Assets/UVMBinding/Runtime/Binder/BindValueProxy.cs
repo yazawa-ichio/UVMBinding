@@ -1,4 +1,7 @@
-﻿namespace UVMBinding
+﻿using UnityEngine;
+using UnityEngine.Events;
+
+namespace UVMBinding
 {
 	public abstract class BindValueProxy<T> : Binder<T>
 	{
@@ -6,6 +9,9 @@
 		{
 			void OnBind(T value);
 		}
+
+		[SerializeField]
+		UnityEvent<T> m_Event;
 
 		IReceiver m_Receiver;
 
@@ -20,6 +26,7 @@
 		protected override void UpdateValue(T value)
 		{
 			m_Receiver?.OnBind(value);
+			m_Event?.Invoke(value);
 		}
 	}
 }

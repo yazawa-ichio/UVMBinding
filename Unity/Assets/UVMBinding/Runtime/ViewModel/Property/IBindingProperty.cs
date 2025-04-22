@@ -9,6 +9,7 @@
 		System.Type GetBindType();
 		bool IsAssignable<T>();
 		void SetDirty();
+		event System.Action<string, object> OnChangedObject;
 	}
 
 	internal interface IBindingProperty<T> : IBindingProperty

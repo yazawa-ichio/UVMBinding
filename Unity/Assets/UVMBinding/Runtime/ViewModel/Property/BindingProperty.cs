@@ -11,6 +11,13 @@ namespace UVMBinding
 		public string Path { get; private set; }
 		public int Hash { get; protected set; }
 		internal BindingProperty Next;
+		protected Action<string, object> m_OnChangedObject;
+
+		public event Action<string, object> OnChangedObject
+		{
+			add => m_OnChangedObject += value;
+			remove => m_OnChangedObject -= value;
+		}
 
 		public BindingProperty(string path)
 		{
@@ -26,11 +33,25 @@ namespace UVMBinding
 
 	}
 
+	internal class ObjectBindingProperty : BindingProperty<object>
+	{
+		public ObjectBindingProperty(string path) : base(path) { }
+
+		public override bool IsAssignable<T>()
+		{
+			if (m_Value == null)
+			{
+				return AssignableNull<T>.IsNullable;
+			}
+			return Assignable.Is(m_Value.GetType(), typeof(T));
+		}
+	}
+
 	internal class BindingProperty<TValue> : BindingProperty, IBindingProperty<TValue>
 	{
 		static EqualityComparer<TValue> s_EqualityComparer = EqualityComparer<TValue>.Default;
 
-		TValue m_Value;
+		protected TValue m_Value;
 		public TValue Value
 		{
 			get
@@ -47,6 +68,7 @@ namespace UVMBinding
 				m_Value = value;
 				Hash++;
 				OnChanged?.Invoke(value);
+				m_OnChangedObject?.Invoke(Path, value);
 			}
 		}
 
@@ -59,6 +81,7 @@ namespace UVMBinding
 			Log.Trace("BindingProperty<{0}> SetDitry Path:{1}", typeof(TValue), Path);
 			Hash++;
 			OnChanged?.Invoke(m_Value);
+			m_OnChangedObject?.Invoke(Path, m_Value);
 		}
 
 		public override Type GetBindType()

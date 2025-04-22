@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using UVMBinding.Core;
+﻿using UVMBinding.Core;
 
 namespace UVMBinding
 {
-	public abstract class ViewModelSourceProvider : MonoBehaviour, IBindSourceProvider, IAutoViewUpdate
+	public abstract class ViewModelSourceProvider : BindSourceProvider, IAutoViewUpdate
 	{
 		bool m_IsActive;
 		IViewElement[] m_Elements;

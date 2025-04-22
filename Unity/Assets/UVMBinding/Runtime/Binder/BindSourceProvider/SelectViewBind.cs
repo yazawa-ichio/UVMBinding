@@ -3,7 +3,7 @@ using UVMBinding.Core;
 
 namespace UVMBinding
 {
-	public class SelectViewBind : MonoBehaviour, IBindSourceProvider
+	public class SelectViewBind : BindSourceProvider
 	{
 		[SerializeField]
 		View m_View;

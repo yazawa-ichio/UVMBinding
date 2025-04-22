@@ -4,10 +4,18 @@ using UVMBinding.Logger;
 
 namespace UVMBinding.Core
 {
+	struct PublishEvent
+	{
+		public string Name;
+		public object Args;
+		public Type Type;
+	}
 
 	public class EventBroker
 	{
 		EventBase m_Event;
+
+		internal event Action<PublishEvent> OnPublishEvent;
 
 		public SubscribeHandle Subscribe(string name, Action onViewEvent)
 		{
@@ -81,10 +89,16 @@ namespace UVMBinding.Core
 				Log.Trace("Publish {0}", name);
 				e.Invoke();
 			}
-			else
+			else if (OnPublishEvent == null)
 			{
 				Log.Warning("Not Found Publish Event Name:{0}", name);
 			}
+			OnPublishEvent?.Invoke(new PublishEvent
+			{
+				Name = name,
+				Args = null,
+				Type = null
+			});
 		}
 
 		public void Publish<T>(string name, T args)
@@ -95,10 +109,16 @@ namespace UVMBinding.Core
 				Log.Trace("Publish<{0}> Name:{1} arg {2}", typeof(T), name, args);
 				e.Invoke(args);
 			}
-			else
+			else if (OnPublishEvent == null)
 			{
 				Log.Warning("Not Found Publish<0> Event Name:{0}", typeof(T), name);
 			}
+			OnPublishEvent?.Invoke(new PublishEvent
+			{
+				Name = name,
+				Args = args,
+				Type = typeof(T)
+			});
 		}
 
 		T Get<T>(string name) where T : EventBase

@@ -92,15 +92,26 @@ namespace UVMBinding.Core
 				return;
 			}
 			Log.Trace("bind {0}", model);
+			m_ViewModel = model;
+			m_ViewModel.OnBind();
 			using (ListPool<IBindingProperty>.Use(out var list))
 			{
-				foreach (var prop in model.Property.GetAllImpl(list))
+				foreach (var prop in m_ViewModel.Property.GetAllImpl(list))
 				{
 					Bind(prop);
 				}
 			}
-			model.Property.OnNewProperty += Bind;
-			m_ViewModel = model;
+			m_ViewModel.Property.OnNewProperty += Bind;
+			if (m_ViewModel.Property.ShouldCreateProperty)
+			{
+				foreach (var binder in m_Binding)
+				{
+					if (binder.IsActive)
+					{
+						m_ViewModel.Property.TryGet(binder.Path, out var prop);
+					}
+				}
+			}
 		}
 
 		public void Unbind()
@@ -114,6 +125,7 @@ namespace UVMBinding.Core
 					binder.Unbind();
 				}
 			}
+			m_ViewModel.OnUnbind();
 			m_ViewModel.Property.OnNewProperty -= Bind;
 			m_ViewModel = null;
 		}
@@ -125,6 +137,7 @@ namespace UVMBinding.Core
 			{
 				if (binder.Path == prop.Path && binder.IsActive)
 				{
+					Log.Trace("Bind {0} {1}", prop.Path, binder);
 					binder.Bind(prop);
 				}
 			}
