@@ -65,6 +65,14 @@ namespace UVMBinding.Core
 		public void TryUpdate()
 		{
 			if (m_Disposed) return;
+
+			TryRebind();
+			TryBinderUpdate();
+
+		}
+
+		void TryBinderUpdate()
+		{
 			bool remove = false;
 			foreach (var binder in m_Binding)
 			{
@@ -81,6 +89,37 @@ namespace UVMBinding.Core
 			{
 				m_Binding.RemoveAll(s_RemoveAll);
 			}
+		}
+
+		void TryRebind()
+		{
+			List<IBinder> rebind = default;
+			for (int i = m_Binding.Count - 1; i >= 0; i--)
+			{
+				var binder = m_Binding[i];
+				if (!binder.IsActive)
+				{
+					continue;
+				}
+				if (binder.IsRebind)
+				{
+					if (rebind == null)
+					{
+						rebind = ListPool<IBinder>.Pop();
+					}
+					rebind.Add(binder);
+				}
+			}
+			if (rebind == null)
+			{
+				return;
+			}
+			foreach (var binder in rebind)
+			{
+				Remove(binder);
+				Add(binder);
+			}
+			ListPool<IBinder>.Push(rebind);
 		}
 
 		public void Bind(IViewModel model)

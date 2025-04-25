@@ -1,6 +1,9 @@
-﻿namespace UVMBinding.Converters
+﻿using System;
+
+namespace UVMBinding.Converters
 {
 	[DispName("Core/BoolInverse")]
+	[Serializable]
 	public class BoolInverse : ConverterBase<bool, bool>
 	{
 		public override bool Convert(bool input)

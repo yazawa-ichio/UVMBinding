@@ -14,11 +14,19 @@ namespace UVMBinding
 
 		public string Path => m_Path;
 
+		bool IBinder.IsRebind => m_Property != null && m_Path != m_Property.Path;
+
 		bool IBinder.IsActive => this != null;
 
 		IBindingProperty m_Property;
 		int m_Hash;
 		bool m_ForceUpdate;
+
+		public void ChangePath(string path)
+		{
+			m_Path = path;
+			Debug.AssertFormat(!string.IsNullOrEmpty(m_Path), this, "{0} Path Empty", this);
+		}
 
 		protected void Set(T val)
 		{
@@ -69,7 +77,7 @@ namespace UVMBinding
 
 		void IBinder.Bind(IBindingProperty prop)
 		{
-			Log.Debug(this, "{0} Bind Property Path:{1}", this, m_Path);
+			Log.Debug(this, "{0} Bind Property Path:{1} {2}", this, m_Path, prop);
 			if (m_Converter != null && m_Converter.TryConvert(prop, ref m_Property))
 			{
 				InvokeBind();
@@ -87,7 +95,7 @@ namespace UVMBinding
 			}
 			else
 			{
-				Log.Warning(this, "Not Found BindingProperty {0} Type:{1}", m_Path, prop.GetBindType());
+				Log.Debug(this, "Not Found BindingProperty {0} Type:{1}", m_Path, prop.GetBindType());
 			}
 		}
 

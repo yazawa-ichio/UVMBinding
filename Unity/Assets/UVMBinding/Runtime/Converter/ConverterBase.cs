@@ -12,6 +12,7 @@ namespace UVMBinding.Converters
 		IBindingProperty m_Input;
 		int m_Hash;
 		bool m_ForceUpdate;
+		bool m_OnUpdateLock;
 
 		public abstract TOutput Convert(TInput input);
 
@@ -67,8 +68,23 @@ namespace UVMBinding.Converters
 			m_ForceUpdate = true;
 		}
 
+		protected virtual void OnUpdate() { }
+
 		public void TryUpdate()
 		{
+			if (m_OnUpdateLock)
+			{
+				return;
+			}
+			m_OnUpdateLock = true;
+			try
+			{
+				OnUpdate();
+			}
+			finally
+			{
+				m_OnUpdateLock = false;
+			}
 			if (m_Output == null || m_Input == null) return;
 			if (!m_ForceUpdate && m_Input.Hash == m_Hash)
 			{

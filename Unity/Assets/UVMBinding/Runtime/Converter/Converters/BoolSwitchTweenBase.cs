@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 namespace UVMBinding.Converters
 {
 	[DispName("Core/BoolSwitchTween/Float")]
+	[Serializable]
 	public class BoolSwitchTweenFloat : BoolSwitchTweenBase<float>
 	{
 		protected override float Leap(float from, float to, float rate)
@@ -13,6 +14,7 @@ namespace UVMBinding.Converters
 	}
 
 	[DispName("Core/BoolSwitchTween/Vector2")]
+	[Serializable]
 	public class BoolSwitchTweenVector2 : BoolSwitchTweenBase<Vector2>
 	{
 		protected override Vector2 Leap(Vector2 from, Vector2 to, float rate)
@@ -22,6 +24,7 @@ namespace UVMBinding.Converters
 	}
 
 	[DispName("Core/BoolSwitchTween/Vector3")]
+	[Serializable]
 	public class BoolSwitchTweenVector3 : BoolSwitchTweenBase<Vector3>
 	{
 		protected override Vector3 Leap(Vector3 from, Vector3 to, float rate)
@@ -31,6 +34,7 @@ namespace UVMBinding.Converters
 	}
 
 	[DispName("Core/BoolSwitchTween/Color")]
+	[Serializable]
 	public class BoolSwitchTweenColor : BoolSwitchTweenBase<Color>
 	{
 		protected override Color Leap(Color from, Color to, float rate)
@@ -42,8 +46,6 @@ namespace UVMBinding.Converters
 
 	public abstract class BoolSwitchTweenBase<T> : ConverterBase<bool, T>
 	{
-		static EqualityComparer<T> s_EqualityComparer = EqualityComparer<T>.Default;
-
 		[SerializeField]
 		T m_On;
 		[SerializeField]
@@ -57,10 +59,12 @@ namespace UVMBinding.Converters
 		AnimationCurve m_OffCurve = AnimationCurve.Linear(0, 0, 1, 1);
 		[SerializeField]
 		bool m_Realtime = true;
+		[SerializeField]
+		bool m_ChangeReset = true;
 
 		bool m_Current;
 		float m_Time;
-		float m_TargetTime;
+		float m_LastRate;
 
 		protected abstract T Leap(T from, T to, float rate);
 
@@ -70,24 +74,28 @@ namespace UVMBinding.Converters
 			{
 				m_Current = input;
 				m_Time = m_Realtime ? Time.unscaledTime : Time.time;
-				m_TargetTime = m_Time + m_TweenTime;
+				if (!m_ChangeReset)
+				{
+					m_Time -= m_TweenTime * (1f - m_LastRate);
+				}
 			}
 			var curve = m_Current ? m_OnCurve : m_OffCurve;
 			var time = m_Realtime ? Time.unscaledTime : Time.time;
-			var rate = Mathf.Clamp01((time - m_Time) / m_TweenTime);
-			if (rate >= 1)
+			m_LastRate = Mathf.Clamp01((time - m_Time) / m_TweenTime);
+			if (m_LastRate >= 1)
 			{
+				m_LastRate = 1;
 				return input ? m_On : m_Off;
 			}
 			SetDirty();
-			rate = curve.Evaluate(rate);
+			var curveRate = curve.Evaluate(m_LastRate);
 			if (input)
 			{
-				return Leap(m_Off, m_On, rate);
+				return Leap(m_Off, m_On, curveRate);
 			}
 			else
 			{
-				return Leap(m_On, m_Off, rate);
+				return Leap(m_On, m_Off, curveRate);
 			}
 		}
 	}
