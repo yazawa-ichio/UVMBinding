@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine.Events;
 using UVMBinding.Logger;
 
 namespace UVMBinding.Core
@@ -39,6 +40,15 @@ namespace UVMBinding.Core
 			});
 		}
 
+		public SubscribeHandle SubscribeFromUnityEvent(string name, Func<UnityEvent> onViewEvent)
+		{
+			return Subscribe(name, () =>
+			{
+				var action = onViewEvent();
+				action?.Invoke();
+			});
+		}
+
 		public void Unsubscribe(string name, Action onViewEvent)
 		{
 			Log.Debug("Event Unsubscribe Name:{0}", name);
@@ -63,6 +73,15 @@ namespace UVMBinding.Core
 		}
 
 		public SubscribeHandle<T> SubscribeByFunc<T>(string name, Func<System.Action<T>> onViewEvent)
+		{
+			return Subscribe<T>(name, (x) =>
+			{
+				var action = onViewEvent();
+				action?.Invoke(x);
+			});
+		}
+
+		public SubscribeHandle<T> SubscribeFromUnityEvent<T>(string name, Func<UnityEvent<T>> onViewEvent)
 		{
 			return Subscribe<T>(name, (x) =>
 			{

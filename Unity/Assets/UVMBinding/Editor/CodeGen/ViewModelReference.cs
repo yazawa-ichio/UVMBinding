@@ -14,6 +14,8 @@ namespace UVMBinding.CodeGen
 		MethodDefinition m_EventSubscribeGeneric;
 		MethodDefinition m_EventSubscribeByFunc;
 		MethodDefinition m_EventSubscribeByFuncGeneric;
+		MethodDefinition m_EventSubscribeFromUnityEvent;
+		MethodDefinition m_EventSubscribeFromUnityEventGeneric;
 		MethodDefinition m_EventUnsubscribe;
 		MethodDefinition m_EventUnsubscribeGeneric;
 
@@ -65,6 +67,16 @@ namespace UVMBinding.CodeGen
 						else
 						{
 							m_EventSubscribeByFuncGeneric = method;
+						}
+						break;
+					case "SubscribeFromUnityEvent":
+						if (!method.HasGenericParameters)
+						{
+							m_EventSubscribeFromUnityEvent = method;
+						}
+						else
+						{
+							m_EventSubscribeFromUnityEventGeneric = method;
 						}
 						break;
 					case "Unsubscribe":
@@ -123,6 +135,19 @@ namespace UVMBinding.CodeGen
 		public MethodReference GetEventSubscribeByFunc(TypeReference type)
 		{
 			return m_Module.ImportReference(new GenericInstanceMethod(m_EventSubscribeByFuncGeneric)
+			{
+				GenericArguments = { type }
+			});
+		}
+
+		public MethodReference GetEventSubscribeFromUnityEvent()
+		{
+			return m_Module.ImportReference(m_EventSubscribeFromUnityEvent);
+		}
+
+		public MethodReference GetEventSubscribeFromUnityEvent(TypeReference type)
+		{
+			return m_Module.ImportReference(new GenericInstanceMethod(m_EventSubscribeFromUnityEventGeneric)
 			{
 				GenericArguments = { type }
 			});

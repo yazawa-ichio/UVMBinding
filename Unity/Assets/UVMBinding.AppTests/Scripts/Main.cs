@@ -14,7 +14,7 @@ namespace AppTests
 			m_UIStack.Push<RootViewModel>("Root", (vm) =>
 			{
 				m_Root = vm;
-				vm.Dialog = OnDialog;
+				vm.Dialog.AddListener(OnDialog);
 				vm.Input = OnInpu;
 				vm.InputClear = () => vm.InputMessage = "";
 			});

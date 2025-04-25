@@ -3,6 +3,7 @@ using Mono.Cecil.Cil;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.CompilationPipeline.Common.Diagnostics;
+using UnityEngine.Events;
 
 namespace UVMBinding.CodeGen
 {
@@ -274,6 +275,14 @@ namespace UVMBinding.CodeGen
 			{
 				return true;
 			}
+			if (property.PropertyType.FullName == typeof(UnityEvent).FullName)
+			{
+				return true;
+			}
+			if (property.PropertyType.FullName.StartsWith("UnityEngine.Events.UnityEvent`1<"))
+			{
+				return true;
+			}
 			m_Diagnostics.Add(new DiagnosticMessage
 			{
 				DiagnosticType = DiagnosticType.Warning,
@@ -289,16 +298,36 @@ namespace UVMBinding.CodeGen
 			processor.InsertBefore(end, Instruction.Create(OpCodes.Ldstr, path));
 			processor.InsertBefore(end, Instruction.Create(OpCodes.Ldarg_0));
 			processor.InsertBefore(end, Instruction.Create(OpCodes.Ldftn, eventMethod));
-			if (eventMethod.ReturnType.FullName != typeof(System.Action).FullName)
+			var returnTypeName = eventMethod.ReturnType.FullName;
+			if (returnTypeName == typeof(System.Action).FullName)
+			{
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Newobj, m_ActionReference.NewFuncAcion()));
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Callvirt, m_ViewModelReference.GetEventSubscribeByFunc()));
+			}
+			else if (returnTypeName.StartsWith(typeof(System.Action).FullName))
 			{
 				var arg = (eventMethod.ReturnType as GenericInstanceType).GenericArguments[0];
 				processor.InsertBefore(end, Instruction.Create(OpCodes.Newobj, m_ActionReference.NewFuncAcion(arg)));
 				processor.InsertBefore(end, Instruction.Create(OpCodes.Callvirt, m_ViewModelReference.GetEventSubscribeByFunc(arg)));
 			}
+			else if (returnTypeName == typeof(UnityEvent).FullName)
+			{
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Newobj, m_ActionReference.NewFuncUnityEvent()));
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Callvirt, m_ViewModelReference.GetEventSubscribeFromUnityEvent()));
+			}
+			else if (returnTypeName.StartsWith(typeof(UnityEvent).FullName))
+			{
+				var arg = (eventMethod.ReturnType as GenericInstanceType).GenericArguments[0];
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Newobj, m_ActionReference.NewFuncUnityEvent(arg)));
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Callvirt, m_ViewModelReference.GetEventSubscribeFromUnityEvent(arg)));
+			}
 			else
 			{
-				processor.InsertBefore(end, Instruction.Create(OpCodes.Newobj, m_ActionReference.NewFuncAcion()));
-				processor.InsertBefore(end, Instruction.Create(OpCodes.Callvirt, m_ViewModelReference.GetEventSubscribeByFunc()));
+				m_Diagnostics.Add(new DiagnosticMessage()
+				{
+					DiagnosticType = DiagnosticType.Error,
+					MessageData = $"Not Found Event Type. {eventMethod.FullName}"
+				});
 			}
 			processor.InsertBefore(end, Instruction.Create(OpCodes.Pop));
 		}

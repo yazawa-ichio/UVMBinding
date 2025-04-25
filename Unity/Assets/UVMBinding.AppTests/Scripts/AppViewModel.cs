@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UVMBinding;
 
 namespace AppTests
@@ -20,11 +21,49 @@ namespace AppTests
 		[Bind]
 		public TestEnum Popup { get; set; } = TestEnum.Value3;
 		[Event]
-		public Action Dialog { get; set; }
+		public UnityEvent Dialog { get; set; } = new UnityEvent();
 		[Event]
 		public Action Input { get; set; }
 		[Event]
 		public Action InputClear { get; set; }
+		[Bind]
+		public bool Toggle { get; set; } = true;
+		[Bind]
+		public ReflectionTestModel ReflectionTest { get; set; } = new ReflectionTestModel();
+	}
+
+	public class ReflectionTestModel : INotifyDirtyEvent
+	{
+		public string Text = "BBB";
+
+		public int Value = 10;
+
+		public bool Toggle = true;
+
+		public bool Select;
+
+		public RectTransform RectTransform
+		{
+			get
+			{
+				return null;
+			}
+			set
+			{
+				Debug.Log("Set RectTransform:" + value);
+			}
+		}
+
+		public NotifyDirtyEventHandler DitryHandler { get; set; }
+
+		void EventTest(object tmp)
+		{
+			Debug.Log("TMP:" + tmp);
+			Text = "AAA";
+			Value++;
+			GlobalState.I.Value1 = "AAA";
+			DitryHandler.SetAllDitry();
+		}
 	}
 
 	public class DialogViewModel : AppViewModel
@@ -57,6 +96,18 @@ namespace AppTests
 		void Submit()
 		{
 			OnSubmit?.Invoke(Input);
+		}
+	}
+
+	public class InputDialog
+	{
+		public string Message { get; set; }
+
+		public string Input { get; set; }
+
+		void Submit()
+		{
+
 		}
 	}
 
