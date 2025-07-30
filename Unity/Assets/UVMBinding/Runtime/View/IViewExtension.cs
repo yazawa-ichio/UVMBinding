@@ -11,7 +11,7 @@ namespace UVMBinding
 			{
 				self.ViewModel = model;
 			}
-			else
+			else if (obj != null)
 			{
 				self.ViewModel = new ReflectionViewModel(obj);
 			}

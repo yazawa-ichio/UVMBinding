@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine.Localization;
+using UnityEngine.Localization.SmartFormat.Core.Extensions;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 
 namespace UVMBinding.Binders
 {
-	public readonly struct LocalizeTextKey : IEquatable<LocalizeTextKey>
+	public readonly struct LocalizeTextKey : IEquatable<LocalizeTextKey>, IVariable
 	{
 		public static LocalizeTextKey GetEntry(string table, string entry) => new LocalizeTextKey(table, entry);
 
@@ -68,9 +70,34 @@ namespace UVMBinding.Binders
 			return new LocalizeTextKey(Table, Entry, Dic, fallback);
 		}
 
+		public override bool Equals(object obj)
+		{
+			return obj is LocalizeTextKey key && Equals(key);
+		}
+
+		public bool Equals(LocalizeTextKey other)
+		{
+			return Table == other.Table &&
+				   Entry == other.Entry &&
+				   Dic == other.Dic &&
+				   Fallback == other.Fallback;
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Table, Entry, Dic, Fallback);
+		}
 
 		public override string ToString()
 		{
+			if (RawText)
+			{
+				return Entry;
+			}
+			if (!RawText && string.IsNullOrEmpty(Table) && string.IsNullOrEmpty(Entry))
+			{
+				return "";
+			}
 			using var ret = new LocalizedString();
 			ret.TableReference = Table;
 			ret.TableEntryReference = Entry;
@@ -86,23 +113,9 @@ namespace UVMBinding.Binders
 			return text;
 		}
 
-		public override bool Equals(object obj)
+		public object GetSourceValue(ISelectorInfo selector)
 		{
-			return obj is LocalizeTextKey key && Equals(key);
-		}
-
-		public bool Equals(LocalizeTextKey other)
-		{
-			return RawText == other.RawText &&
-				   Table == other.Table &&
-				   Entry == other.Entry &&
-				   Dic == other.Dic &&
-				   Fallback == other.Fallback;
-		}
-
-		public override int GetHashCode()
-		{
-			return HashCode.Combine(RawText, Table, Entry, Dic, Fallback);
+			return ToString();
 		}
 
 		public static bool operator ==(LocalizeTextKey left, LocalizeTextKey right)

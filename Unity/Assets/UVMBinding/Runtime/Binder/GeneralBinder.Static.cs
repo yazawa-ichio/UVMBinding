@@ -81,6 +81,7 @@ namespace UVMBinding
 			{
 				m_Field?.SetValue(component, value);
 				m_Property?.SetValue(component, value);
+				m_Method?.Invoke(component, new[] { value });
 			}
 
 		}

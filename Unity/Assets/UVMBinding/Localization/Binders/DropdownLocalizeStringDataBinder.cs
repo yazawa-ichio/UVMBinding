@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
@@ -8,42 +7,48 @@ namespace UVMBinding.Binders
 {
 	public class DropdownLocalizeStringDataBinder : Binder<IList<LocalizeTextKey>, Dropdown>
 	{
-		protected override void OnInit(Dropdown target)
+		IList<LocalizeTextKey> m_Cache;
+
+		void OnLocaleChanged(Locale locale)
 		{
-			target.ClearOptions();
+			if (m_Cache != null)
+			{
+				Apply();
+			}
 		}
 
 		protected override void OnBind()
 		{
-			LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+			LocalizationSettings.Instance.OnSelectedLocaleChanged += OnLocaleChanged;
 		}
 
 		protected override void OnUnbind()
 		{
-			LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
-		}
-
-		void OnLocaleChanged(Locale locale)
-		{
-			Apply(Get());
+			LocalizationSettings.Instance.OnSelectedLocaleChanged -= OnLocaleChanged;
 		}
 
 		protected override void UpdateValue(IList<LocalizeTextKey> value)
 		{
-			Apply(value);
+			m_Cache = value;
+			Apply();
 		}
 
-		void Apply(IList<LocalizeTextKey> value)
+		void Apply()
 		{
-			Target.ClearOptions();
-			if (value != null)
+			var options = Target.options;
+			options.Clear();
+			if (m_Cache != null)
 			{
-				foreach (var item in value.Select(x => x.ToString()))
+				foreach (var item in m_Cache)
 				{
-					Target.options.Add(new Dropdown.OptionData(item));
+					var option = new Dropdown.OptionData
+					{
+						text = item.ToString()
+					};
+					options.Add(option);
 				}
-				Target.RefreshShownValue();
 			}
+			Target.RefreshShownValue();
 		}
 	}
 
