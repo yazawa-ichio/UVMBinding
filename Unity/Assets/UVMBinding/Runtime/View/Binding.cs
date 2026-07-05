@@ -97,12 +97,12 @@ namespace UVMBinding.Core
 			for (int i = m_Binding.Count - 1; i >= 0; i--)
 			{
 				var binder = m_Binding[i];
-				if (!binder.IsActive)
+				if (binder.IsRebind) // 軽いので先にチェックする
 				{
-					continue;
-				}
-				if (binder.IsRebind)
-				{
+					if (!binder.IsActive)
+					{
+						continue;
+					}
 					if (rebind == null)
 					{
 						rebind = ListPool<IBinder>.Pop();

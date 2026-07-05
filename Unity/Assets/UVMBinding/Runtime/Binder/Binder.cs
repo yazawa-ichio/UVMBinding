@@ -14,17 +14,19 @@ namespace UVMBinding
 
 		public string Path => m_Path;
 
-		bool IBinder.IsRebind => m_Property != null && m_Path != m_Property.Path;
+		bool IBinder.IsRebind => m_ChangePath && m_Property != null && m_Path != m_Property.Path;
 
 		bool IBinder.IsActive => this != null;
 
 		IBindingProperty m_Property;
 		int m_Hash;
 		bool m_ForceUpdate;
+		bool m_ChangePath;
 
 		public void ChangePath(string path)
 		{
 			m_Path = path;
+			m_ChangePath = true;
 			Debug.AssertFormat(!string.IsNullOrEmpty(m_Path), this, "{0} Path Empty", this);
 		}
 
@@ -102,6 +104,7 @@ namespace UVMBinding
 		void InvokeBind()
 		{
 			Log.Trace(this, "{0} Bind Property Path:{1}", this, m_Path);
+			m_ChangePath = false;
 			m_ForceUpdate = true;
 			OnBind();
 		}
