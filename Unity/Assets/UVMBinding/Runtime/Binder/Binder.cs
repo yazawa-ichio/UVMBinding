@@ -7,7 +7,7 @@ namespace UVMBinding
 
 	public abstract class Binder<T> : MonoBehaviour, IBinder
 	{
-		[SerializeField]
+		[SerializeField, PropertyPath]
 		string m_Path = null;
 		[SerializeReference]
 		IConverter m_Converter;

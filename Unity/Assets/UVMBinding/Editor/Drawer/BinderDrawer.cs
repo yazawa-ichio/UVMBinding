@@ -6,6 +6,7 @@ using UVMBinding.Core;
 
 namespace UVMBinding.Drawer
 {
+
 	[CustomEditor(typeof(Binder<>), true)]
 	public class BinderDrawer : Editor
 	{
@@ -29,11 +30,6 @@ namespace UVMBinding.Drawer
 				if (property.propertyPath == "m_Converter")
 				{
 					converter = property.Copy();
-					continue;
-				}
-				if (property.propertyPath == "m_Path")
-				{
-					DrawPath(property);
 					continue;
 				}
 				using (new EditorGUI.DisabledScope(property.propertyPath == "m_Script"))
@@ -171,7 +167,7 @@ namespace UVMBinding.Drawer
 			var select = EditorGUILayout.Popup(converterIndex, ConverterList.GetDispNames());
 			if (ConverterList.GetType(select) == typeof(ConcatenateConverter))
 			{
-				Debug.LogWarning("not allow ConcatenateConverter in ConcatenateConverter");
+				EditorGUILayout.HelpBox("not allow ConcatenateConverter in ConcatenateConverter", MessageType.Warning);
 				select = 0;
 			}
 			if (GUILayout.Button("x", GUILayout.ExpandWidth(false)))

@@ -32,19 +32,26 @@ namespace UVMBinding
 	{
 		Event<T> m_Event;
 		IBindingProperty<T> m_Property;
+		IBindingProperty m_ObjectProperty;
 		Action<T> m_Action;
+		Action<string, object> m_ObjectAction;
 
-		internal SubscribeHandle(IBindingProperty<T> owner, Action<T> action)
+		internal SubscribeHandle(IBindingProperty<T> owner, Action<T> action) : this()
 		{
 			m_Property = owner;
-			m_Event = null;
 			m_Action = action;
 			Log.Trace("Create Property SubscribeHandle<{0}> Path:{1}", typeof(T), owner.Path);
 		}
 
-		internal SubscribeHandle(Event<T> owner, Action<T> action)
+		internal SubscribeHandle(IBindingProperty owner, Action<string, object> action) : this()
 		{
-			m_Property = null;
+			m_ObjectProperty = owner;
+			m_ObjectAction = action;
+			Log.Trace("Create Property SubscribeHandle<{0}> Path:{1}", typeof(T), owner.Path);
+		}
+
+		internal SubscribeHandle(Event<T> owner, Action<T> action) : this()
+		{
 			m_Event = owner;
 			m_Action = action;
 			Log.Trace("Create Event SubscribeHandle<{0}> Name:{1}", typeof(T), owner.Name);
@@ -58,6 +65,12 @@ namespace UVMBinding
 				m_Property.OnChanged -= m_Action;
 				m_Property = null;
 				m_Action = null;
+			}
+			if (m_ObjectProperty != null)
+			{
+				m_ObjectProperty.OnChangedObject -= m_ObjectAction;
+				m_ObjectProperty = null;
+				m_ObjectAction = null;
 			}
 			if (m_Event != null)
 			{

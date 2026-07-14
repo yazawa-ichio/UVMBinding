@@ -5,6 +5,7 @@ Library
 *.vs
 .vsconfig
 obj/
+.idea/
 Logs
 Build
 CodeCoverage

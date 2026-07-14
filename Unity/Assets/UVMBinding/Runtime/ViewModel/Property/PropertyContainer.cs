@@ -23,6 +23,26 @@ namespace UVMBinding.Core
 			return new SubscribeHandle<T>(porp, notify);
 		}
 
+		public SubscribeHandle<T> SubscribeAllowCast<T>(string path, Action<T> notify)
+		{
+			Log.Debug("Property Subscribe<{0}> Path:{1}", typeof(T), path);
+			var prop = Get<object>(path);
+			if (prop is IBindingProperty<T> property)
+			{
+				property.OnChanged += notify;
+				return new SubscribeHandle<T>(property, notify);
+			}
+			else
+			{
+				Action<string, object> action = (_, v) =>
+				{
+					notify?.Invoke((T)v);
+				};
+				prop.OnChangedObject += action;
+				return new SubscribeHandle<T>(prop, action);
+			}
+		}
+
 		public void Unsubscribe<T>(string path, Action<T> notify)
 		{
 			Log.Debug("Property Unsubscribe<{0}> Path:{1}", typeof(T), path);

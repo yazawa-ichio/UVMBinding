@@ -2,6 +2,7 @@
 using UnityEngine;
 using UVMBinding.Core;
 using UVMBinding.Logger;
+using UVMBinding.PropertyProvider;
 
 namespace UVMBinding
 {
@@ -129,6 +130,10 @@ namespace UVMBinding
 			Log.Trace(this, "{0} Attach {1}", this, vm);
 			m_ViewModel = vm;
 			m_Binding.Bind(vm);
+			if (TryGetComponent<ViewModelPropertyExtension>(out var extension))
+			{
+				extension.Init(vm, m_Binding);
+			}
 			if (m_UpdateOnAttach || ViewUpdater.IsUpdating)
 			{
 				Log.Trace(this, "{0} Attach And Update", this);

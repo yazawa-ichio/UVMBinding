@@ -11,6 +11,7 @@ namespace UVMBinding.Core
 		List<IBinder> m_Binding = new();
 		IViewModel m_ViewModel;
 		bool m_Disposed;
+		BindingProperty m_Extend;
 
 		public void Init(IViewElement[] elements)
 		{
@@ -53,7 +54,7 @@ namespace UVMBinding.Core
 			if (elm is IBinder binder)
 			{
 				m_Binding.Remove(binder);
-				if (binder != null && binder.IsActive)
+				if (binder.IsActive)
 				{
 					binder.Unbind();
 				}
@@ -137,17 +138,25 @@ namespace UVMBinding.Core
 			{
 				foreach (var prop in m_ViewModel.Property.GetAllImpl(list))
 				{
-					Bind(prop);
+					BindToBinder(prop);
+				}
+				{
+					var prop = m_Extend;
+					while (prop != null)
+					{
+						BindToBinder(prop);
+						prop = prop.Next;
+					}
 				}
 			}
-			m_ViewModel.Property.OnNewProperty += Bind;
+			m_ViewModel.Property.OnNewProperty += BindToBinder;
 			if (m_ViewModel.Property.ShouldCreateProperty)
 			{
 				foreach (var binder in m_Binding)
 				{
 					if (binder.IsActive)
 					{
-						m_ViewModel.Property.TryGet(binder.Path, out var prop);
+						m_ViewModel.Property.TryGet(binder.Path, out var _);
 					}
 				}
 			}
@@ -165,11 +174,11 @@ namespace UVMBinding.Core
 				}
 			}
 			m_ViewModel.OnUnbind();
-			m_ViewModel.Property.OnNewProperty -= Bind;
+			m_ViewModel.Property.OnNewProperty -= BindToBinder;
 			m_ViewModel = null;
 		}
 
-		void Bind(IBindingProperty prop)
+		internal void BindToBinder(IBindingProperty prop)
 		{
 			if (m_Disposed) return;
 			foreach (var binder in m_Binding)
