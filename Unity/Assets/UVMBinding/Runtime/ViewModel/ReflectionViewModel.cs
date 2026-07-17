@@ -56,7 +56,7 @@ namespace UVMBinding
 			Event.OnPublishEvent -= OnPublishEvent;
 			foreach (var prop in Property.GetAll())
 			{
-				prop.OnChangedObject -= OnChangedObject;
+				prop.OnChangedValue -= OnChangedValue;
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace UVMBinding
 
 		void OnNewProperty(IBindingProperty property)
 		{
-			property.OnChangedObject += OnChangedObject;
+			property.OnChangedValue += OnChangedValue;
 			var resolver = ReflectionPropertyValueResolver.Get(m_DataSource.GetType(), property.Path);
 			if (resolver != null && resolver.CanRead)
 			{
@@ -109,7 +109,7 @@ namespace UVMBinding
 			}
 		}
 
-		void OnChangedObject(string path, object value)
+		void OnChangedValue(string path, IValueHolder value)
 		{
 			var resolver = ReflectionPropertyValueResolver.Get(m_DataSource.GetType(), path);
 			if (resolver != null && resolver.CanRead)

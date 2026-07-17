@@ -56,32 +56,8 @@ namespace UVMBinding.PropertyProvider
 
 		public void Subscribe<T>(string name, Action<T> action)
 		{
-			bool newProperty = false;
-			if (!m_ViewModel.Property.TryGet(name, out var property))
-			{
-				property = m_ViewModel.Property.Get<object>(name);
-				newProperty = true;
-			}
-			if (property is IBindingProperty<T> bindingProperty)
-			{
-				SubscribeHandle<T> handle = new SubscribeHandle<T>(bindingProperty, action);
-				m_Disposables.Add(handle);
-				action(bindingProperty.Value);
-			}
-			else
-			{
-				Action<string, object> castAction = (_, value) =>
-				{
-					action((T)value);
-				};
-				property.OnChangedObject += castAction;
-				SubscribeHandle<T> handle = new SubscribeHandle<T>(property, castAction);
-				m_Disposables.Add(handle);
-				if (!newProperty)
-				{
-					action((T)property.GetObject());
-				}
-			}
+			var handle = m_ViewModel.Property.SubscribeAssignable<T>(name, action, true);
+			m_Disposables.Add(handle);
 		}
 
 		public void Set<T>(string name, T value)

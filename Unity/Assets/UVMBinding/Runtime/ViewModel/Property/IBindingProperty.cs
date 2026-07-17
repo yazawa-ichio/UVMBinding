@@ -1,4 +1,4 @@
-﻿namespace UVMBinding
+﻿namespace UVMBinding.Core
 {
 	internal interface IBindingProperty
 	{
@@ -9,7 +9,7 @@
 		System.Type GetBindType();
 		bool IsAssignable<T>();
 		void SetDirty();
-		event System.Action<string, object> OnChangedObject;
+		event System.Action<string, IValueHolder> OnChangedValue;
 	}
 
 	internal interface IBindingProperty<T> : IBindingProperty
@@ -17,4 +17,5 @@
 		T Value { get; set; }
 		event System.Action<T> OnChanged;
 	}
+
 }

@@ -119,6 +119,9 @@ namespace UVMBinding.Tests
 			int value1 = 0;
 			int count2 = 0;
 			string value2 = "";
+			int count3 = 0;
+			object value3 = null;
+
 			var handel1 = container.Subscribe<int>("P1", (x) =>
 			{
 				count1++;
@@ -129,6 +132,11 @@ namespace UVMBinding.Tests
 				count2++;
 				value2 = x;
 			});
+			var handle3 = container.SubscribeAssignable<object>("P1", (x) =>
+			{
+				count3++;
+				value3 = x;
+			}, notifyCurrent: false);
 
 			container.Get<int>("P1").Value = 10;
 			container.Get<string>("P1").Value = "Test";
@@ -137,6 +145,8 @@ namespace UVMBinding.Tests
 			Assert.AreEqual(10, value1);
 			Assert.AreEqual(1, count2);
 			Assert.AreEqual("Test", value2);
+			Assert.AreEqual(2, count3);
+			Assert.AreEqual("Test", value3);
 
 			container.SetAllDirty();
 			container.SetDirty("P1");
@@ -146,10 +156,14 @@ namespace UVMBinding.Tests
 			Assert.AreEqual(10, value1);
 			Assert.AreEqual(3, count2);
 			Assert.AreEqual("Test", value2);
+			// 2 + 2 増加
+			Assert.AreEqual(6, count3);
+			Assert.AreEqual("Test", value3);
 
 
 			handel1.Dispose();
 			handel2.Dispose();
+			handle3.Dispose();
 
 			container.Get<int>("P1").Value = 20;
 			container.Get<string>("P1").Value = "Test2";
@@ -160,6 +174,9 @@ namespace UVMBinding.Tests
 			Assert.AreEqual(10, value1);
 			Assert.AreEqual(3, count2);
 			Assert.AreEqual("Test", value2);
+			Assert.AreEqual(6, count3);
+			Assert.AreEqual("Test", value3);
+
 
 #if UNITY_EDITOR
 			Assert.AreEqual(2, container.GetAll().Count());

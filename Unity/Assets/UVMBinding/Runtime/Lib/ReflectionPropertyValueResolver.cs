@@ -17,7 +17,7 @@ namespace UVMBinding.Core
 			m_PropertyValue = propertyValue;
 		}
 
-		public void SetValue(object dataSource, object value)
+		public void SetValue(object dataSource, IValueHolder value)
 		{
 			m_PropertyValue.SetValue(dataSource, value);
 		}
@@ -48,7 +48,7 @@ namespace UVMBinding.Core
 		{
 			bool CanWrite { get; }
 			bool CanRead { get; }
-			void SetValue(object component, object value);
+			void SetValue(object component, IValueHolder value);
 			object GetValue(object component);
 		}
 
@@ -73,9 +73,16 @@ namespace UVMBinding.Core
 				m_Getter = getter;
 			}
 
-			public void SetValue(object data, object value)
+			public void SetValue(object data, IValueHolder valueHolder)
 			{
-				m_Setter((TDataSource)(object)data, (TValue)value);
+				if (valueHolder.TryGetValue<TValue>(out var value))
+				{
+					m_Setter((TDataSource)(object)data, value);
+				}
+				else
+				{
+					m_Setter((TDataSource)(object)data, (TValue)valueHolder.GetObject());
+				}
 			}
 
 			public object GetValue(object data)
@@ -97,7 +104,6 @@ namespace UVMBinding.Core
 
 		class ReflectionValueSetter : IPropertyValue
 		{
-			readonly string m_Path;
 			readonly FieldInfo m_Field;
 			readonly PropertyInfo m_Property;
 
@@ -109,15 +115,14 @@ namespace UVMBinding.Core
 			{
 				const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-				m_Path = path;
 				while (type != null)
 				{
-					m_Field = type.GetField(m_Path, flags);
+					m_Field = type.GetField(path, flags);
 					if (m_Field != null)
 					{
 						return;
 					}
-					m_Property = type.GetProperty(m_Path, flags);
+					m_Property = type.GetProperty(path, flags);
 					if (m_Property != null)
 					{
 						return;
@@ -126,8 +131,9 @@ namespace UVMBinding.Core
 				}
 			}
 
-			public void SetValue(object data, object value)
+			public void SetValue(object data, IValueHolder valueHolder)
 			{
+				var value = valueHolder.GetObject();
 				m_Field?.SetValue(data, value);
 				m_Property?.SetValue(data, value);
 			}

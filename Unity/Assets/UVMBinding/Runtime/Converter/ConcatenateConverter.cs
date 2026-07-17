@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UVMBinding.Core;
 using UVMBinding.Logger;
 
 namespace UVMBinding

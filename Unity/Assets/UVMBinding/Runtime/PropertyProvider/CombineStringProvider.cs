@@ -29,7 +29,6 @@ namespace UVMBinding.PropertyProvider
 				int index = i;
 				propertyExtension.Subscribe<object>(m_SourceKeys[i], v =>
 				{
-					Debug.Log(v);
 					values[index] = v;
 					foreach (var value in values)
 					{
@@ -39,7 +38,6 @@ namespace UVMBinding.PropertyProvider
 						}
 					}
 					string ret = string.Format(m_Format, values);
-					Debug.Log(ret);
 					propertyExtension.Set(m_ValueKey, ret);
 				});
 			}

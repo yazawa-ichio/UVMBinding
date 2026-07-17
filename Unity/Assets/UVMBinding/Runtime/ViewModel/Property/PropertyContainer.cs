@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UVMBinding.Logger;
 
 namespace UVMBinding.Core
@@ -13,7 +14,30 @@ namespace UVMBinding.Core
 
 		internal event Action<IBindingProperty> OnNewProperty;
 
+		internal event Action<string, IValueHolder> OnChangedValue;
+
 		internal bool ShouldCreateProperty;
+
+		HashSet<string> m_SubscribePaths;
+
+		Action<string, IValueHolder> m_InvokeChangedValueCache;
+		Action<string, IValueHolder> InvokeChangedValueCache
+		{
+			get
+			{
+				if (m_InvokeChangedValueCache == null)
+				{
+					m_InvokeChangedValueCache = InvokeChangedValue;
+				}
+				return m_InvokeChangedValueCache;
+			}
+		}
+
+
+		void InvokeChangedValue(string path, IValueHolder holder)
+		{
+			OnChangedValue?.Invoke(path, holder);
+		}
 
 		public SubscribeHandle<T> Subscribe<T>(string path, Action<T> notify)
 		{
@@ -23,24 +47,46 @@ namespace UVMBinding.Core
 			return new SubscribeHandle<T>(porp, notify);
 		}
 
-		public SubscribeHandle<T> SubscribeAllowCast<T>(string path, Action<T> notify)
+		public SubscribeAssignableHandle<T> SubscribeAssignable<T>(string path, Action<T> notify, bool notifyCurrent = true)
 		{
-			Log.Debug("Property Subscribe<{0}> Path:{1}", typeof(T), path);
-			var prop = Get<object>(path);
-			if (prop is IBindingProperty<T> property)
+			Log.Debug("Property SubscribeAssignable<{0}> Path:{1}", typeof(T), path);
+			if (m_SubscribePaths == null)
 			{
-				property.OnChanged += notify;
-				return new SubscribeHandle<T>(property, notify);
+				m_SubscribePaths = new HashSet<string>();
 			}
-			else
+			bool isFirst = m_SubscribePaths.Add(path);
+			T value = default;
+			if (isFirst || notifyCurrent)
 			{
-				Action<string, object> action = (_, v) =>
+				UnityEngine.Debug.Log("SubscribeAssignable" + m_Properties.Count);
+				if (m_Properties.TryGetValue(path, out BindingProperty property))
 				{
-					notify?.Invoke((T)v);
-				};
-				prop.OnChangedObject += action;
-				return new SubscribeHandle<T>(prop, action);
+					var cur = property;
+					UnityEngine.Debug.Log("SubscribeAssignable" + path);
+					while (cur != null)
+					{
+						if (isFirst)
+						{
+							cur.OnChangedValue += InvokeChangedValueCache;
+						}
+						if (cur is BindingProperty<T> cast)
+						{
+							value = cast.Value;
+						}
+						else if (cur.IsAssignable<T>())
+						{
+							value = (T)cur.GetObject();
+						}
+						UnityEngine.Debug.Log("InvokeChangedValue" + path);
+						cur = cur.Next;
+					}
+				}
 			}
+			if (notifyCurrent)
+			{
+				notify(value);
+			}
+			return new SubscribeAssignableHandle<T>(this, path, notify);
 		}
 
 		public void Unsubscribe<T>(string path, Action<T> notify)
@@ -102,12 +148,21 @@ namespace UVMBinding.Core
 			{
 				var ret = new ObjectBindingProperty(path);
 				OnNewProperty?.Invoke(ret);
+				if (m_SubscribePaths != null && m_SubscribePaths.Contains(path))
+				{
+					ret.OnChangedValue += InvokeChangedValueCache;
+				}
 				return (BindingProperty<T>)(object)ret;
 			}
 			else
 			{
 				var ret = new BindingProperty<T>(path);
+				UnityEngine.Debug.Log("NewProperty" + path);
 				OnNewProperty?.Invoke(ret);
+				if (m_SubscribePaths != null && m_SubscribePaths.Contains(path))
+				{
+					ret.OnChangedValue += InvokeChangedValueCache;
+				}
 				return ret;
 			}
 		}

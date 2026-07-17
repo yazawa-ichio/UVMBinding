@@ -1,5 +1,6 @@
 ﻿using System;
 using UVMBinding.Logger;
+using UVMBinding.Core;
 
 namespace UVMBinding.Converters
 {

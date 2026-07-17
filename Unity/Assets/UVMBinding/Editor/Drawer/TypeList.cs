@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UVMBinding.Arguments;
+using UVMBinding.Core;
 
 namespace UVMBinding.Drawer
 {

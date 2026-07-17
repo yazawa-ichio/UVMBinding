@@ -1,5 +1,6 @@
 ﻿using System;
 using UVMBinding.Logger;
+using UVMBinding.Core;
 
 namespace UVMBinding
 {
@@ -34,7 +35,7 @@ namespace UVMBinding
 		IBindingProperty<T> m_Property;
 		IBindingProperty m_ObjectProperty;
 		Action<T> m_Action;
-		Action<string, object> m_ObjectAction;
+		Action<string, IValueHolder> m_ObjectAction;
 
 		internal SubscribeHandle(IBindingProperty<T> owner, Action<T> action) : this()
 		{
@@ -43,7 +44,7 @@ namespace UVMBinding
 			Log.Trace("Create Property SubscribeHandle<{0}> Path:{1}", typeof(T), owner.Path);
 		}
 
-		internal SubscribeHandle(IBindingProperty owner, Action<string, object> action) : this()
+		internal SubscribeHandle(IBindingProperty owner, Action<string, IValueHolder> action) : this()
 		{
 			m_ObjectProperty = owner;
 			m_ObjectAction = action;
@@ -68,7 +69,7 @@ namespace UVMBinding
 			}
 			if (m_ObjectProperty != null)
 			{
-				m_ObjectProperty.OnChangedObject -= m_ObjectAction;
+				m_ObjectProperty.OnChangedValue -= m_ObjectAction;
 				m_ObjectProperty = null;
 				m_ObjectAction = null;
 			}
@@ -77,6 +78,41 @@ namespace UVMBinding
 				Log.Trace("Dispose Event SubscribeHandle<{0}> Name:{1}", typeof(T), m_Event.Name);
 				m_Event.OnEvent -= m_Action;
 				m_Event = null;
+				m_Action = null;
+			}
+		}
+	}
+
+
+	public struct SubscribeAssignableHandle<T> : IDisposable
+	{
+		PropertyContainer m_Owner;
+		string m_Path;
+		Action<string, IValueHolder> m_Action;
+
+		internal SubscribeAssignableHandle(PropertyContainer owner, string path, Action<T> action) : this()
+		{
+			m_Owner = owner;
+			m_Path = path;
+			m_Action = (p, value) =>
+			{
+				if (p == path)
+				{
+					if (value.TryGetValue<T>(out T ret))
+					{
+						action(ret);
+					}
+				}
+			};
+			owner.OnChangedValue += m_Action;
+		}
+
+		public void Dispose()
+		{
+			if (m_Owner != null)
+			{
+				Log.Trace("Dispose Property SubscribeAssignableHandle<{0}> Path:{1}", typeof(T), m_Path);
+				m_Owner.OnChangedValue -= m_Action;
 				m_Action = null;
 			}
 		}

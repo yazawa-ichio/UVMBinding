@@ -11,12 +11,12 @@ namespace UVMBinding
 		public string Path { get; private set; }
 		public int Hash { get; protected set; }
 		internal BindingProperty Next;
-		protected Action<string, object> m_OnChangedObject;
+		protected Action<string, IValueHolder> m_OnChangedValue;
 
-		public event Action<string, object> OnChangedObject
+		public event Action<string, IValueHolder> OnChangedValue
 		{
-			add => m_OnChangedObject += value;
-			remove => m_OnChangedObject -= value;
+			add => m_OnChangedValue += value;
+			remove => m_OnChangedValue -= value;
 		}
 
 		public BindingProperty(string path)
@@ -68,7 +68,10 @@ namespace UVMBinding
 				m_Value = value;
 				Hash++;
 				OnChanged?.Invoke(value);
-				m_OnChangedObject?.Invoke(Path, value);
+				using (ValueHolder<TValue>.Use(value, out var holder))
+				{
+					m_OnChangedValue?.Invoke(Path, holder);
+				}
 			}
 		}
 
@@ -81,7 +84,10 @@ namespace UVMBinding
 			Log.Trace("BindingProperty<{0}> SetDitry Path:{1}", typeof(TValue), Path);
 			Hash++;
 			OnChanged?.Invoke(m_Value);
-			m_OnChangedObject?.Invoke(Path, m_Value);
+			using (ValueHolder<TValue>.Use(m_Value, out var holder))
+			{
+				m_OnChangedValue?.Invoke(Path, holder);
+			}
 		}
 
 		public override Type GetBindType()
