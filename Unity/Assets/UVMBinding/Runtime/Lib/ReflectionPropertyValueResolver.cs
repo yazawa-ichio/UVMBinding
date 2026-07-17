@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace UVMBinding.Core
 {
@@ -19,11 +20,19 @@ namespace UVMBinding.Core
 
 		public void SetValue(object dataSource, IValueHolder value)
 		{
+			if (!CanWrite)
+			{
+				throw new InvalidOperationException($"Cannot write to property {dataSource}");
+			}
 			m_PropertyValue.SetValue(dataSource, value);
 		}
 
 		public object GetValue(object dataSource)
 		{
+			if (!CanRead)
+			{
+				throw new InvalidOperationException($"Cannot read from property {dataSource}");
+			}
 			return m_PropertyValue.GetValue(dataSource);
 		}
 

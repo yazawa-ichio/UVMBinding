@@ -72,20 +72,16 @@ namespace UVMBinding
 
 		private void OnDitryEvent(NotifyDirtyEvent e)
 		{
-			if (string.IsNullOrEmpty(e.Path))
+			using (ListPool<IBindingProperty>.Use(out var list))
 			{
-				using (ListPool<IBindingProperty>.Use(out var list))
+				foreach (var property in Property.GetAllImpl(list))
 				{
-					foreach (var property in Property.GetAllImpl(list))
+					if (!string.IsNullOrEmpty(e.Path) && property.Path != e.Path)
 					{
-						SetPropertyValue(property);
+						continue;
 					}
+					SetPropertyValue(property);
 				}
-			}
-			else
-			{
-				var property = Property.Get<object>(e.Path);
-				SetPropertyValue(property);
 			}
 		}
 

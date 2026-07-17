@@ -157,7 +157,6 @@ namespace UVMBinding.Core
 			else
 			{
 				var ret = new BindingProperty<T>(path);
-				UnityEngine.Debug.Log("NewProperty" + path);
 				OnNewProperty?.Invoke(ret);
 				if (m_SubscribePaths != null && m_SubscribePaths.Contains(path))
 				{
