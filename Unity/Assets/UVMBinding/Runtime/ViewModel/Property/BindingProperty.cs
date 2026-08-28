@@ -68,9 +68,13 @@ namespace UVMBinding
 				m_Value = value;
 				Hash++;
 				OnChanged?.Invoke(value);
-				using (ValueHolder<TValue>.Use(value, out var holder))
+				//購読者が居ない場合は ValueHolder のプール操作を行わない
+				if (m_OnChangedValue != null)
 				{
-					m_OnChangedValue?.Invoke(Path, holder);
+					using (ValueHolder<TValue>.Use(value, out var holder))
+					{
+						m_OnChangedValue.Invoke(Path, holder);
+					}
 				}
 			}
 		}
@@ -84,9 +88,13 @@ namespace UVMBinding
 			Log.Trace("BindingProperty<{0}> SetDitry Path:{1}", typeof(TValue), Path);
 			Hash++;
 			OnChanged?.Invoke(m_Value);
-			using (ValueHolder<TValue>.Use(m_Value, out var holder))
+			//購読者が居ない場合は ValueHolder のプール操作を行わない
+			if (m_OnChangedValue != null)
 			{
-				m_OnChangedValue?.Invoke(Path, holder);
+				using (ValueHolder<TValue>.Use(m_Value, out var holder))
+				{
+					m_OnChangedValue.Invoke(Path, holder);
+				}
 			}
 		}
 

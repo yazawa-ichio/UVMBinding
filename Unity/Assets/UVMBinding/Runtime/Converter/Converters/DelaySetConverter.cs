@@ -24,6 +24,9 @@ namespace UVMBinding.Converters
 
 		bool m_Pendding = false;
 		T m_DelayValue;
+		//遅延の待機が明けるまで出力する値。m_DefaultValue はシリアライズ値なので実行時に書き換えない
+		T m_CurrentValue;
+		bool m_HasCurrentValue;
 		float m_LastTime = 0f;
 
 		float GetCurrentTime()
@@ -37,10 +40,12 @@ namespace UVMBinding.Converters
 
 			if (GetCurrentTime() - m_LastTime > m_Delay)
 			{
-				var val = m_DelayValue;
+				//待機が明けたので確定させる。再度 Convert が走るまで待機しない
+				m_Pendding = false;
+				m_CurrentValue = m_DelayValue;
+				m_HasCurrentValue = true;
 				m_DelayValue = default(T);
-				m_DefaultValue = val;
-				SetImmediate(m_DefaultValue);
+				SetImmediate(m_CurrentValue);
 			}
 		}
 
@@ -49,7 +54,8 @@ namespace UVMBinding.Converters
 			m_Pendding = true;
 			m_LastTime = GetCurrentTime();
 			m_DelayValue = input;
-			return m_DefaultValue;
+			//待機中は直前に確定した値を出す。未確定ならシリアライズされた既定値
+			return m_HasCurrentValue ? m_CurrentValue : m_DefaultValue;
 		}
 
 	}

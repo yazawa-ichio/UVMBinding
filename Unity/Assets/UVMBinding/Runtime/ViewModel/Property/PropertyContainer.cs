@@ -58,11 +58,9 @@ namespace UVMBinding.Core
 			T value = default;
 			if (isFirst || notifyCurrent)
 			{
-				UnityEngine.Debug.Log("SubscribeAssignable" + m_Properties.Count);
 				if (m_Properties.TryGetValue(path, out BindingProperty property))
 				{
 					var cur = property;
-					UnityEngine.Debug.Log("SubscribeAssignable" + path);
 					while (cur != null)
 					{
 						if (isFirst)
@@ -77,7 +75,6 @@ namespace UVMBinding.Core
 						{
 							value = (T)cur.GetObject();
 						}
-						UnityEngine.Debug.Log("InvokeChangedValue" + path);
 						cur = cur.Next;
 					}
 				}

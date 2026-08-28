@@ -21,6 +21,8 @@ namespace UVMBinding.Binders
 
 		protected override void UpdateValue(IList<IViewModel> value)
 		{
+			//未生成のコレクションにバインドされる場合がある
+			int count = value?.Count ?? 0;
 			// 破棄済みを削除
 			for (int i = m_Instance.Count - 1; i >= 0; i--)
 			{
@@ -30,12 +32,12 @@ namespace UVMBinding.Binders
 				}
 			}
 			// 多い分を削除
-			for (int i = m_Instance.Count - 1; i >= value.Count; i--)
+			for (int i = m_Instance.Count - 1; i >= count; i--)
 			{
 				GameObject.Destroy(m_Instance[i]);
 				m_Instance.RemoveAt(i);
 			}
-			for (int i = 0; i < value.Count; i++)
+			for (int i = 0; i < count; i++)
 			{
 				if (m_Instance.Count == i)
 				{

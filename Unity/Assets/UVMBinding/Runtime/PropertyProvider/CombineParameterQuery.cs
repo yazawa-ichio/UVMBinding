@@ -10,6 +10,7 @@ namespace UVMBinding.PropertyProvider
 		{
 			return new CombineParameterBuilder<T1>
 			{
+				PropertyExtension = PropertyExtension,
 				SourceKey = key
 			};
 		}

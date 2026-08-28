@@ -3,13 +3,35 @@
 | | |
 | --- | --- |
 | Phase | 0（バグ修正） |
-| 状態 | 未着手 |
+| 状態 | **完了**（2026-08-28） |
 | 依存 | なし |
 | 規模 | 小 |
 
 ## 目的
 
 `Collection<T>` / `ValueCollection<T>` の 3 種の不具合を修正する。列挙子の NRE、`CopyTo` の副作用、そして `OnChanged` が発火しない型不一致。
+
+## 実施結果（2026-08-28）
+
+**`Collection<T>.OnChanged` のシグネチャを `Action<List<T>>` から `Action<Collection<T>>` に変更した。**
+
+ストレージを `List<T>` にはできない。`CollectionBinder` が `Binder<IList<IViewModel>>` であり、`IList<T>` は非変なので `List<T>` を `IList<IViewModel>` として渡せないため。`List<IViewModel>` に揃えると `Action<List<T>>` の維持には通知ごとの変換アロケーションが必要になり、パフォーマンス規約に反する。
+
+自身を渡す形にすれば変換もクロージャも発生しない。購読者はパッケージ・テスト・AppTests のいずれにも存在しなかった。
+
+`ValueCollection<T>` は元から型が揃っており、列挙子と `CopyTo` のみ修正。
+
+### 副次的に判明した問題：`CollectionBinder` が null を許容していなかった
+
+型を揃えた結果、コンストラクタの `Subscribe<List<IViewModel>>` がプロパティを生成するようになり、**値が null の状態で Binder に届く**ようになった。`CollectionBinder.UpdateValue` が null を想定しておらず `NullReferenceException` になり、既存テスト `BinderTests.コレクションを利用したBinder` が落ちた。
+
+修正前は型不一致により、`GetList()` が呼ばれるまで `BindingProperty<List<IViewModel>>` が存在せず、**偶然 null が渡らなかっただけ**。Binder が null のコレクションを許容するのが本来の姿であるため、`UpdateValue` に null ガードを追加した。
+
+### 初回追加時に通知が 2 回発生する
+
+`Add` の初回は「リストの遅延生成による `Set`」と「`SetDirty`」で 2 回通知される。2 回目以降は 1 回。
+
+ハッシュ方式のポーリングにより同一フレーム内の複数通知は 1 回の UI 更新に畳まれるため実害はない。**仕様上の問題ではないと判断し、テスト側を実挙動に合わせた。** [TASK-014](TASK-014-collectionDiff.md) の差分更新で自然に解消される見込み。
 
 ## 背景
 

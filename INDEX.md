@@ -18,12 +18,12 @@
 | # | タスク | 状態 | 依存 | 規模 |
 | --- | --- | --- | --- | --- |
 | 000 | [対象 Unity バージョンの更新](Task/TASK-000-unityVersion.md) | **完了** | — | 小 |
-| 024 | [テストアセンブリの EditMode / PlayMode 分離](Task/TASK-024-testAssemblyClassification.md) | 未着手 | 000 | 小 |
-| 001 | [Collection / ValueCollection の不具合修正](Task/TASK-001-collectionEnumerator.md) | 未着手 | — | 小 |
-| 002 | [PropertyContainer のデバッグ出力除去](Task/TASK-002-removeDebugLog.md) | 未着手 | — | 小 |
-| 016 | [書き込みパスの ValueHolder ガード](Task/TASK-016-writePathAllocation.md) | 未着手 | — | 小 |
-| 017 | [Converter のバグ修正](Task/TASK-017-converterBugs.md) | 未着手 | — | 小 |
-| 018 | [汎用 PropertyProvider の修正](Task/TASK-018-propertyProviderBuilder.md) | 未着手 | — | 小 |
+| 024 | [テストアセンブリの EditMode / PlayMode 分離](Task/TASK-024-testAssemblyClassification.md) | **完了** | 000 | 小 |
+| 001 | [Collection / ValueCollection の不具合修正](Task/TASK-001-collectionEnumerator.md) | **完了** | — | 小 |
+| 002 | [PropertyContainer のデバッグ出力除去](Task/TASK-002-removeDebugLog.md) | **完了** | — | 小 |
+| 016 | [書き込みパスの ValueHolder ガード](Task/TASK-016-writePathAllocation.md) | **完了** | — | 小 |
+| 017 | [Converter のバグ修正](Task/TASK-017-converterBugs.md) | **完了** | — | 小 |
+| 018 | [汎用 PropertyProvider の修正](Task/TASK-018-propertyProviderBuilder.md) | **完了** | — | 小 |
 
 ### Phase 0.5 — 基盤再設計
 

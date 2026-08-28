@@ -7,8 +7,6 @@ namespace UVMBinding.Converters
 	[Serializable]
 	public abstract class ConverterBase<TInput, TOutput> : IConverter
 	{
-		static readonly bool s_InputIsValueType = typeof(TInput).IsValueType;
-
 		BindingProperty<TOutput> m_Output;
 		IBindingProperty m_Input;
 		int m_Hash;
@@ -106,14 +104,8 @@ namespace UVMBinding.Converters
 
 		protected void SetImmediate(TOutput output)
 		{
-			if (m_Input is IBindingProperty<TInput> input)
-			{
-				m_Output.Value = Convert(input.Value);
-			}
-			else
-			{
-				m_Output.Value = Convert((TInput)m_Input.GetObject());
-			}
+			if (m_Output == null) return;
+			m_Output.Value = output;
 			m_Output.SetDirty();
 		}
 

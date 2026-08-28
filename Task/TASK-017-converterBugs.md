@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | Phase | 0（前提整備・バグ修正） |
-| 状態 | 未着手 |
+| 状態 | **完了**（2026-08-28） |
 | 依存 | なし |
 | 規模 | 小 |
 
@@ -60,6 +60,16 @@ protected void SetImmediate(TOutput output)
 | BoolSwitch の逆変換 | BoolSwitch 系が **30 箇所以上** |
 | `SetImmediate` の引数無視 | DelaySet 経由で下記に波及 |
 | DelaySet の永久再通知 | DelaySet 系が数箇所。**`[SerializeField]` の実行時書き換えにより、Editor 上で prefab がダーティになりうる** |
+
+## 実施結果（2026-08-28）
+
+3 件とも修正済み。あわせて未使用の `s_InputIsValueType` を削除した。
+
+**`SetImmediate` は `m_Output.Value = output;` とし、`m_Output` の null ガードを追加した。** `SetDirty()` の呼び出しは残している（[TASK-020](TASK-020-converterUpdateCost.md) で無条件化の是非を判断するまで挙動を変えない）。
+
+**`DelaySetConverter` は非シリアライズの `m_CurrentValue` / `m_HasCurrentValue` を追加した。** 待機明けに `m_Pendding = false` へ戻して永久再通知を止め、待機中は直前に確定した値（未確定ならシリアライズ既定値）を返す。`[SerializeField] m_DefaultValue` は実行時に書き換えない。
+
+BoolSwitch の逆変換は、`m_On` / `m_Off` が private なシリアライズ値のためテストからは設定できない。`Convert` の出力を正解値として使い、**修正前に必ず false を返していたケースが true になる**ことで検証している。
 
 ## 変更内容
 
