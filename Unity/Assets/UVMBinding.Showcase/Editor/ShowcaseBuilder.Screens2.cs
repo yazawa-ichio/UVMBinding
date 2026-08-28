@@ -72,12 +72,30 @@ public static partial class ShowcaseBuilder
 
 		var ops = Row(c.transform, "Row_Ops", 56);
 		Label(ops.transform, "元の値");
-		Value(ops.transform, "IntValue", 120);
+		//TextBinder は string を要求するため int には変換が要る
+		var opsValue = New("Value", ops.transform);
+		AddText(opsValue, "-", 23, Ink, TextAnchor.MiddleLeft);
+		Size(opsValue, 120, 0);
+		var opsBinder = opsValue.AddComponent<TextBinder>();
+		SetPath(opsBinder, "IntValue");
+		SetManagedRef(opsBinder, "m_Converter", new ObjectToString());
 		Button(ops.transform, "Increment", "OnIncrement", 160);
 		Button(ops.transform, "Toggle Bool", "OnToggle", 160);
 
 		Section(c.transform, "Cast（1 型に集約済み）");
-		AddConverterRow(c.transform, "CastConverter : int → float", "IntValue", new CastConverter());
+		//CastConverter は出力型をバインド時に Binder から受け取るため、
+		//Concatenate の中間段では型が決まらず使えない。float を要求する
+		//Binder に直接付けることで int → float を示す。
+		var rCast = Row(c.transform, "Row_Cast", 60);
+		Label(rCast.transform, "CastConverter : int → float（Fill に適用）", 420);
+		var castFill = New("Fill", rCast.transform);
+		var cfi = AddImage(castFill, Accent, false);
+		cfi.type = UnityEngine.UI.Image.Type.Filled;
+		cfi.fillMethod = UnityEngine.UI.Image.FillMethod.Horizontal;
+		Size(castFill, 240, 40);
+		var castBinder = castFill.AddComponent<ImageFillAmountBinder>();
+		SetPath(castBinder, "FloatValue");
+		SetManagedRef(castBinder, "m_Converter", new CastConverter());
 
 		Section(c.transform, "比較・真偽");
 		AddConverterRow(c.transform, "IntComparison : int → bool", "IntValue", new IntComparison());

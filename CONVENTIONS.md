@@ -213,6 +213,12 @@ T IViewModel.Get<T>(string path) => GetImpl<T>(path);
 
 **関連する型は 1 ファイルにまとめてよい。** `VectorConverter.cs` に 8 型、`LerpConverter.cs` に 6 型など。ファイル名は代表となる型に合わせる。
 
+**ただし `MonoBehaviour` は例外。1 ファイル 1 クラスとし、ファイル名をクラス名に一致させる。**
+
+まとめると**シーンや prefab への参照が Missing Script になる**。実際にショーケース構築で 10 個の `MonoBehaviour` を 1 ファイルにまとめたところ、7 個の参照が壊れた（一部だけ壊れるため気付きにくい）。
+
+`ScriptableObject` も同じ制約を受ける。
+
 ### var
 
 **使ってよい。** 実測 193 箇所。`.editorconfig` は明示型を推奨しているが severity が `silent` であり、実態は var が主流。

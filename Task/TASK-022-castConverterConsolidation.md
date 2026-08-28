@@ -18,6 +18,24 @@
 | 生成物 | 90 クラス → **90 行の登録コード** |
 | テスト | **34 件すべて通過**（Cast 関連 6 件を追加） |
 
+### 判明した制約：Concatenate の中間段では使えない
+
+**`CastConverter` は出力型をバインド時に `Binder<T>` から受け取るため、`ConcatenateConverter` の
+中間段に置くと型が決まらず失敗する。** 最終段（Binder に直接付く位置）でのみ機能する。
+
+`ConcatenateConverter` は中間段に `conv.GetOutputType()` を渡すが、`CastConverter` の
+`GetOutputType()` はバインド前は `null` を返す。次段の `GetInputType()` を渡す案も考えたが、
+`int → float → string` のように**中間の型がどの段の宣言にも現れない**場合は解決できない。
+
+[TASK-023](TASK-023-showcase.md) のショーケースで実際に踏んだ。`float` を要求する
+`ImageFillAmountBinder` に直接付ける形に変更して回避している。
+
+対応の選択肢は 2 つ。**現時点では未対応**とする。
+
+1. **現状のまま**（最終段専用と割り切る）。数値変換を中間に挟む必要は稀
+2. `CastConverter` に出力型の enum を持たせる。型数は 1 のままだが設定を持つことになり、
+   「設定を持たないから集約できる」という前提が崩れる
+
 ### 実装の要点
 
 `IConverter.TryConvert` に `outputType` を追加し、`Binder<T>` から `typeof(T)` を渡す。設定クラスは自分の出力型を知らないため。
