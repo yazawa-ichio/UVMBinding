@@ -28,16 +28,19 @@ namespace UVMBinding
 			return m_Converters[m_Converters.Length - 1].GetOutputType();
 		}
 
-		public bool TryConvert(IBindingProperty input, ref IBindingProperty output)
+		public bool TryConvert(IBindingProperty input, Type outputType, ref IBindingProperty output)
 		{
 			if (m_Converters.Length == 0)
 			{
 				Log.Warning("Converters.Length Zero");
 				return false;
 			}
-			foreach (var conv in m_Converters)
+			for (int i = 0; i < m_Converters.Length; i++)
 			{
-				if (conv == null || !conv.TryConvert(input, ref input))
+				var conv = m_Converters[i];
+				//最終段だけが Binder の型に合わせる必要がある。中間段は次段の入力型に従う
+				var stageOutputType = (i == m_Converters.Length - 1) ? outputType : conv?.GetOutputType();
+				if (conv == null || !conv.TryConvert(input, stageOutputType, ref input))
 				{
 					Unbind();
 					return false;

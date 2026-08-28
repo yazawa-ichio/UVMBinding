@@ -80,7 +80,7 @@ namespace UVMBinding
 		void IBinder.Bind(IBindingProperty prop)
 		{
 			Log.Debug(this, "{0} Bind Property Path:{1} {2}", this, m_Path, prop);
-			if (m_Converter != null && m_Converter.TryConvert(prop, ref m_Property))
+			if (m_Converter != null && m_Converter.TryConvert(prop, typeof(T), ref m_Property))
 			{
 				InvokeBind();
 				return;

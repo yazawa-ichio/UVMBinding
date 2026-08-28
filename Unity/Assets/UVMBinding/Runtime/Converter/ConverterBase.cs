@@ -30,7 +30,7 @@ namespace UVMBinding.Converters
 			return typeof(TOutput);
 		}
 
-		bool IConverter.TryConvert(IBindingProperty property, ref IBindingProperty output)
+		bool IConverter.TryConvert(IBindingProperty property, Type outputType, ref IBindingProperty output)
 		{
 			if (!(property is IBindingProperty<TInput>) && !property.IsAssignable<TInput>())
 			{

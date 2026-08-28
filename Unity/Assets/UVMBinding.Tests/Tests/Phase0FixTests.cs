@@ -125,6 +125,87 @@ namespace UVMBinding.Tests
 	}
 
 
+	public class CastConverterTests
+	{
+		//Binder 相当。Converter に出力型を渡してバインドする
+		static IBindingProperty Bind<TInput, TOutput>(TInput value, out IConverter converter)
+		{
+			var container = new PropertyContainer();
+			var source = container.Get<TInput>("Value");
+			source.Value = value;
+
+			converter = new CastConverter();
+			IBindingProperty output = null;
+			Assert.IsTrue(converter.TryConvert((IBindingProperty)source, typeof(TOutput), ref output),
+				$"{typeof(TInput)} => {typeof(TOutput)} の変換が解決される");
+			return output;
+		}
+
+		[Test]
+		public void Cast_Converts_IntToFloat()
+		{
+			var output = Bind<int, float>(3, out _);
+			Assert.AreEqual(3f, ((IBindingProperty<float>)output).Value);
+		}
+
+		[Test]
+		public void Cast_Converts_FloatToInt()
+		{
+			var output = Bind<float, int>(3.9f, out _);
+			Assert.AreEqual(3, ((IBindingProperty<int>)output).Value, "切り捨てになる");
+		}
+
+		[Test]
+		public void Cast_Converts_DoubleToByte()
+		{
+			var output = Bind<double, byte>(200d, out _);
+			Assert.AreEqual((byte)200, ((IBindingProperty<byte>)output).Value);
+		}
+
+		[Test]
+		public void Cast_Fails_WhenPairIsNotRegistered()
+		{
+			var container = new PropertyContainer();
+			var source = container.Get<string>("Value");
+			source.Value = "abc";
+
+			IConverter converter = new CastConverter();
+			IBindingProperty output = null;
+			Assert.IsFalse(converter.TryConvert((IBindingProperty)source, typeof(int), ref output),
+				"数値以外は登録されていない");
+		}
+
+		[Test]
+		public void Cast_Fails_WhenOutputTypeIsUnknown()
+		{
+			var container = new PropertyContainer();
+			var source = container.Get<int>("Value");
+
+			IConverter converter = new CastConverter();
+			IBindingProperty output = null;
+			Assert.IsFalse(converter.TryConvert((IBindingProperty)source, null, ref output));
+		}
+
+		[Test]
+		public void Cast_RegistersAllNumericPairs()
+		{
+			var types = new[]
+			{
+				typeof(byte), typeof(ushort), typeof(uint), typeof(ulong), typeof(sbyte),
+				typeof(short), typeof(int), typeof(long), typeof(float), typeof(double),
+			};
+			foreach (var input in types)
+			{
+				foreach (var output in types)
+				{
+					if (input == output) continue;
+					Assert.IsTrue(CastRegistry.IsRegistered(input, output), $"{input} => {output}");
+				}
+			}
+		}
+	}
+
+
 	public class PropertyProviderFixTests
 	{
 		class AddOneProvider : PropertyProvider.PropertyProvider<int, int>

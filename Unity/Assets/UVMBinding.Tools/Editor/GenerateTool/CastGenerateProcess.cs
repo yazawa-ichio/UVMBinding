@@ -1,5 +1,8 @@
 ﻿namespace UVMBinding.Tools
 {
+	//数値変換の実装を静的レジストリとして生成する。
+	//Register<TIn, TOut> の呼び出しがジェネリック実体化への静的参照になるため AOT 安全。
+	//型ごとの Converter クラスは生成しない（TASK-022）。
 	public static class CastGenerateProcess
 	{
 		public static void Run()
@@ -9,33 +12,29 @@
 			emitter.WriteLine("namespace UVMBinding.Converters");
 			using (emitter.Bracket())
 			{
-				foreach (var x in GenerateUtil.Names.Keys)
+				emitter.WriteLine("internal static partial class CastRegistry");
+				using (emitter.Bracket())
 				{
-					foreach (var y in GenerateUtil.Names.Keys)
+					emitter.WriteLine("static void RegisterGenerated()");
+					using (emitter.Bracket())
 					{
-						if (x == y)
+						foreach (var x in GenerateUtil.Names.Keys)
 						{
-							continue;
-						}
-						emitter.NewLine();
-						var xName = GenerateUtil.Names[x];
-						var yName = GenerateUtil.Names[y];
-						emitter.WriteLine($"[DispName(\"Core/Cast/{xName}/To{yName}\")]");
-						emitter.WriteLine($"public class {xName}To{yName} : CastBase<{xName.ToLower()}, {yName.ToLower()}>");
-						using (emitter.Bracket())
-						{
-							emitter.WriteLine($"public override {yName.ToLower()} Convert({xName.ToLower()} input)");
-							using (emitter.Bracket())
+							foreach (var y in GenerateUtil.Names.Keys)
 							{
-								emitter.WriteLine($"return ({yName.ToLower()})input;");
+								if (x == y)
+								{
+									continue;
+								}
+								var xName = GenerateUtil.Names[x].ToLower();
+								var yName = GenerateUtil.Names[y].ToLower();
+								emitter.WriteLine($"Register<{xName}, {yName}>(x => ({yName})x);");
 							}
 						}
 					}
 				}
-				emitter.NewLine();
 			}
 			emitter.Dump("Assets/UVMBinding/Runtime/Converter/Converters/Generated/Cast.Generated.cs");
-			UnityEngine.Debug.Log(emitter.ToString());
 		}
 	}
 
