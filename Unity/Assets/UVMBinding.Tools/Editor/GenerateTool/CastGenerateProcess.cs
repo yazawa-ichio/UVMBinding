@@ -22,12 +22,15 @@
 						{
 							foreach (var y in GenerateUtil.Names.Keys)
 							{
-								if (x == y)
-								{
-									continue;
-								}
 								var xName = GenerateUtil.Names[x].ToLower();
 								var yName = GenerateUtil.Names[y].ToLower();
+								if (x == y)
+								{
+									//同一型は恒等変換として登録する。型が一致したまま Cast を挟んでも
+									//変換失敗にせず素通しさせるため
+									emitter.WriteLine($"Register<{xName}, {xName}>(x => x);");
+									continue;
+								}
 								emitter.WriteLine($"Register<{xName}, {yName}>(x => ({yName})x);");
 							}
 						}

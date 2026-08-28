@@ -58,3 +58,16 @@ editor-open:
 # 全 Editor インスタンスの一覧。パス絞り込みが無いため対象行を目視で確認する。
 editor-list:
 	unity pipeline list --no-banner
+
+# IL2CPP + ストリッピング下でショーケースを実行し、基準値と突き合わせる。
+# 差分が出たら [SerializeReference] の型が落ちたか、バインドが壊れている。
+# プレイヤーは自己診断を書き出した後に自分で終了する。
+# 同一プロジェクトを二重に開けないため、実行前に Editor を閉じること。
+VERIFY_DIR = ./Build/Showcase
+VERIFY_BASELINE = ./Unity/Verify/selfcheck-baseline.txt
+
+verify-strip:
+	unity run ${UNITY_PROJECT} --non-interactive -- -executeMethod ShowcaseBuilder.BuildPlayer
+	${VERIFY_DIR}/Showcase.exe -screen-width 1280 -screen-height 720 -screen-fullscreen 0 -selfcheck-quit
+	diff ${VERIFY_BASELINE} ${VERIFY_DIR}/selfcheck.txt
+	@echo "OK: IL2CPP + Stripping High の結果が基準値と一致"

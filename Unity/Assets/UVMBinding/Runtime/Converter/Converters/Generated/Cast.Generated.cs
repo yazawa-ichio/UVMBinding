@@ -5,6 +5,7 @@ namespace UVMBinding.Converters
 	{
 		static void RegisterGenerated()
 		{
+			Register<byte, byte>(x => x);
 			Register<byte, ushort>(x => (ushort)x);
 			Register<byte, uint>(x => (uint)x);
 			Register<byte, ulong>(x => (ulong)x);
@@ -15,6 +16,7 @@ namespace UVMBinding.Converters
 			Register<byte, float>(x => (float)x);
 			Register<byte, double>(x => (double)x);
 			Register<ushort, byte>(x => (byte)x);
+			Register<ushort, ushort>(x => x);
 			Register<ushort, uint>(x => (uint)x);
 			Register<ushort, ulong>(x => (ulong)x);
 			Register<ushort, sbyte>(x => (sbyte)x);
@@ -25,6 +27,7 @@ namespace UVMBinding.Converters
 			Register<ushort, double>(x => (double)x);
 			Register<uint, byte>(x => (byte)x);
 			Register<uint, ushort>(x => (ushort)x);
+			Register<uint, uint>(x => x);
 			Register<uint, ulong>(x => (ulong)x);
 			Register<uint, sbyte>(x => (sbyte)x);
 			Register<uint, short>(x => (short)x);
@@ -35,6 +38,7 @@ namespace UVMBinding.Converters
 			Register<ulong, byte>(x => (byte)x);
 			Register<ulong, ushort>(x => (ushort)x);
 			Register<ulong, uint>(x => (uint)x);
+			Register<ulong, ulong>(x => x);
 			Register<ulong, sbyte>(x => (sbyte)x);
 			Register<ulong, short>(x => (short)x);
 			Register<ulong, int>(x => (int)x);
@@ -45,6 +49,7 @@ namespace UVMBinding.Converters
 			Register<sbyte, ushort>(x => (ushort)x);
 			Register<sbyte, uint>(x => (uint)x);
 			Register<sbyte, ulong>(x => (ulong)x);
+			Register<sbyte, sbyte>(x => x);
 			Register<sbyte, short>(x => (short)x);
 			Register<sbyte, int>(x => (int)x);
 			Register<sbyte, long>(x => (long)x);
@@ -55,6 +60,7 @@ namespace UVMBinding.Converters
 			Register<short, uint>(x => (uint)x);
 			Register<short, ulong>(x => (ulong)x);
 			Register<short, sbyte>(x => (sbyte)x);
+			Register<short, short>(x => x);
 			Register<short, int>(x => (int)x);
 			Register<short, long>(x => (long)x);
 			Register<short, float>(x => (float)x);
@@ -65,6 +71,7 @@ namespace UVMBinding.Converters
 			Register<int, ulong>(x => (ulong)x);
 			Register<int, sbyte>(x => (sbyte)x);
 			Register<int, short>(x => (short)x);
+			Register<int, int>(x => x);
 			Register<int, long>(x => (long)x);
 			Register<int, float>(x => (float)x);
 			Register<int, double>(x => (double)x);
@@ -75,6 +82,7 @@ namespace UVMBinding.Converters
 			Register<long, sbyte>(x => (sbyte)x);
 			Register<long, short>(x => (short)x);
 			Register<long, int>(x => (int)x);
+			Register<long, long>(x => x);
 			Register<long, float>(x => (float)x);
 			Register<long, double>(x => (double)x);
 			Register<float, byte>(x => (byte)x);
@@ -85,6 +93,7 @@ namespace UVMBinding.Converters
 			Register<float, short>(x => (short)x);
 			Register<float, int>(x => (int)x);
 			Register<float, long>(x => (long)x);
+			Register<float, float>(x => x);
 			Register<float, double>(x => (double)x);
 			Register<double, byte>(x => (byte)x);
 			Register<double, ushort>(x => (ushort)x);
@@ -95,6 +104,7 @@ namespace UVMBinding.Converters
 			Register<double, int>(x => (int)x);
 			Register<double, long>(x => (long)x);
 			Register<double, float>(x => (float)x);
+			Register<double, double>(x => x);
 		}
 	}
 }

@@ -4,5 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/UVMBinding.Showcase/Scenes/Showcase.unity
+    guid: 414c70249f0c7db4182cc26b6d73b42e
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

@@ -27,6 +27,8 @@ namespace UVMBinding.Showcase
 			Select(0);
 		}
 
+		public int ScreenCount => m_Screens.Count;
+
 		public void Select(int index)
 		{
 			for (int i = 0; i < m_Screens.Count; i++)

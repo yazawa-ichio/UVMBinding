@@ -28,6 +28,35 @@ public static partial class ShowcaseBuilder
 
 	// ---------- 基本ヘルパ ----------
 
+	// ---------- 検証用ビルド ----------
+
+	//IL2CPP + ストリッピング下の挙動を検証するためのプレイヤービルド。
+	//make verify-strip から -executeMethod で呼ばれる。
+	public static void BuildPlayer()
+	{
+		const string ScenePath = "Assets/UVMBinding.Showcase/Scenes/Showcase.unity";
+		//相対パスは Unity プロセスの作業ディレクトリ基準になり、CLI 経由だと場所が変わる。
+		//また Unity/Temp は Editor 終了時に消えるため、リポジトリ直下の Build に出す。
+		var projectRoot = System.IO.Path.GetDirectoryName(Application.dataPath);
+		var outputPath = System.IO.Path.GetFullPath(
+			System.IO.Path.Combine(projectRoot, "../Build/Showcase/Showcase.exe"));
+		var options = new BuildPlayerOptions
+		{
+			scenes = new[] { ScenePath },
+			locationPathName = outputPath,
+			target = BuildTarget.StandaloneWindows64,
+			targetGroup = BuildTargetGroup.Standalone,
+			options = BuildOptions.None,
+		};
+		var report = BuildPipeline.BuildPlayer(options);
+		var summary = report.summary;
+		Debug.Log($"Showcase player built. result={summary.result} errors={summary.totalErrors} path={outputPath}");
+		if (summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+		{
+			EditorApplication.Exit(1);
+		}
+	}
+
 	public static GameObject New(string name, Transform parent)
 	{
 		var go = new GameObject(name, typeof(RectTransform));

@@ -1,0 +1,358 @@
+[SelfCheck] BEGIN
+[SelfCheck] type UVMBinding.Arguments.CollectionIndexArgument 4
+[SelfCheck] type UVMBinding.Arguments.GraphicColorArgument 1
+[SelfCheck] type UVMBinding.Arguments.TextArgument 1
+[SelfCheck] type UVMBinding.ConcatenateConverter 6
+[SelfCheck] type UVMBinding.Converters.BoolInverse 1
+[SelfCheck] type UVMBinding.Converters.BoolSwitchTweenColor 1
+[SelfCheck] type UVMBinding.Converters.CastConverter 1
+[SelfCheck] type UVMBinding.Converters.DelaySetBoolConverter 1
+[SelfCheck] type UVMBinding.Converters.IntComparison 1
+[SelfCheck] type UVMBinding.Converters.ObjectToString 9
+[SelfCheck] type UVMBinding.Converters.StringComparison 1
+[SelfCheck] type UVMBinding.Converters.StringToLength 2
+[SelfCheck] type UVMBinding.PropertyProvider.CombineBoolProvider 1
+[SelfCheck] type UVMBinding.PropertyProvider.CombineStringProvider 1
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Increment:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Toggle Enabled:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_対象ボタン:InteractableBinder.m_Converter
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Button_Toggle Panel:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/TogglePanel:ActiveBinder.m_Converter
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Icon/Icon:ImageSpriteBinder.m_Converter
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Preview/Preview:RawImageTextureBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_Toggle:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_対象ボタン:InteractableBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown:DropdownSelectBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField:InputFieldBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Scrollbar/Scrollbar:ScrollbarBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider:SliderBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Toggle:ToggleBinder.m_Converter
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/03 コレクション/RowTemplate/Label:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List:CollectionBinder.m_Converter
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Add:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Clear:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Remove:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Increment:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Toggle Bool:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle A:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle B:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Panel:ActiveBinder.m_Converter
+[SelfCheck] null Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView:ViewBinder.m_Converter
+[SelfCheck] null Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Button_子を差し替え:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_SetDirty:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_変更:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Randomize:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Toggle Visible:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Group:CanvasGroupAlphaBinder.m_Converter
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Fill:ImageFillAmountBinder.m_Converter
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving:PositionBinder.m_Converter
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/ScaleHost/Scaling:ScaleBinder.m_Converter
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Tint:GraphicColorBinder.m_Converter
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Visible:ActiveBinder.m_Converter
+[SelfCheck] null Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Plain:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
+[SelfCheck] null Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Target:GeneralBinder.m_Converter
+[SelfCheck] null Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover:PositionBinder.m_Converter
+[SelfCheck] text Canvas/Body/01 基本バインド/Description=表示系 Binder。Text / Image / RawImage / Active / Enabled。
+[SelfCheck] text Canvas/Body/01 基本バインド/Header=01 基本バインド
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Increment/Text=Increment
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Toggle Enabled/Text=Toggle Enabled
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_対象ボタン/Text=対象ボタン
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label=InteractableBinder (IsEnabled)
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label=TextBinder (CounterText)
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label=TextBinder (Message)
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Value=Count : 0
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Value=Hello UVMBinding
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Button_Toggle Panel/Text=Toggle Panel
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Label=ActiveBinder (ShowPanel)
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/TogglePanel/Text=表示中
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Icon/Label=ImageSpriteBinder (Icon)
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Preview/Label=RawImageTextureBinder (Preview)
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section=テキスト
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section=画像
+[SelfCheck] text Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section=表示・活性
+[SelfCheck] text Canvas/Body/02 入力（双方向）/Description=入力系 Binder。View の変更が ViewModel に戻ることを確認する。
+[SelfCheck] text Canvas/Body/02 入力（双方向）/Header=02 入力（双方向）
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_Toggle/Text=Toggle
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_対象ボタン/Text=対象ボタン
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Label=InteractableBinder (IsInteractable)
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Label=Alpha
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Label=DropdownSelectBinder (DropdownIndex)
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Value=0
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField/Placeholder=入力してください
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField/Text=
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/Label=InputFieldBinder (TextValue)
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/Value=(未入力)
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Scrollbar/Label=ScrollbarBinder (ScrollbarValue)
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Label=SliderBinder (SliderValue)
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Value=0.40
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Label=ToggleBinder (ToggleValue)
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Value=ON
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section=スライダー / トグル
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section=テキスト入力
+[SelfCheck] text Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section=選択 / 活性
+[SelfCheck] text Canvas/Body/03 コレクション/Description=CollectionBinder と Collection<T>。要素の追加・削除と CollectionIndexArgument。
+[SelfCheck] text Canvas/Body/03 コレクション/Header=03 コレクション
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text=Pick
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text=Pick
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text=Pick
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label=Item 01
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label=Item 02
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label=Item 03
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Add/Text=Add
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Clear/Text=Clear
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Remove/Text=Remove
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Label=操作
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Value=3 件
+[SelfCheck] text Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Section=CollectionBinder (Rows)
+[SelfCheck] text Canvas/Body/04 Converter/Description=Binder に設定する変換。Cast / Comparison / BoolSwitch / Concatenate ほか。
+[SelfCheck] text Canvas/Body/04 Converter/Header=04 Converter
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolInverse : bool → bool/Label=BoolInverse : bool → bool
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolInverse : bool → bool/Value=False
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolSwitch/Label=BoolSwitchTweenColor (BoolValue)
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Cast/Label=CastConverter : int → float（Fill に適用）
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Concat/Label=Concatenate : string → int → string
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Concat/Value=10
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Delay/Label=DelaySetBoolConverter (BoolValue)
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Delay/Value=True
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_IntComparison : int → bool/Label=IntComparison : int → bool
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_IntComparison : int → bool/Value=False
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ObjectToString : int → string/Label=ObjectToString : int → string
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ObjectToString : int → string/Value=3
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Increment/Text=Increment
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Toggle Bool/Text=Toggle Bool
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Label=元の値
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Value=3
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringComparison : string → bool/Label=StringComparison : string → bool
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringComparison : string → bool/Value=False
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringToLength : string → int/Label=StringToLength : string → int
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringToLength : string → int/Value=10
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section=Cast（1 型に集約済み）
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section=合成
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section=文字列
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section=比較・真偽
+[SelfCheck] text Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section=視覚効果（bool → 値）
+[SelfCheck] text Canvas/Body/05 派生値/Description=View 側で複数のパスから値を導出する。CombineBoolProvider / CombineStringProvider。
+[SelfCheck] text Canvas/Body/05 派生値/Header=05 派生値
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle A/Text=Toggle A
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle B/Text=Toggle B
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Label=Caption = "{0} / Lv.{1}"
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Label=FlagA / FlagB
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Value=Player / Lv.12
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Label=BothFlags = FlagA && FlagB
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Panel/Text=両方 ON
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Section=CombineBoolProvider（All）
+[SelfCheck] text Canvas/Body/05 派生値/ScrollView/Viewport/Content/Section=CombineStringProvider（書式）
+[SelfCheck] text Canvas/Body/06 View 合成/Description=View の入れ子と ViewBinder。子 ViewModel を差し替える。
+[SelfCheck] text Canvas/Body/06 View 合成/Header=06 View 合成
+[SelfCheck] text Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView/Label=子 View (ChildText)
+[SelfCheck] text Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView/Value=子 A
+[SelfCheck] text Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Button_子を差し替え/Text=子を差し替え
+[SelfCheck] text Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Label=親 View (Title)
+[SelfCheck] text Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Value=親 ViewModel
+[SelfCheck] text Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Section=ViewBinder（子 View に ViewModel を流す）
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/Description=Property<T> / SetDirty / ReflectionViewModel。
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/Header=07 ViewModel 種別
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/Count=7
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/Label=public フィールド Title / Count
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/Value=ReflectionViewModel
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_SetDirty/Text=SetDirty
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_変更/Text=変更
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Label=DirtyTarget
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Label=Property<string> (Tracked)
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Value=Property<string>
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Value=SetDirty で強制更新
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section=Property<T>
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section=ReflectionViewModel（素の POCO をバインド）
+[SelfCheck] text Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section=SetDirty（値を変えずに再通知）
+[SelfCheck] text Canvas/Body/08 演出系 Binder/Description=SemanticRole.None に分類される表示効果。走査対象から除外される予定。
+[SelfCheck] text Canvas/Body/08 演出系 Binder/Header=08 演出系 Binder
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Randomize/Text=Randomize
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Toggle Visible/Text=Toggle Visible
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Label=操作
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Label=CanvasGroupAlphaBinder (Alpha)
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Label=ImageFillAmountBinder (Fill)
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/Label=PositionBinder (Offset)
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/Label=ScaleBinder (Scale)
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Label=GraphicColorBinder (Tint)
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Label=ActiveBinder (Visible)
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Visible/Text=表示中
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Section=CanvasGroup / Image
+[SelfCheck] text Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Section=Transform
+[SelfCheck] text Canvas/Body/09 Event と引数/Description=EventButton と EventArgument。引数付きイベントの発火。
+[SelfCheck] text Canvas/Body/09 Event と引数/Header=09 Event と引数
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Plain/Text=Plain
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Color/Text=Send Color
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Text/Text=Send Text
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label=Action
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label=Action<Color> (GraphicColorArgument)
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label=Action<string> (TextArgument)
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label=受信ログ
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Payload/Text=送る文字列
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Value=(イベント待ち)
+[SelfCheck] text Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Section=引数なし / 引数あり
+[SelfCheck] text Canvas/Body/10 任意パッケージ/Description=TMP / Localization。defineConstraints により未導入でもコンパイルできる。
+[SelfCheck] text Canvas/Body/10 任意パッケージ/Header=10 任意パッケージ
+[SelfCheck] text Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Note=TMP / Localization 向けの Binder は別アセンブリにあり、versionDefines で自動的に有効化される。 未導入の環境ではアセンブリごと無効になるため、この画面はコンパイルエラーにならない。
+[SelfCheck] text Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row/Label=導入状況
+[SelfCheck] text Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row/Value=TMP : 未導入   /   Localization : 未導入
+[SelfCheck] text Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Section=備考
+[SelfCheck] text Canvas/Body/11 その他/Description=GeneralBinder と ComponentSetter。任意コンポーネントのプロパティを更新する。
+[SelfCheck] text Canvas/Body/11 その他/Header=11 その他
+[SelfCheck] text Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Label=対象 Text.text へ直接反映
+[SelfCheck] text Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Target=GeneralBinder
+[SelfCheck] text Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move/Text=Move
+[SelfCheck] text Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label=PositionBinder (Position)
+[SelfCheck] text Canvas/Body/11 その他/ScrollView/Viewport/Content/Section=GeneralBinder（任意のプロパティ）
+[SelfCheck] text Canvas/Body/11 その他/ScrollView/Viewport/Content/Section=PositionBinder + 操作
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_0/Text=01 基本
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_1/Text=02 入力
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_10/Text=11 その他
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_2/Text=03 コレクション
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_3/Text=04 Converter
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_4/Text=05 派生値
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_5/Text=06 View 合成
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_6/Text=07 VM 種別
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_7/Text=08 演出
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_8/Text=09 Event
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Tab_9/Text=10 任意
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] text Canvas/TabBar/Title=UVMBinding Showcase
+[SelfCheck] END slots=89 nulls=58 types=14 errors=0 texts=284

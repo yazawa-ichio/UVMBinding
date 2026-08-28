@@ -114,6 +114,9 @@ public static partial class ShowcaseBuilder
 		for (int i = 0; i < buttons.Count; i++) bp.GetArrayElementAtIndex(i).objectReferenceValue = buttons[i];
 		so.ApplyModifiedPropertiesWithoutUndo();
 
+		//ストリッピング検証用。Editor 実行の結果を基準にプレイヤー実行と突き合わせる
+		es.AddComponent<ShowcaseSelfCheck>();
+
 		UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
 		UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
 		Debug.Log($"Showcase built. screens={screens.Count}");

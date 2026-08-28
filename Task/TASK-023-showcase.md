@@ -3,9 +3,48 @@
 | | |
 | --- | --- |
 | Phase | 0.5（基盤再設計） |
-| 状態 | 未着手 |
+| 状態 | **画面は完成 / チェックリスト未作成** |
 | 依存 | TASK-000 |
 | 規模 | 大 |
+
+## 実施結果（2026-08-29）
+
+`UVMBinding.Showcase` を新設し、**11 区分すべてをタブ切り替えで構築**した。各画面はスクロール可能。
+シーンは手で組まず `ShowcaseBuilder` から再生成する（メニュー `UVMBinding/Showcase/Build All`）。
+
+タブ切り替えは**あえて UVMBinding を使わない素の実装**にした。バインドが壊れた際も画面遷移だけは
+生き残らせ、回帰の切り分けを可能にするため。
+
+### 構築で発見したパッケージの問題
+
+| 問題 | 記録先 |
+| --- | --- |
+| `CollectionBinder` が `ScrollRect` 内で再入し例外 | [TASK-014](TASK-014-collectionDiff.md) |
+| `CastConverter` が Concatenate の中間段で使えない | [TASK-022](TASK-022-castConverterConsolidation.md) |
+| 型不一致のたびに Converter が要る（自動挿入の着想） | [TASK-026](TASK-026-implicitCast.md) |
+| `ConcatenateConverter` / `IConverter` が internal で外部から合成できない | [TASK-004](TASK-004-binderInfo.md) |
+
+### ストリッピング検証の基盤にもなった
+
+[TASK-025](TASK-025-strippingVerification.md) で `ShowcaseSelfCheck` を追加した。全画面を巡回し、
+`[SerializeReference]` の復元状況・表示テキスト・エラーを機械可読な形で書き出す。
+
+**これが「観察可能な事象として書いたチェックリスト」の代わりになりうる。** 手で書いた文章ではなく、
+**動いている状態そのものを基準値にする**方式。`make verify-strip` で差分を判定できる。
+
+ただし現状の基準値は**表示テキストと結線の有無しか見ていない**。色・位置・アルファなど
+演出系の確認は含まれないため、チェックリストを完全に置き換えるには至っていない。
+
+### 残作業：チェックリスト
+
+**完了条件のうち「観察可能な事象として書いたチェックリスト」が未作成。**
+
+現状は目視と `eval` による値の照会で確認しているが、**正しさの基準が文書化されていない**。
+[TASK-003](TASK-003-bindingPropertyRedesign.md) の回帰検出に使う前に作成すること。
+
+なお [export 計画](../History/plan-viewHtmlExportFoundation.prompt.md) に「検証用スナップショット出力」の
+提案を追記した。実現すれば**チェックリストを手で書く代わりに、動いている状態をベースラインにできる**。
+チェックリスト作成の前にそちらを検討する価値がある。
 
 ## 目的
 

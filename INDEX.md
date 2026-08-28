@@ -29,8 +29,8 @@
 
 | # | タスク | 状態 | 依存 | 規模 |
 | --- | --- | --- | --- | --- |
-| 025 | [IL2CPP / ストリッピング耐性の検証](Task/TASK-025-strippingVerification.md) | 未着手 | 024 | 大 |
-| 023 | [ショーケースシーンの構築](Task/TASK-023-showcase.md) | 未着手 | 000 | 大 |
+| 025 | [IL2CPP / ストリッピング耐性の検証](Task/TASK-025-strippingVerification.md) | **完了** | 024 | 大 |
+| 023 | [ショーケースシーンの構築](Task/TASK-023-showcase.md) | 画面完成 / チェックリスト未 | 000 | 大 |
 | 022 | [Cast Converter の集約](Task/TASK-022-castConverterConsolidation.md) | **完了** | 000,017 | 中 |
 | 003 | [BindingProperty の再設計（1 path = 1 値）](Task/TASK-003-bindingPropertyRedesign.md) | 未着手 | 001,002,016,**023**（022 は先行推奨） | **大** |
 

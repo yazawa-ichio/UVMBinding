@@ -578,3 +578,38 @@ Editor 上から実行する場合は Window > General > Test Runner。
 いずれも severity が `silent` であるため警告は出ない。**規約としては本ドキュメントを優先する。**
 
 `.editorconfig` を書き換える場合は、既存コード全体への影響（`format.sh` 実行時の差分）を確認してから行う。
+
+## 12. 実機（IL2CPP / ストリッピング）でのサポート範囲
+
+**IL2CPP + Managed Stripping High で動作することを実測で確認している**（[TASK-025](Task/TASK-025-strippingVerification.md)）。
+`[Preserve]` の拡大や `link.xml` の同梱は**行っていない。必要が無いため。**
+
+Unity のビルドパイプラインがシーン・prefab の直列化データから `[SerializeReference]` の型を
+リンカのルートに加えるため、Converter / PropertyProvider / EventArgument は削除されない。
+
+### 保証する範囲
+
+| 対象 | 条件 |
+| --- | --- |
+| `[SerializeReference]` の Converter / PropertyProvider / EventArgument | **ビルドに含まれるシーンまたは prefab から参照されていること** |
+| `ReflectionViewModel` / `GeneralBinder` などのリフレクション経路 | 同上 |
+| 値型の `BindingProperty<T>`（int / float / bool / enum） | 同上 |
+
+### 保証しない範囲（利用側の責任）
+
+| 経路 | 対応 |
+| --- | --- |
+| AssetBundle / Addressables で後から読む prefab | 利用側で `link.xml` を用意するか、いずれかのシーンから型を参照させる |
+| どのアセットからも参照されない型 | 削除されるのが正しい。参照を作るか、不要なら消す |
+
+### 回帰の検出
+
+```
+make verify-strip
+```
+
+ショーケースを IL2CPP でビルドして実行し、Editor 実行時の基準値
+（`Unity/Verify/selfcheck-baseline.txt`）と突き合わせる。**実行前に Editor を閉じること。**
+
+**差分が出た場合、型が落ちたかバインドが壊れている。** `[SerializeReference]` の型が落ちても
+例外は出ず `null` になるだけなので、画面を見ても気づけない。**必ずこのコマンドで判定する。**
