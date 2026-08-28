@@ -5,6 +5,10 @@
 # プロジェクトパスは必ず明示する。auto-detect に頼ると別プロジェクトを操作しうる。
 UNITY_PROJECT = ./Unity
 
+# status / command の --project-path は「絶対パスへのサブストリング照合」であり、
+# "./Unity" もスラッシュ区切りの絶対パスも一致しない。照合用の文字列を別に持つ。
+UNITY_MATCH = UVMBinding
+
 doc-build:
 	docfx build docfx/docfx.json -t statictoc
 
@@ -40,11 +44,17 @@ test-edit:
 
 test-all: test test-edit
 
-# 稼働中の Editor への接続確認。ready にならない場合は Editor の起動と
-# com.unity.pipeline の導入（unity pipeline install）を確認する。
+# 稼働中の Editor への接続確認。state が ready にならない場合は
+# Editor の起動と com.unity.pipeline の導入を確認する。
 editor-status:
-	unity status --project-path ${UNITY_PROJECT} --no-banner
+	unity status --project-path ${UNITY_MATCH} --no-banner
 
-# 全 Editor インスタンスの一覧。パス絞り込みが無いため、対象行を目視で確認する。
+# Editor を開く。ブロックするためバックグラウンドで実行すること。
+# コンパイルエラーがあると Safe Mode で起動し CLI から接続できない。
+# 先に make test を通してから開く。
+editor-open:
+	unity open ${UNITY_PROJECT} --non-interactive
+
+# 全 Editor インスタンスの一覧。パス絞り込みが無いため対象行を目視で確認する。
 editor-list:
 	unity pipeline list --no-banner

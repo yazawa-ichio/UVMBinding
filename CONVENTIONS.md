@@ -25,14 +25,25 @@
 `unity command` / `unity status` の `--project-path` は「auto-detected if not specified」が既定であり、**省略すると別プロジェクトの Editor を操作しうる**。取り返しのつかない変更を誤ったプロジェクトに加える危険がある。
 
 ```bash
-# ○ 必ずパスを明示する
-unity status  --project-path ./Unity --no-banner
-unity command --project-path ./Unity eval 'new UnityEngine.GameObject("Foo");'
-unity test    ./Unity --mode PlayMode
-
 # × 省略しない
 unity status
 unity command eval '...'
+```
+
+**同じ `--project-path` でもコマンドによって意味が違う。**
+
+| コマンド | `--project-path` の意味 | 渡す値 |
+| --- | --- | --- |
+| `unity status` | **絶対パスへのサブストリング照合** | `UVMBinding`（`./Unity` もスラッシュ区切りの絶対パスも一致しない） |
+| `unity command` | **実際のプロジェクトパス** | `./Unity` |
+| `unity test` / `run` / `open` | 位置引数のプロジェクトパス | `./Unity` |
+
+Makefile では前者を `UNITY_MATCH`、後者を `UNITY_PROJECT` として分けている。
+
+```bash
+unity status  --project-path UVMBinding --no-banner
+unity command --project-path ./Unity eval 'new UnityEngine.GameObject("Foo");'
+unity test    ./Unity --mode PlayMode
 ```
 
 `unity pipeline list` だけはパス絞り込みを持たず全インスタンスを列挙するため、**対象行を目視で確認してから使う**。
@@ -43,6 +54,22 @@ Makefile のターゲットはすべてパスを明示している。手打ち�
 make editor-status   # 対象プロジェクトの接続確認
 make editor-list     # 全インスタンス一覧
 ```
+
+#### Editor を開く前にテストを回す
+
+**コンパイルエラーがあると Editor は Safe Mode で起動し、Pipeline パッケージが読み込まれないため CLI から接続できなくなる。**
+
+開く前に必ずテストを通し、コンパイルが成立していることを確認する。
+
+```bash
+make test              # コンパイル + テストの確認
+make editor-open &     # 通ってから開く。ブロックするため必ずバックグラウンドで
+make editor-status     # 接続確認（state が ready になるまで数十秒かかる）
+```
+
+**`unity open` は Editor プロセスに紐づいたままブロックする。** 前面で実行するとタイムアウトするため、必ずバックグラウンドに回す。
+
+接続できない場合は `make editor-list` で Safe Mode かどうかを確認する。Safe Mode なら**ファイルの直接編集に逃げず、C# のコンパイルエラーを直して Editor を再起動する**。
 
 #### 主なコマンド
 
