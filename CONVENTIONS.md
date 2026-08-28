@@ -427,17 +427,32 @@ public void Bind属性使用時のViewModel()
 CI は構築しない（決定 A-3）。**Unity CLI で実行する。**
 
 ```bash
-make test
+make test-play
 ```
 
-`Makefile` の `test` ターゲットが以下を実行する（[TASK-000](Task/TASK-000-unityVersion.md) で追加）。
+**現状、パッケージの単体テストは PlayMode に分類されている。** `make test`（EditMode）では 1 件も実行されない。
 
-```
-Unity.exe -runTests -batchmode -projectPath ./Unity \
-    -testPlatform EditMode -testResults ./TestResults.xml -logFile -
+| ターゲット | 実行対象 |
+| --- | --- |
+| `make test-play` | **`UVMBinding.Tests` の全テスト**（現状はこちらを使う） |
+| `make test` | EditMode テスト。現状パッケージ側は該当なし |
+
+Editor 上から実行する場合は Window > General > Test Runner。
+
+### テストアセンブリの分類（既知の問題）
+
+`UVMBinding.Tests.asmdef` は EditMode と PlayMode の設定が混在している。
+
+```json
+"includePlatforms": [],                                       // 全プラットフォーム = PlayMode 扱い
+"references": [ "UnityEngine.TestRunner", "UnityEditor.TestRunner" ]  // Editor 用も参照
 ```
 
-`-testPlatform PlayMode` で PlayMode テストに切り替わる。Editor 上から実行する場合は Window > General > Test Runner。
+Unity の慣例では、EditMode は `includePlatforms: ["Editor"]`、PlayMode は `includePlatforms: []` かつ `UnityEditor.TestRunner` を参照しない。
+
+中身は `[Test]` 属性の純粋な単体テストであり、**本来 EditMode が適切**。ただし分類変更は挙動が変わりうるため、[TASK-024](Task/TASK-024-testAssemblyClassification.md) として切り出している。
+
+**新しくテストアセンブリを追加する場合**（Lint の EditMode テストなど）は、この混在構成を踏襲せず、用途に応じて正しく設定すること。
 
 ### 手動での動作確認
 

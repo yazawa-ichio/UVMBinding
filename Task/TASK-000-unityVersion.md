@@ -3,9 +3,42 @@
 | | |
 | --- | --- |
 | Phase | 0（前提整備） |
-| 状態 | 未着手 |
+| 状態 | **完了**（2026-08-28） |
 | 依存 | なし |
 | 規模 | 小 |
+
+## 実施結果（2026-08-28）
+
+| 項目 | 結果 |
+| --- | --- |
+| `ProjectVersion.txt` | `6000.0.46f1` → **`6000.3.20f1`** |
+| アップグレード時のコンパイルエラー | **0 件** |
+| **既存テスト** | **20 件すべて通過**（`make test-play`） |
+| **ILPostProcessor** | **健全**（`BindingTests` / `BinderTests` 通過） |
+
+### 依存パッケージの自動更新
+
+| パッケージ | 変更 |
+| --- | --- |
+| **`nuget.mono-cecil`** | **1.11.4 → 1.11.6** |
+| `test-framework` | 1.5.1 → 1.6.0 |
+| `localization` | 1.5.2 → 1.5.8 |
+| `ai.navigation` | 2.0.6 → 2.0.13 |
+| `ide.visualstudio` | 2.0.23 → 2.0.26 |
+| `testtools.codecoverage` | 1.2.6 → 1.3.0 |
+| モジュール追加 | `adaptiveperformance` / `vectorgraphics` |
+
+`mono-cecil` が想定と異なる値（1.11.6）に解決されたため、**決め打ちせず実値に合わせる方針が有効だった**。
+
+### 副次的に判明した問題
+
+**1. テストアセンブリの分類** — `make test`（EditMode）ではパッケージのテストが 1 件も実行されない。`UVMBinding.Tests.asmdef` が PlayMode として分類されているため。→ [TASK-024](TASK-024-testAssemblyClassification.md) として切り出し
+
+**2. `SolutionSync` が削除済み内部 API に依存** — `Unity/Assets/DocTools/Editor/SolutionSync.cs` が `UnityEditor.SyncVS` と `UnityEditor.VisualStudioIntegration.SolutionSynchronizer` をリフレクションで参照している。これらは Unity から削除済みで、`-executeMethod` が例外を投げていた。
+
+csproj はプロジェクトを開いた時点で自動生成されるため、**`rebuild-project` から `-executeMethod` を除去**して解決した。`SolutionSync.cs` 自体（`Tools/SolutionSync` メニュー）は壊れたまま残っている。→ 後述の残課題
+
+**3. Unity 6.3 は `.slnx` を生成する** — 従来の `Unity.sln` ではなく新形式の `Unity.slnx` が生成される。`Unity/.gitignore` が `*.sln` しか除外していなかったため追加した。`rebuild-project` の削除対象にも追加。
 
 ## 目的
 
@@ -103,17 +136,30 @@ PlayMode 用のターゲットも同様に用意する（`-testPlatform PlayMode
 
 - `Unity/Assets/UVMBinding/package.json`
 - `Makefile`
-- `.gitignore`（新規。`TestResults.xml` を追加）
+- `.gitignore`（新規。`TestResults.xml` / `TestResults.PlayMode.xml` を追加）
+- `Unity/.gitignore`（`*.slnx` を追加）
 
 ## 完了条件
 
-- `ProjectVersion.txt` が `6000.3.20f1` になっていること
-- `package.json` の `"unity"` が `6000.3` になっていること
-- `mono-cecil` のバージョンが更新後の `manifest.json` と一致していること
-- パッケージがクリーンな状態で解決・コンパイルできること
-- **エディタ更新後に既存テストが全通過すること**
-- `make test` で EditMode テストが実行され、結果が出力されること
-- `UNITY_APP` を明示しない状態で `make rebuild-project` が動作すること
+- [x] `ProjectVersion.txt` が `6000.3.20f1` になっていること
+- [x] `package.json` の `"unity"` が `6000.3` になっていること
+- [x] `mono-cecil` のバージョンが更新後の `manifest.json` と一致していること（`1.11.6`）
+- [x] パッケージがクリーンな状態で解決・コンパイルできること
+- [x] **エディタ更新後に既存テストが全通過すること**（20 件通過）
+- [x] `make test` / `make test-play` が実行され、結果が出力されること
+- [x] `UNITY_APP` を明示しない状態で `make rebuild-project` が動作すること
+
+## 残課題
+
+**`SolutionSync.cs` は壊れたまま。** `Tools/SolutionSync` メニューを実行すると例外になる。`rebuild-project` からは切り離したため実害は無いが、動かないメニュー項目が残っている。
+
+対応は 3 択。
+
+1. 削除する（csproj 生成は Unity が自動で行うため役割を終えている）
+2. 現代の API で書き直す
+3. 放置する
+
+**削除が妥当**と考えるが、`DocTools` は本計画の対象外アセンブリのため、独立した判断とする。
 
 ## 備考
 
