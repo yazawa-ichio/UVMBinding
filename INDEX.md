@@ -65,6 +65,7 @@ Phase 1・2 と独立に進められる。
 | 019 | [Converter / Provider の型フィルタ](Task/TASK-019-converterTypeFilter.md) | 未着手 | 017,018,022 | 中 |
 | 020 | [Converter の更新コスト見直し](Task/TASK-020-converterUpdateCost.md) | 未着手 | 017 | 中 |
 | 021 | [CombineStringProvider のボックス化解消](Task/TASK-021-combineStringAllocation.md) | 未着手 | 018 | 小 |
+| 026 | [数値変換の自動挿入](Task/TASK-026-implicitCast.md) | 未着手 | 022,**003** | 中 |
 
 ---
 
