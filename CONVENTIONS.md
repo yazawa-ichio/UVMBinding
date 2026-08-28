@@ -18,10 +18,38 @@
 
 `com.unity.pipeline` を導入済みのため、**稼働中の Editor を CLI から直接操作できる**。
 
+#### プロジェクトパスを必ず明示する
+
+**他の Unity プロジェクトが同時に開かれている場合があるため、パスの省略は禁止。**
+
+`unity command` / `unity status` の `--project-path` は「auto-detected if not specified」が既定であり、**省略すると別プロジェクトの Editor を操作しうる**。取り返しのつかない変更を誤ったプロジェクトに加える危険がある。
+
 ```bash
-unity status              # 接続確認（state が ready か）
-unity command             # Editor が公開するコマンド一覧
-unity command eval '...'  # 任意の C# を実行
+# ○ 必ずパスを明示する
+unity status  --project-path ./Unity --no-banner
+unity command --project-path ./Unity eval 'new UnityEngine.GameObject("Foo");'
+unity test    ./Unity --mode PlayMode
+
+# × 省略しない
+unity status
+unity command eval '...'
+```
+
+`unity pipeline list` だけはパス絞り込みを持たず全インスタンスを列挙するため、**対象行を目視で確認してから使う**。
+
+Makefile のターゲットはすべてパスを明示している。手打ちする場合も同様にすること。
+
+```bash
+make editor-status   # 対象プロジェクトの接続確認
+make editor-list     # 全インスタンス一覧
+```
+
+#### 主なコマンド
+
+```bash
+unity status  --project-path ./Unity              # 接続確認（state が ready か）
+unity command --project-path ./Unity              # Editor が公開するコマンド一覧
+unity command --project-path ./Unity eval '...'   # 任意の C# を実行
 ```
 
 **シーン・prefab・アセットを編集する前に必ず `unity status` を実行し、接続中の Editor があるか確認する。** 接続できる場合は `.unity` / `.prefab` / `.asset` の YAML を直接編集しない。fileID や GUID の手書きは誤りやすく、稼働中の Editor には再インポートまで反映されない。

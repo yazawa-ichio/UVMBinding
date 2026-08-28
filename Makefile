@@ -1,5 +1,8 @@
 # Unity CLI を使う。エディタ解決とレポート出力を CLI に任せる。
 # CLI 未導入の場合は https://public-cdn.cloud.unity3d.com/hub/prod/cli/install.ps1 を参照。
+#
+# 重要: 他の Unity プロジェクトが同時に開かれている場合があるため、
+# プロジェクトパスは必ず明示する。auto-detect に頼ると別プロジェクトを操作しうる。
 UNITY_PROJECT = ./Unity
 
 doc-build:
@@ -37,8 +40,11 @@ test-edit:
 
 test-all: test test-edit
 
-# 稼働中の Editor への接続確認。繋がらない場合は Editor の起動と
+# 稼働中の Editor への接続確認。ready にならない場合は Editor の起動と
 # com.unity.pipeline の導入（unity pipeline install）を確認する。
 editor-status:
-	unity status --no-banner
+	unity status --project-path ${UNITY_PROJECT} --no-banner
+
+# 全 Editor インスタンスの一覧。パス絞り込みが無いため、対象行を目視で確認する。
+editor-list:
 	unity pipeline list --no-banner
