@@ -176,18 +176,27 @@ public static partial class ShowcaseBuilder
 		var r2 = Row(c.transform); Label(r2.transform, "Action");
 		Button(r2.transform, "Plain", "OnPlain", 180);
 
+		//EventArgument は m_Target から値を読む。未設定だと GetValue で例外になる
 		var r3 = Row(c.transform); Label(r3.transform, "Action<string> (TextArgument)");
+		var payload = New("Payload", r3.transform);
+		AddImage(payload, Panel, false);
+		Size(payload, 220, 44);
+		var payloadText = New("Text", payload.transform);
+		Stretch(payloadText);
+		var payloadLabel = AddText(payloadText, "送る文字列", 20, Ink, TextAnchor.MiddleCenter);
 		var withText = Button(r3.transform, "Send Text", "OnWithText", 200);
-		SetManagedRef(withText.GetComponent<EventButton>(), "m_Argument", new TextArgument());
-		var argText = New("Text", withText.transform);
-		//TextArgument は同一 GameObject の Text を読む
-		var caption = withText.transform.Find("Text").GetComponent<UnityEngine.UI.Text>();
-		caption.text = "Send Text";
-		Object.DestroyImmediate(argText);
+		var textArg = new TextArgument();
+		SetPrivate(textArg, "m_Target", payloadLabel);
+		SetManagedRef(withText.GetComponent<EventButton>(), "m_Argument", textArg);
 
 		var r4 = Row(c.transform); Label(r4.transform, "Action<Color> (GraphicColorArgument)");
+		var swatch = New("Swatch", r4.transform);
+		var swatchImage = AddImage(swatch, new Color(0.95f, 0.45f, 0.25f, 1f), false);
+		Size(swatch, 220, 44);
 		var withColor = Button(r4.transform, "Send Color", "OnWithColor", 200);
-		SetManagedRef(withColor.GetComponent<EventButton>(), "m_Argument", new GraphicColorArgument());
+		var colorArg = new GraphicColorArgument();
+		SetPrivate(colorArg, "m_Target", swatchImage);
+		SetManagedRef(withColor.GetComponent<EventButton>(), "m_Argument", colorArg);
 
 		screens.Add(screen);
 	}

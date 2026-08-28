@@ -84,6 +84,10 @@ public static partial class ShowcaseBuilder
 		var sb = New("Scrollbar", r4.transform); AddImage(sb, Panel, true); Size(sb, 300, 26);
 		var sbArea = New("SlidingArea", sb.transform); Stretch(sbArea);
 		var sbHandle = New("Handle", sbArea.transform); AddImage(sbHandle, Accent, true);
+		//Scrollbar もハンドルのアンカーを実行時に操作する。既定の 100x100 を避ける
+		var sbhr = Rect(sbHandle);
+		sbhr.anchorMin = Vector2.zero; sbhr.anchorMax = Vector2.one;
+		sbhr.sizeDelta = Vector2.zero;
 		var sbc = sb.AddComponent<Scrollbar>(); sbc.handleRect = Rect(sbHandle); sbc.targetGraphic = sbHandle.GetComponent<UnityEngine.UI.Image>();
 		SetPath(sb.AddComponent<ScrollbarBinder>(), "ScrollbarValue");
 
@@ -102,12 +106,33 @@ public static partial class ShowcaseBuilder
 
 	static GameObject BuildSlider(Transform parent, out Slider slider)
 	{
+		const float HandleWidth = 24f;
 		var go = New("Slider", parent); Size(go, 300, 32);
 		var bg = New("Background", go.transform); Stretch(bg); AddImage(bg, Panel, true);
-		var fillArea = New("Fill Area", go.transform); Stretch(fillArea);
+
+		//Fill / Handle は Slider が実行時にアンカーを操作する。
+		//既定のままだと 100x100 になるため、幅・高さを明示しておく。
+		var fillArea = New("Fill Area", go.transform);
+		var far = Rect(fillArea);
+		far.anchorMin = Vector2.zero; far.anchorMax = Vector2.one;
+		far.offsetMin = new Vector2(HandleWidth * 0.5f, 0f);
+		far.offsetMax = new Vector2(-HandleWidth * 0.5f, 0f);
 		var fill = New("Fill", fillArea.transform); AddImage(fill, Accent, false);
-		var handleArea = New("Handle Slide Area", go.transform); Stretch(handleArea);
+		var fr = Rect(fill);
+		fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one;
+		fr.sizeDelta = Vector2.zero;
+
+		var handleArea = New("Handle Slide Area", go.transform);
+		var har = Rect(handleArea);
+		har.anchorMin = Vector2.zero; har.anchorMax = Vector2.one;
+		har.offsetMin = new Vector2(HandleWidth * 0.5f, 0f);
+		har.offsetMax = new Vector2(-HandleWidth * 0.5f, 0f);
 		var handle = New("Handle", handleArea.transform); AddImage(handle, Ink, true);
+		var hr = Rect(handle);
+		hr.anchorMin = new Vector2(0f, 0f); hr.anchorMax = new Vector2(0f, 1f);
+		hr.pivot = new Vector2(0.5f, 0.5f);
+		hr.sizeDelta = new Vector2(HandleWidth, 0f);
+
 		slider = go.AddComponent<Slider>();
 		slider.fillRect = Rect(fill);
 		slider.handleRect = Rect(handle);

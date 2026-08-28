@@ -24,7 +24,7 @@ public static partial class ShowcaseBuilder
 	public static readonly Color Ink = new Color(0.94f, 0.95f, 0.97f, 1f);
 	public static readonly Color Sub = new Color(0.65f, 0.68f, 0.74f, 1f);
 
-	public const float LabelWidth = 360f;
+	public const float LabelWidth = 420f;
 
 	// ---------- 基本ヘルパ ----------
 
