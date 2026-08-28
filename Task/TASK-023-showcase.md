@@ -1,0 +1,87 @@
+# TASK-023: ショーケースシーンの構築
+
+| | |
+| --- | --- |
+| Phase | 0.5（基盤再設計） |
+| 状態 | 未着手 |
+| 依存 | TASK-000 |
+| 規模 | 大 |
+
+## 目的
+
+`UVMBinding.AppTests` を最小構成から**基本機能を網羅したショーケース**に作り替え、**手動での動作確認の基準**として使えるようにする。
+
+## 背景
+
+現状の `AppTests` は最小構成で、Root / Dialog / InputDialog の 3 画面しかない。スクリプトは合計 345 行。
+
+複数のタスクが完了条件に「AppTests のシーンが動作すること（手動確認）」を挙げているが、**何をもって「動作」とするかの基準が無い**。検証不能な受け入れ条件になっており、半年後の自分や他の作業者が判断できない。
+
+網羅性も不足している。現在使われている Converter は 6 種類（`ObjectToString` / `IntComparison` / `BoolInverse` / `ConcatenateConverter` / `BoolSwitchTweenColor` / `BoolSwitchTweenVector3`）のみで、Binder も一部しかカバーしていない。
+
+### なぜ再設計の前に作るか
+
+- **TASK-003 の回帰リスクはここでしか検出できない。** 単体テストは `PropertyContainer` レベルを見るが、prefab の結線が壊れたことは実機で見るしかない
+- **変更前のベースラインが手に入る。** 作り替えた後に再設計すれば、挙動の差分が分かる
+- **現行 API を一通り使うことになる**ため、再設計に向けた使い勝手の問題が表面化する
+
+## 網羅する範囲
+
+画面（またはタブ）単位で分割する。1 画面に詰め込まない。
+
+| # | 画面 | 対象 |
+| --- | --- | --- |
+| 1 | 基本バインド | `TextBinder` / `ImageSpriteBinder` / `RawImageTextureBinder` / `ActiveBinder` / `EnabledBinder` / `TargetActiveBinder` / `OnOffActiveBinder` |
+| 2 | 入力（双方向） | `InputFieldBinder` / `SliderBinder` / `ToggleBinder` / `ScrollbarBinder` / `DropdownSelectBinder` / `DropdownStringDataBinder` / `InteractableBinder` |
+| 3 | コレクション | `CollectionBinder` / `Collection<T>` / `ValueCollection<T>` / `CollectionIndexArgument` / 要素の追加・削除・並べ替え |
+| 4 | Converter | `Cast` / `Comparison` / `BoolSwitch` / `BoolSwitchTween` / `BoolInverse` / `ObjectToString` / `StringToLength` / `StringComparison` / `Lerp` / `DelaySet` / `Concatenate` / `Vector` |
+| 5 | 派生値 | `CombineBoolProvider` / `CombineStringProvider` / `ViewModelPropertyExtension` / 汎用 `PropertyProvider`（TASK-018 後） |
+| 6 | View 合成 | ネストした View / `ParentViewBind` / `SelectViewBind` / `ViewBinder` / `DataSourceProvider` / `ViewModelSourceProvider` |
+| 7 | ViewModel 種別 | `[Bind]` / `[Event]` / `Property<T>` / `ReflectionViewModel` / `GeneralViewModel` / `SetDirty` / `SetAllDirty` |
+| 8 | 演出系 Binder | `PositionBinder` / `RotationBinder` / `ScaleBinder` / `CanvasGroupAlphaBinder` / `CanvasGroupBlocksRaycastsBinder` / `GraphicColorBinder` / `AnimatorBool/Float/IntBinder` / `ImageFillAmountBinder` |
+| 9 | Event と引数 | `EventButton` / `InputFieldSubmitEvent` / `DropdownSelectEvent` / `EventSystemSelectBinder` / `EventSystemPointerStayBinder` / `PointerMovePositionBinder` / 各 `EventArgument` |
+| 10 | 任意パッケージ | TMP 系 Binder / Localization 系 Binder。**`defineConstraints` で切り替わることを確認できる形にする** |
+| 11 | その他 | `GeneralBinder` / `ComponentSetter`（`TransformSetter` / `RectTransformSetter`） |
+
+**演出系（画面 8）は [TASK-008](TASK-008-semanticRole.md) で `SemanticRole.None` として収集対象外にする対象**でもある。ショーケースに含めておくと、除外が正しく効いているかの確認にも使える。
+
+## 動作確認のプロトコル
+
+**「動作する」を検証可能な条件として定義する。**
+
+1. Play 中に Console へ **エラー・例外が出ないこと**
+2. 各画面の**確認項目チェックリスト**をすべて満たすこと
+3. 画面遷移とダイアログの開閉が破綻しないこと
+
+チェックリストは画面ごとにシーン内（またはショーケース用の `README`）に記述し、**画面上に確認手順を表示する**。「Toggle を押すと色が 0.2 秒かけて赤へ遷移する」のように、**観察可能な事象として書く**。
+
+このチェックリストが、他タスクの「AppTests のシーンが動作すること」を置き換える。
+
+## 対象ファイル
+
+- `Unity/Assets/UVMBinding.AppTests/` 配下（全面的に作り替え）
+- 既存の `Root.prefab` / `Dialog.prefab` / `InputDialog.prefab` は流用または作り直し
+
+## 完了条件
+
+- 上記 11 区分すべてに対応する画面が存在すること
+- 各画面に確認項目チェックリストがあり、**観察可能な事象として記述されている**こと
+- Play して全画面を巡回し、Console にエラー・例外が出ないこと
+- TMP / Localization を**外した構成でもコンパイル・実行できる**こと（`defineConstraints` の確認）
+- チェックリストを他タスクから参照できる形で配置すること
+
+## 備考
+
+**規模が大きい。** 分割して進めてよいが、**TASK-003 着手前に画面 1〜7 は完成させる**こと。再設計の回帰検出に必要な範囲がここに集中している。
+
+画面 8〜11 は TASK-003 と並行、または後回しでよい。
+
+### 実使用のある機能を優先する
+
+実プロジェクトで実際に使われている Converter は 12 種類に集中している（Comparison 系・BoolInverse・ObjectToString・Concatenate・StringComparison・BoolSwitch 系・Lerp・DelaySet）。**これらを先に網羅する。**
+
+一方、実使用がゼロの機能（数値 Cast、`PropertyProvider` 系、`ReflectionViewModel` / `GeneralViewModel` の直接利用）もある。網羅が目的なので最終的には含めるが、**優先度は下げてよい**。
+
+利用側では独自の Binder / Event / Converter / EventArgument が 50 以上定義されている。**ショーケースにも「ユーザー定義の拡張」の実例を 1 種ずつ含める**こと。パッケージ組み込みの型だけでは、拡張点が機能しているかを確認できない。
+
+既存の `TestEnumPopupBinder` / `TestViewModelSourceProvider` / `GlobalStateDataSource` は、ユーザー定義の Binder / Provider の実例として**残す価値がある**。作り替えの際に削除しないこと。
