@@ -175,6 +175,7 @@ export 計画は「既存の命名が意味を持つこと」に賭けている�
 | A-9 | prefab / アセットの互換性 | **維持しない** | メジャーバージョンアップ作業中のため。既存 prefab が壊れることを理由に変更を躊躇しない。壊れた箇所は作り直す |
 | A-10 | 手動での動作確認の基準 | **ショーケースシーンを構築し、そのチェックリストで判定する** | 現 AppTests は最小構成で、「動作すること」は検証不能な条件だった。基本機能を網羅したショーケースに作り替える → [TASK-023](Task/TASK-023-showcase.md) |
 | A-11 | テスト実行手段 | **Unity CLI（`make test`）** | CI は作らない（A-3）が、実行手順が暗黙知だった。`Makefile` に `test` / `test-edit` / `test-all` を追加 → [TASK-000](Task/TASK-000-unityVersion.md) |
+| A-14 | Unity 操作の手段 | **Unity CLI（`unity`）+ `com.unity.pipeline`** | Unity MCP パッケージが廃止予定。CLI は稼働中の Editor を駆動でき（`unity command eval`）、テスト・ビルドも扱える。エディタバージョンを `ProjectVersion.txt` から解決するため Makefile からパス指定が不要になる → [TASK-000](Task/TASK-000-unityVersion.md) |
 | A-13 | ストリッピング対策の方針 | **利用側に制限を課さない。制限が避けられない設計はロールバックする** | ストリッピング下で動かない箇所を「利用側の責任」や「使用禁止」で片付けない。解決できない場合は**その設計変更自体を戻す**。したがって各タスクは独立したコミットに分け、単独で revert できる状態を保つ → [TASK-025](Task/TASK-025-strippingVerification.md) |
 
 ### A-13 の適用

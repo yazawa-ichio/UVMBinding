@@ -12,6 +12,23 @@
 | --- | --- |
 | 対象 Unity | **6000.3（Unity 6.3 LTS）** |
 | C# バージョン | **C# 9**（.NET Standard 2.1） |
+| ツール | **Unity CLI**（`unity`）+ `com.unity.pipeline` |
+
+### Unity CLI で Editor を駆動する
+
+`com.unity.pipeline` を導入済みのため、**稼働中の Editor を CLI から直接操作できる**。
+
+```bash
+unity status              # 接続確認（state が ready か）
+unity command             # Editor が公開するコマンド一覧
+unity command eval '...'  # 任意の C# を実行
+```
+
+**シーン・prefab・アセットを編集する前に必ず `unity status` を実行し、接続中の Editor があるか確認する。** 接続できる場合は `.unity` / `.prefab` / `.asset` の YAML を直接編集しない。fileID や GUID の手書きは誤りやすく、稼働中の Editor には再インポートまで反映されない。
+
+接続できない場合のみファイルを直接編集し、**その旨を明示する**。
+
+なお、C# のコンパイルエラーがあると Editor は Safe Mode で起動し Pipeline が読み込まれないため接続できなくなる。`unity pipeline list` で確認できる。
 
 エディタを `6000.3.20f1` に更新し、`package.json` の `"unity"` を合わせる（[TASK-000](Task/TASK-000-unityVersion.md)）。下位互換は維持しない。
 
@@ -448,7 +465,7 @@ public void Bind属性使用時のViewModel()
 
 ### 実行方法
 
-CI は構築しない（決定 A-3）。**Unity CLI で実行する。**
+CI は構築しない（決定 A-3）。**Unity CLI（`unity test`）で実行する。**
 
 ```bash
 make test
@@ -459,6 +476,9 @@ make test
 | `make test` | **PlayMode（主軸）** |
 | `make test-edit` | EditMode |
 | `make test-all` | 両方 |
+| `make editor-status` | 稼働中 Editor への接続確認 |
+
+`Unity.exe` を直接叩かず `unity test` を使う。エディタバージョンの解決（`ProjectVersion.txt` から）、タイムアウト、NUnit / JUnit 両形式のレポート出力を CLI が扱うため。
 
 Editor 上から実行する場合は Window > General > Test Runner。
 

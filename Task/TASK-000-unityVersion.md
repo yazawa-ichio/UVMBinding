@@ -151,6 +151,22 @@ CI を構築しない方針（決定 A-3）のため、**ローカルからテ�
 - [x] `make test` / `make test-edit` が実行され、結果が出力されること
 - [x] `UNITY_APP` を明示しない状態で `make rebuild-project` が動作すること
 
+## 追補：Unity CLI への移行（2026-08-28）
+
+Unity MCP パッケージが廃止予定のため、**Unity CLI（`unity`）に置き換えた**。
+
+`com.unity.pipeline`（0.5.0-exp.1）を `unity pipeline install` で導入。これにより稼働中の Editor を CLI から駆動でき、`unity command eval` で任意の C# を実行できる。MCP の `Unity_RunCommand` に相当する。
+
+Makefile も `Unity.exe` の直接呼び出しから CLI に置き換えた。
+
+| ターゲット | 変更 |
+| --- | --- |
+| `test` / `test-edit` | `unity test --mode PlayMode/EditMode`。NUnit と JUnit の両形式を出力 |
+| `rebuild-project` | `unity run` |
+| `editor-status`（新規） | `unity status` + `unity pipeline list` |
+
+CLI がエディタバージョンを `ProjectVersion.txt` から解決するため、**`UNITY_APP` の手動指定が不要になった**。バージョン更新のたびに Makefile を書き換える必要もなくなる。
+
 ## 残課題
 
 **`SolutionSync.cs` は壊れたまま。** `Tools/SolutionSync` メニューを実行すると例外になる。`rebuild-project` からは切り離したため実害は無いが、動かないメニュー項目が残っている。

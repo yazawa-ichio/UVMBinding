@@ -1,6 +1,6 @@
-ifndef UNITY_APP
-	UNITY_APP="C:/Program Files/Unity/Hub/Editor/6000.3.20f1/Editor/Unity.exe"
-endif
+# Unity CLI を使う。エディタ解決とレポート出力を CLI に任せる。
+# CLI 未導入の場合は https://public-cdn.cloud.unity3d.com/hub/prod/cli/install.ps1 を参照。
+UNITY_PROJECT = ./Unity
 
 doc-build:
 	docfx build docfx/docfx.json -t statictoc
@@ -12,12 +12,11 @@ format:
 	cd Unity && ./format.sh
 
 rebuild-project:
-	echo ${PWD}
 	rm -f ./Unity/*.csproj
 	rm -f ./Unity/*.sln
 	rm -f ./Unity/*.slnx
 	rm -rf ./Unity/Library/ScriptAssemblies
-	${UNITY_APP}  -quit -batchmode -projectPath "${PWD}/Unity"
+	unity run ${UNITY_PROJECT} --non-interactive
 
 doc-release: rebuild-project doc-metadata
 	rm -rf docfx/_site
@@ -27,9 +26,19 @@ doc-release: rebuild-project doc-metadata
 
 # PlayMode が主軸。実機 / IL2CPP / ストリッピング下の挙動を検証できるため。
 test:
-	${UNITY_APP} -runTests -batchmode -projectPath "${PWD}/Unity" -testPlatform PlayMode -testResults "${PWD}/TestResults.PlayMode.xml" -logFile -
+	unity test ${UNITY_PROJECT} --mode PlayMode --report-format nunit,junit \
+		--output ./TestResults.PlayMode.xml --junit-output ./TestResults.PlayMode.junit.xml \
+		--non-interactive
 
 test-edit:
-	${UNITY_APP} -runTests -batchmode -projectPath "${PWD}/Unity" -testPlatform EditMode -testResults "${PWD}/TestResults.EditMode.xml" -logFile -
+	unity test ${UNITY_PROJECT} --mode EditMode --report-format nunit,junit \
+		--output ./TestResults.EditMode.xml --junit-output ./TestResults.EditMode.junit.xml \
+		--non-interactive
 
 test-all: test test-edit
+
+# 稼働中の Editor への接続確認。繋がらない場合は Editor の起動と
+# com.unity.pipeline の導入（unity pipeline install）を確認する。
+editor-status:
+	unity status --no-banner
+	unity pipeline list --no-banner
