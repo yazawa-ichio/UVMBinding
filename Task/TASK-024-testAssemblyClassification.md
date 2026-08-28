@@ -1,25 +1,30 @@
-# TASK-024: テストアセンブリの分類是正
+# TASK-024: テストアセンブリの EditMode / PlayMode 分離
 
 | | |
 | --- | --- |
 | Phase | 0（前提整備） |
-| 状態 | **判断待ち** |
+| 状態 | 未着手 |
 | 依存 | TASK-000 |
 | 規模 | 小 |
 
 ## 目的
 
-`UVMBinding.Tests` の EditMode / PlayMode 分類を是正し、`make test`（EditMode）でパッケージのテストが実行されるようにする。
+テストアセンブリを EditMode 用と PlayMode 用に分離し、**PlayMode を主軸**とする構成を確立する。
 
-## 背景
+## 決定事項
 
-[TASK-000](TASK-000-unityVersion.md) で `make test` を追加した際に判明した。
+**PlayMode を主軸とする**（2026-08-28 決定）。
 
-**`make test`（EditMode）では、パッケージのテストが 1 件も実行されない。** 実行されたのは依存パッケージ（Addressables）のスタブテスト 1 件のみだった。
+理由は、**PlayMode テストは実機環境・IL2CPP・ストリッピング下で実行できる**ため。このライブラリは以下の理由でストリッピングの影響を受けやすく、**どこまでサポートできるかをテストで実測する必要がある**。
 
-`make test-play`（PlayMode）では `UVMBinding.Tests` の全 20 件が実行され、すべて通過する。
+- `[SerializeReference]` の Converter / Provider / EventArgument は、参照が prefab 内の**文字列（`{class, ns, asm}`）だけ**。静的なコード参照が存在しない
+- `ReflectionViewModel` / `ReflectionPropertyValueResolver` / `ReflectionEventMethodResolver` がリフレクションを使う
+- `BindingProperty<T>` / `ValueHolder<T>` / `Assignable<TSrc,TDst>` のジェネリック実体化が AOT で必要になる
+- 現状 `[UnityEngine.Scripting.Preserve]` は 5 型にしか付いていない
 
-### 原因
+詳細な検証は [TASK-025](TASK-025-strippingVerification.md) で行う。**本タスクはその土台**にあたる。
+
+## 現状の問題
 
 `UVMBinding.Tests.asmdef` が EditMode と PlayMode の設定を混在させている。
 
@@ -28,58 +33,64 @@
 "references": [ "UnityEngine.TestRunner", "UnityEditor.TestRunner" ] // Editor 用も参照
 ```
 
-Unity の慣例は以下。
+**`UnityEditor.TestRunner` を参照していると、プレイヤービルドに含められない。** 実機での実行という主軸の目的が達成できない。
 
-| 分類 | `includePlatforms` | 参照 |
-| --- | --- | --- |
-| EditMode | `["Editor"]` | `UnityEngine.TestRunner` + `UnityEditor.TestRunner` |
-| PlayMode | `[]` | `UnityEngine.TestRunner` のみ |
+また `make test`（EditMode）では 1 件も実行されなかった。
 
-現状は `UnityEditor.TestRunner` を参照しながら全プラットフォーム対象になっており、**Unity は PlayMode として分類している**。
+## 目標とする構成
 
-### 中身は EditMode が適切
+| アセンブリ | 分類 | `includePlatforms` | 参照 | 用途 |
+| --- | --- | --- | --- | --- |
+| `UVMBinding.Tests` | **PlayMode（主軸）** | `[]` | `UnityEngine.TestRunner` のみ | ランタイム挙動。実機 / IL2CPP / ストリッピング検証 |
+| `UVMBinding.EditorTests` | EditMode | `["Editor"]` | `UnityEngine.TestRunner` + `UnityEditor.TestRunner` | Lint、Drawer、アセット走査など Editor 専用 |
 
-テストはすべて `[Test]` 属性の単体テストで、`[UnityTest]`（コルーチン）は使われていない。実行中のプレイヤーを必要とする内容ではない。
+### 振り分けの基準
 
-**PlayMode で回すのは無駄に遅く、Lint の EditMode テスト（[TASK-007](TASK-007-structuralLint.md) / [TASK-010](TASK-010-namingQualityLint.md)）との相性も悪い。**
+| 対象 | 配置先 |
+| --- | --- |
+| ViewModel / Binder / Converter のランタイム挙動 | **PlayMode** |
+| ILPostProcessor が生成したコードの動作 | **PlayMode** |
+| ボックス化・アロケーションの実測 | **PlayMode** |
+| Lint（[TASK-007](TASK-007-structuralLint.md) / [TASK-010](TASK-010-namingQualityLint.md)） | EditMode |
+| Drawer / Inspector の検証 | EditMode |
+| Prefab / Scene の走査 | EditMode |
 
-## 判断が必要な点
+**迷ったら PlayMode に置く。** Editor でしか動かないものだけを EditMode に置く。
 
-**`BinderTests` が PlayMode 固有の挙動に依存していないか。**
+## 変更内容
 
-`BinderTests` は `Resources` から prefab を読み込み、`Instantiate` して `View.Attach` を行う。EditMode でも `Instantiate` は `Awake` を呼ぶため動作する見込みだが、以下は要確認。
+### 1. `UVMBinding.Tests` を PlayMode 専用にする
 
-- `View.Awake()` が `ViewUpdater.Register` を行う経路
-- `ViewUpdater` が購読する `Canvas.preWillRenderCanvases` が EditMode で発火するか
-- `Binder` の `TryUpdate` が EditMode で回るか
+`references` から `UnityEditor.TestRunner` を削除する。テストソースは `UnityEditor` 名前空間を一切使っていないため、削除しても影響しない。
 
-**動かない場合は、当該テストのみ PlayMode に残す**という分割も選択肢になる。
+### 2. `UVMBinding.EditorTests` の新設
 
-## 変更内容（是正する場合）
+**本タスクでは作らない。** 中身のない空アセンブリを先に作らない方針のため、EditMode テストが最初に必要になる TASK-007 で作成する。
 
-```json
-"includePlatforms": [ "Editor" ]
-```
+構成のみ本ファイルに定義しておき、TASK-007 はこれに従う。
 
-`UVMBinding.Tests.asmdef` を EditMode 用に変更する。
+### 3. Makefile のターゲット構成
 
-必要なら PlayMode 固有のテストを別アセンブリ（`UVMBinding.PlayModeTests`）に分離する。
+主軸を反映し、`make test` を PlayMode に割り当てる。
+
+| ターゲット | 内容 |
+| --- | --- |
+| `make test` | **PlayMode（主軸）** |
+| `make test-edit` | EditMode |
+| `make test-all` | 両方 |
 
 ## 対象ファイル
 
 - `Unity/Assets/UVMBinding.Tests/Tests/UVMBinding.Tests.asmdef`
+- `Makefile`
 
 ## 完了条件
 
-- 判断結果を本ファイルに記録すること
-- 是正する場合、**`make test` で 20 件すべてが実行され通過すること**
-- 分割する場合、`make test` と `make test-play` の合計で 20 件が通過すること
-- [CONVENTIONS.md](../CONVENTIONS.md) の「実行方法」節を実態に合わせて更新すること
+- `UVMBinding.Tests` が `UnityEditor.TestRunner` を参照しないこと
+- **`make test` で既存 20 件が実行され、すべて通過すること**
+- `make test-edit` が実行でき、結果が出力されること（現状パッケージ側は 0 件で正常）
+- [CONVENTIONS.md](../CONVENTIONS.md) のテスト節が構成を反映していること
 
 ## 備考
 
-**現状でもテストは全通過しており、機能上の問題はない。** 是正の目的は実行の速さと、Lint テストを EditMode で追加する際の一貫性。
-
-対応しない判断も妥当。その場合は CONVENTIONS に `make test-play` を正とする旨が既に記載されているため、追加作業は不要。
-
-[TASK-007](TASK-007-structuralLint.md) / [TASK-010](TASK-010-namingQualityLint.md) の Lint を EditMode テストとして追加する際は、**この混在構成を踏襲せず新規に正しい asmdef を作る**こと。本タスクを対応しない場合でも、そちらは独立して正しく設定できる。
+`UVMBinding.AppTests` は `defineConstraints` を持たずテストアセンブリでもないため、本タスクの対象外。[TASK-023](TASK-023-showcase.md) でショーケースとして作り替える。

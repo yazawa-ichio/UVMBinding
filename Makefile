@@ -25,8 +25,11 @@ doc-release: rebuild-project doc-metadata
 	docfx build docfx/docfx.json
 	cp -r docfx/_site Documents
 
+# PlayMode が主軸。実機 / IL2CPP / ストリッピング下の挙動を検証できるため。
 test:
-	${UNITY_APP} -runTests -batchmode -projectPath "${PWD}/Unity" -testPlatform EditMode -testResults "${PWD}/TestResults.xml" -logFile -
-
-test-play:
 	${UNITY_APP} -runTests -batchmode -projectPath "${PWD}/Unity" -testPlatform PlayMode -testResults "${PWD}/TestResults.PlayMode.xml" -logFile -
+
+test-edit:
+	${UNITY_APP} -runTests -batchmode -projectPath "${PWD}/Unity" -testPlatform EditMode -testResults "${PWD}/TestResults.EditMode.xml" -logFile -
+
+test-all: test test-edit

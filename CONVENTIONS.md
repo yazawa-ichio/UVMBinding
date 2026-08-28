@@ -383,6 +383,30 @@ Converter による変換は path を持たず依存関係の宣言も無いた�
 
 ## 10. テスト
 
+### PlayMode を主軸とする
+
+**新しいテストは原則 PlayMode に置く。** EditMode は Editor でしか動かないものに限る。
+
+理由は、**PlayMode テストは実機・IL2CPP・ストリッピング下で実行できる**ため。このライブラリは `[SerializeReference]` の型が prefab 内の文字列でしか参照されない、リフレクション経路を持つ、ジェネリック実体化が AOT に依存する、といった理由でストリッピングの影響を受けやすい（[TASK-025](Task/TASK-025-strippingVerification.md)）。
+
+| アセンブリ | 分類 | `includePlatforms` | 参照 | 用途 |
+| --- | --- | --- | --- | --- |
+| `UVMBinding.Tests` | **PlayMode（主軸）** | `[]` | `UnityEngine.TestRunner` のみ | ランタイム挙動 |
+| `UVMBinding.EditorTests` | EditMode | `["Editor"]` | `UnityEngine.TestRunner` + `UnityEditor.TestRunner` | Lint、Drawer、アセット走査 |
+
+**PlayMode アセンブリに `UnityEditor.TestRunner` を参照させない。** 参照するとプレイヤービルドに含められず、実機検証ができなくなる。
+
+### 振り分け
+
+| 対象 | 配置先 |
+| --- | --- |
+| ViewModel / Binder / Converter のランタイム挙動 | **PlayMode** |
+| ILPostProcessor が生成したコードの動作 | **PlayMode** |
+| ボックス化・アロケーションの実測 | **PlayMode** |
+| Lint、Drawer、Prefab / Scene 走査 | EditMode |
+
+**迷ったら PlayMode。** Editor でしか動かないものだけを EditMode に置く。
+
 配置は `Unity/Assets/UVMBinding.Tests/Tests/`、名前空間は `UVMBinding.Tests`。
 
 ### メソッド名
@@ -427,32 +451,22 @@ public void Bind属性使用時のViewModel()
 CI は構築しない（決定 A-3）。**Unity CLI で実行する。**
 
 ```bash
-make test-play
+make test
 ```
-
-**現状、パッケージの単体テストは PlayMode に分類されている。** `make test`（EditMode）では 1 件も実行されない。
 
 | ターゲット | 実行対象 |
 | --- | --- |
-| `make test-play` | **`UVMBinding.Tests` の全テスト**（現状はこちらを使う） |
-| `make test` | EditMode テスト。現状パッケージ側は該当なし |
+| `make test` | **PlayMode（主軸）** |
+| `make test-edit` | EditMode |
+| `make test-all` | 両方 |
 
 Editor 上から実行する場合は Window > General > Test Runner。
 
-### テストアセンブリの分類（既知の問題）
+`UVMBinding.EditorTests` はまだ存在しない。EditMode テストが最初に必要になる [TASK-007](Task/TASK-007-structuralLint.md) で作成する。**中身のない空アセンブリを先に作らない。**
 
-`UVMBinding.Tests.asmdef` は EditMode と PlayMode の設定が混在している。
+### 実機での検証
 
-```json
-"includePlatforms": [],                                       // 全プラットフォーム = PlayMode 扱い
-"references": [ "UnityEngine.TestRunner", "UnityEditor.TestRunner" ]  // Editor 用も参照
-```
-
-Unity の慣例では、EditMode は `includePlatforms: ["Editor"]`、PlayMode は `includePlatforms: []` かつ `UnityEditor.TestRunner` を参照しない。
-
-中身は `[Test]` 属性の純粋な単体テストであり、**本来 EditMode が適切**。ただし分類変更は挙動が変わりうるため、[TASK-024](Task/TASK-024-testAssemblyClassification.md) として切り出している。
-
-**新しくテストアセンブリを追加する場合**（Lint の EditMode テストなど）は、この混在構成を踏襲せず、用途に応じて正しく設定すること。
+実機・IL2CPP・ストリッピング下での動作確認は [TASK-025](Task/TASK-025-strippingVerification.md) で扱う。**サポート範囲が確定するまで、ストリッピング環境での動作は保証されない。**
 
 ### 手動での動作確認
 

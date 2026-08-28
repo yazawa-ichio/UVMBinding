@@ -13,7 +13,7 @@
 | --- | --- |
 | `ProjectVersion.txt` | `6000.0.46f1` → **`6000.3.20f1`** |
 | アップグレード時のコンパイルエラー | **0 件** |
-| **既存テスト** | **20 件すべて通過**（`make test-play`） |
+| **既存テスト** | **20 件すべて通過**（PlayMode） |
 | **ILPostProcessor** | **健全**（`BindingTests` / `BinderTests` 通過） |
 
 ### 依存パッケージの自動更新
@@ -120,13 +120,15 @@ UNITY_APP="C:/Program Files/Unity/Hub/Editor/6000.3.20f1/Editor/Unity.exe"
 
 CI を構築しない方針（決定 A-3）のため、**ローカルからテストを回す手段を Makefile に用意する**。現状はどこにも記載がなく、全タスクが「既存テスト全通過」を完了条件にしているのに手順が暗黙知になっている。
 
-```makefile
-test:
-	${UNITY_APP} -runTests -batchmode -projectPath "${PWD}/Unity" \
-		-testPlatform EditMode -testResults "${PWD}/TestResults.xml" -logFile -
-```
+| ターゲット | 内容 |
+| --- | --- |
+| `make test` | **PlayMode（主軸）** |
+| `make test-edit` | EditMode |
+| `make test-all` | 両方 |
 
-PlayMode 用のターゲットも同様に用意する（`-testPlatform PlayMode`）。`TestResults.xml` は `.gitignore` に追加する。
+`TestResults.*.xml` は `.gitignore` に追加する。
+
+**当初は EditMode を `test` に割り当てていたが、[TASK-024](TASK-024-testAssemblyClassification.md) で PlayMode を主軸とする決定（A-12）を受けて入れ替えた。** 実機・IL2CPP・ストリッピング下での検証が PlayMode でしか行えないため。
 
 `version` は本タスクでは据え置き（`0.0.3`）。
 
@@ -146,7 +148,7 @@ PlayMode 用のターゲットも同様に用意する（`-testPlatform PlayMode
 - [x] `mono-cecil` のバージョンが更新後の `manifest.json` と一致していること（`1.11.6`）
 - [x] パッケージがクリーンな状態で解決・コンパイルできること
 - [x] **エディタ更新後に既存テストが全通過すること**（20 件通過）
-- [x] `make test` / `make test-play` が実行され、結果が出力されること
+- [x] `make test` / `make test-edit` が実行され、結果が出力されること
 - [x] `UNITY_APP` を明示しない状態で `make rebuild-project` が動作すること
 
 ## 残課題

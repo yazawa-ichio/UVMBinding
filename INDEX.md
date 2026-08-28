@@ -18,7 +18,7 @@
 | # | タスク | 状態 | 依存 | 規模 |
 | --- | --- | --- | --- | --- |
 | 000 | [対象 Unity バージョンの更新](Task/TASK-000-unityVersion.md) | **完了** | — | 小 |
-| 024 | [テストアセンブリの分類是正](Task/TASK-024-testAssemblyClassification.md) | **判断待ち** | 000 | 小 |
+| 024 | [テストアセンブリの EditMode / PlayMode 分離](Task/TASK-024-testAssemblyClassification.md) | 未着手 | 000 | 小 |
 | 001 | [Collection / ValueCollection の不具合修正](Task/TASK-001-collectionEnumerator.md) | 未着手 | — | 小 |
 | 002 | [PropertyContainer のデバッグ出力除去](Task/TASK-002-removeDebugLog.md) | 未着手 | — | 小 |
 | 016 | [書き込みパスの ValueHolder ガード](Task/TASK-016-writePathAllocation.md) | 未着手 | — | 小 |
@@ -29,6 +29,7 @@
 
 | # | タスク | 状態 | 依存 | 規模 |
 | --- | --- | --- | --- | --- |
+| 025 | [IL2CPP / ストリッピング耐性の検証](Task/TASK-025-strippingVerification.md) | 未着手 | 024 | 大 |
 | 023 | [ショーケースシーンの構築](Task/TASK-023-showcase.md) | 未着手 | 000 | 大 |
 | 022 | [Cast Converter の集約](Task/TASK-022-castConverterConsolidation.md) | 未着手 | 000,017 | 中 |
 | 003 | [BindingProperty の再設計（1 path = 1 値）](Task/TASK-003-bindingPropertyRedesign.md) | 未着手 | 001,002,016,**023**（022 は先行推奨） | **大** |
@@ -172,7 +173,8 @@ export 計画は「既存の命名が意味を持つこと」に賭けている�
 | A-8 | 数値 Cast の 90 型 | **設定と実装を分離して 1 型に集約する** | `CastBase` はシリアライズ状態を持たないため集約できる。Comparison / BoolSwitch は型付きの `[SerializeField]` を持つため不可。**調査で prefab / scene における Cast の使用が 0 件と判明**したため、移行コストなしに削除できる → [TASK-022](Task/TASK-022-castConverterConsolidation.md) |
 | A-9 | prefab / アセットの互換性 | **維持しない** | メジャーバージョンアップ作業中のため。既存 prefab が壊れることを理由に変更を躊躇しない。壊れた箇所は作り直す |
 | A-10 | 手動での動作確認の基準 | **ショーケースシーンを構築し、そのチェックリストで判定する** | 現 AppTests は最小構成で、「動作すること」は検証不能な条件だった。基本機能を網羅したショーケースに作り替える → [TASK-023](Task/TASK-023-showcase.md) |
-| A-11 | テスト実行手段 | **Unity CLI（`make test-play`）** | CI は作らない（A-3）が、実行手順が暗黙知だった。`Makefile` に `test` / `test-play` を追加。**現状パッケージのテストは PlayMode 分類のため `test-play` を使う** → [TASK-000](Task/TASK-000-unityVersion.md) / [TASK-024](Task/TASK-024-testAssemblyClassification.md) |
+| A-11 | テスト実行手段 | **Unity CLI（`make test`）** | CI は作らない（A-3）が、実行手順が暗黙知だった。`Makefile` に `test` / `test-edit` / `test-all` を追加 → [TASK-000](Task/TASK-000-unityVersion.md) |
+| A-12 | テストの主軸 | **PlayMode を主軸とし、EditMode と分離する** | PlayMode テストは実機・IL2CPP・ストリッピング下で実行できる。本ライブラリは `[SerializeReference]` の型が prefab 内の文字列でしか参照されない、リフレクション経路を持つ、ジェネリック実体化が AOT に依存する、といった理由でストリッピングの影響を受けやすく、**サポート範囲を実測する必要がある** → [TASK-024](Task/TASK-024-testAssemblyClassification.md) / [TASK-025](Task/TASK-025-strippingVerification.md) |
 
 ### A-2 / A-9 の適用範囲
 

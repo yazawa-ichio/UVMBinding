@@ -81,7 +81,23 @@ EditMode テストとして実装し、あわせて手動実行用のメニュ�
 
 ## 対象ファイル
 
-新規。配置先は `Unity/Assets/UVMBinding/Editor/Lint/`。
+新規。検査ロジックの配置先は `Unity/Assets/UVMBinding/Editor/Lint/`。
+
+**テストは `UVMBinding.EditorTests` に置く。** このアセンブリはまだ存在しないため、**本タスクで新規作成する**（[TASK-024](TASK-024-testAssemblyClassification.md) で構成を定義済み）。
+
+```json
+{
+    "name": "UVMBinding.EditorTests",
+    "references": [ "UnityEngine.TestRunner", "UnityEditor.TestRunner", "UVMBinding", "UVMBinding.Editor" ],
+    "includePlatforms": [ "Editor" ],
+    "overrideReferences": true,
+    "precompiledReferences": [ "nunit.framework.dll" ],
+    "autoReferenced": false,
+    "defineConstraints": [ "UNITY_INCLUDE_TESTS" ]
+}
+```
+
+**PlayMode 主軸の方針（[CONVENTIONS.md](../CONVENTIONS.md) 10 章）の例外にあたる。** Lint は Prefab / Scene の走査を伴い Editor でしか動かないため EditMode が正当。
 
 参照するもの。
 
