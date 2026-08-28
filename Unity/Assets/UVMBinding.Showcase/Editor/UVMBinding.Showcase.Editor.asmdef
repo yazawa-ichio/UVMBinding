@@ -1,0 +1,20 @@
+{
+    "name": "UVMBinding.Showcase.Editor",
+    "rootNamespace": "",
+    "references": [
+        "UVMBinding",
+        "UVMBinding.UI",
+        "UVMBinding.Showcase"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

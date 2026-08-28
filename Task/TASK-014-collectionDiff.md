@@ -28,6 +28,36 @@ public void Add(T val)
 
 **1 要素の追加で全行が再バインドされ、GC が走る。** インベントリ、クエスト一覧、ランキングなど実際のゲームで必ず出てくる形なので、規模が出た時点で確実に刺さる。
 
+## 再入の問題（2026-08-29 に判明）
+
+**`Instantiate` が Canvas のレイアウト再構築を誘発し、`UpdateValue` が再入する。**
+
+ショーケース構築（[TASK-023](TASK-023-showcase.md)）で `CollectionBinder` を `ScrollRect` の中に置いたところ、要素追加のたびに `NullReferenceException` が発生した。
+
+```
+CollectionBinder.Bind (CollectionBinder.cs:53)
+CollectionBinder.UpdateValue
+Binder`1.TryUpdate
+Binding.TryBinderUpdate
+ViewUpdater.Update
+Canvas.SendPreWillRenderCanvases
+Canvas.ForceUpdateCanvases
+ScrollRect.EnsureLayoutHasRebuilt      ← ここから再入する
+ScrollRect.LateUpdate
+```
+
+`m_Instance.Add(Instantiate(...))` の最中にレイアウト再構築が走り、`ViewUpdater` 経由で同じ `UpdateValue` が再入する。生成途中の要素に対して `Bind` が呼ばれ、`GetComponent<IView>()` が null を返す。
+
+**暫定対応として `Bind` に null ガードを入れた**（例外ではなく警告にした）。ただし**根本原因は再入であり、本タスクで解消する**こと。
+
+差分更新の実装時に以下を満たす。
+
+- `UpdateValue` の再入をガードする（更新中フラグ、または再入時は次フレームへ回す）
+- 生成とバインドを分離し、**生成が完了した要素だけをバインド対象にする**
+- プーリング導入後は `Instantiate` の頻度自体が下がるため、発生条件も減る
+
+**この問題は ScrollRect の中で使うと必ず踏む。** 実プロジェクトでもリスト UI は多くがスクロール内にあるため、優先度は高い。
+
 ## 参考
 
 Cysharp/ObservableCollections の `ISynchronizedView` は Add / Remove / Replace / Move / Reset を粒度別に通知し、変換関数は Add 時に 1 回だけ呼ばれる。Unity 統合では transform 関数が GameObject を生成し、ビューが寿命を管理する。

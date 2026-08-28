@@ -2,6 +2,7 @@
 using UnityEngine;
 using UVMBinding.Arguments;
 using UVMBinding.Core;
+using UVMBinding.Logger;
 
 namespace UVMBinding.Binders
 {
@@ -50,6 +51,13 @@ namespace UVMBinding.Binders
 		protected virtual void Bind(int index, GameObject instance, IViewModel vm)
 		{
 			var view = instance.GetComponent<IView>();
+			if (view == null)
+			{
+				//Instantiate が Canvas のレイアウト再構築を誘発し、生成途中の要素に対して
+				//再入することがある。View が無い prefab を指定した場合もここに来る
+				Log.Warning(this, "{0} Not Found View in Collection Item {1}", this, instance);
+				return;
+			}
 			view.Prepare();
 			view.ViewModel = vm;
 			if (!instance.activeSelf && !m_DisableAutoActive)
