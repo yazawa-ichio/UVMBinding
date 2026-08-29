@@ -10,7 +10,6 @@ namespace UVMBinding
 	{
 		public string Path { get; private set; }
 		public int Hash { get; protected set; }
-		internal BindingProperty Next;
 		protected Action<string, IValueHolder> m_OnChangedValue;
 
 		public event Action<string, IValueHolder> OnChangedValue

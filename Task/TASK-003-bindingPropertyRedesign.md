@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | Phase | 0.5（基盤再設計） |
-| 状態 | 未着手 |
+| 状態 | **完了** |
 | 依存 | TASK-001, TASK-002, TASK-016（TASK-022 は先行推奨） |
 | 規模 | **大** |
 
@@ -144,6 +144,54 @@ prefab 側も一応確認するが、**互換性を守るためではなく、�
 
 ---
 
+## 調査結果（2026-08-29）
+
+### チェーンは実際にはほとんど作られていない
+
+`Get<T>` がチェーンを継ぎ足す箇所に一時的な記録を入れ、実測した。
+
+| 対象 | チェーン生成 |
+| --- | --- |
+| PlayMode テスト 34 件 | **1 件** |
+| ショーケース全 11 画面（操作込み） | **0 件** |
+
+唯一の 1 件は `SubscribeTests` の「PropertyのHandleで解除出来る」で、`Subscribe<int>` と
+`Subscribe<string>` を同じ path に張って両方が独立に発火することを確かめている。
+**廃止する仕様そのものを検証しているテスト**であり、本タスクで書き換える対象。
+
+### 利用側にチェーンを作る経路が無い
+
+実プロジェクトを静的に調べた結果は以下。
+
+| 観点 | 結果 |
+| --- | --- |
+| `PropertyContainer.Get<T>` / `Set<T>` の直接呼び出し | **0 件**（`Get<T>` の検出 11 件はすべて別 API） |
+| `GeneralViewModel` | **0 件** |
+| `ViewModelPropertyExtension` / PropertyProvider | **0 件**（コード・prefab とも） |
+| `Property<T>` 宣言 | 10 件。すべて 1 path に 1 型 |
+| `Collection<T>` | 15 件 |
+
+`Subscribe<T>` の 1 件は `EventBroker` に対するもので**本タスクの対象外**。
+
+**チェーンは同一 path が異なる T で 2 回触られたときにしかできない。** 宣言箇所が
+path ごとに 1 つしかない以上、実プロジェクトでは発生し得ない。
+
+### 型を決めるのは「最初に触った側」
+
+プロパティは `Get<T>` で**遅延生成**される。`[Bind]` の事前登録は無い。
+したがって 1 path = 1 型にすると、**型は最初にその path を触ったコードで確定する**。
+
+ただし上記のとおり **path ごとに型を持つ箇所は 1 つしかない**ため、実害は無い。
+`Binder.Bind` は `Get<T>` を経由せず、渡された 1 つのプロパティを判定するだけなので
+View 側から型が確定することもない。
+
+### `ReflectionViewModel` は影響を受けない
+
+書き込みは `property.SetObject(value)`、つまり**型消去されたインターフェース経由**で行っており
+`Get<T>` を通らない。`ObjectBindingProperty` の `TValue` は `object` なのでキャストも常に成功する。
+
+---
+
 ## 移行手順
 
 1. TASK-001 で `Collection<T>` の型不一致を修正する（チェーンなしでも動く状態にする）
@@ -153,6 +201,55 @@ prefab 側も一応確認するが、**互換性を守るためではなく、�
 5. `SetDirty` / `SetAllDirty` / `GetAllImpl` / `SubscribeAssignable` からチェーン走査を削除する
 6. `Binding.m_Extend` の走査を修正する
 7. 型不一致のログを入れ、既存テストと[ショーケース](TASK-023-showcase.md)で不一致が出ないことを確認する
+
+## 実装結果（2026-08-29）
+
+### 変更点
+
+| 対象 | 変更 |
+| --- | --- |
+| `BindingProperty` | `Next` フィールドを削除 |
+| `PropertyContainer.Get<T>` | 型が合わなければ `Log.Error` して **null を返す** |
+| `PropertyContainer.Subscribe` / `Unsubscribe` | null ガード |
+| `PropertyContainer.SubscribeAssignable` | チェーン走査を削除 |
+| `PropertyContainer.SetDirty` / `SetAllDirty` / `GetAllImpl` | チェーン走査を削除 |
+| `ViewModel.GetImpl` / `SetImpl` | null ガード。読み取りは `default` を返す |
+| `Property<T>` | null ガード。`Value` の読み書きと `SetDirty` |
+| `ViewModelPropertyExtension.Set<T>` | null ガード |
+| `Binding` | `m_Extend` の走査を削除 |
+
+### `Binding.m_Extend` は死んでいた
+
+`m_Extend` は**宣言と読み出ししか存在せず、代入箇所が無かった**。常に null であり、
+チェーン走査のループは一度も実行されていない。フィールドごと削除した。
+
+### 検証
+
+| 項目 | 結果 |
+| --- | --- |
+| PlayMode テスト | **43 / 43**（新規 9 件を含む） |
+| EditMode テスト | 1 / 1 |
+| ショーケース（IL2CPP + Stripping High） | **基準値と完全一致** |
+
+**ショーケースの基準値が 1 行も変わらなかった。** 446 件の状態（操作前後・色・座標・活性・入力値）が
+再設計の前後で同一であり、[TASK-023](TASK-023-showcase.md) の基準値が回帰検出として機能した。
+
+### 書き換えたテスト
+
+`SubscribeTests.PropertyのHandleで解除出来る` は `Subscribe<int>` と `Subscribe<string>` を
+同じ path に張り、両方が独立に発火することを検証していた。**廃止した仕様そのもの**のため、
+1 path = 1 型を前提とする内容に書き換えた。
+
+### 新規テスト（`SinglePropertyTypeTests`）
+
+型不一致で `Log.Error` が出て無視されること、`Subscribe` / `Unsubscribe` が例外にならないこと、
+`BindingProperty<object>` が任意の型を受け入れること、`SubscribeAssignable` の 3 ケース
+（完全一致・代入可能・不一致）、path ごとにプロパティが 1 つしか作られないこと、
+完全一致の書き込みでボックス化しないこと。
+
+**アロケーション計測では `Logger.Log.Level` を一時的に `Error` へ落としている。**
+`Trace` が有効だとログの整形でアロケーションが発生するため。既定は Editor で `Debug`、
+プレイヤーで `Warning` なので通常は通らない経路。
 
 ## 完了条件
 

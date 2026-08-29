@@ -43,6 +43,11 @@ namespace UVMBinding.Core
 		{
 			Log.Debug("Property Subscribe<{0}> Path:{1}", typeof(T), path);
 			var porp = Get<T>(path);
+			if (porp == null)
+			{
+				//型不一致。Get<T> が理由を記録済みなので何もしない
+				return default;
+			}
 			porp.OnChanged += notify;
 			return new SubscribeHandle<T>(porp, notify);
 		}
@@ -60,22 +65,17 @@ namespace UVMBinding.Core
 			{
 				if (m_Properties.TryGetValue(path, out BindingProperty property))
 				{
-					var cur = property;
-					while (cur != null)
+					if (isFirst)
 					{
-						if (isFirst)
-						{
-							cur.OnChangedValue += InvokeChangedValueCache;
-						}
-						if (cur is BindingProperty<T> cast)
-						{
-							value = cast.Value;
-						}
-						else if (cur.IsAssignable<T>())
-						{
-							value = (T)cur.GetObject();
-						}
-						cur = cur.Next;
+						property.OnChangedValue += InvokeChangedValueCache;
+					}
+					if (property is BindingProperty<T> cast)
+					{
+						value = cast.Value;
+					}
+					else if (property.IsAssignable<T>())
+					{
+						value = (T)property.GetObject();
 					}
 				}
 			}
@@ -89,31 +89,27 @@ namespace UVMBinding.Core
 		public void Unsubscribe<T>(string path, Action<T> notify)
 		{
 			Log.Debug("Property Unsubscribe<{0}> Path:{1}", typeof(T), path);
-			Get<T>(path).OnChanged -= notify;
+			var property = Get<T>(path);
+			if (property != null)
+			{
+				property.OnChanged -= notify;
+			}
 		}
 
+		//1 path = 1 型。型は最初の登録で確定する。
+		//型が合わない場合は例外を投げず null を返す。出荷後に落とさないため。
+		//不一致は静的検査（TASK-007）で防ぐ方針。
 		internal IBindingProperty<T> Get<T>(string path)
 		{
 			if (m_Properties.TryGetValue(path, out BindingProperty property))
 			{
-				var last = property;
-				while (property != null)
+				if (property is BindingProperty<T> ret)
 				{
-					if (property is BindingProperty<T> ret)
-					{
-						//データがすでにある
-						return ret;
-					}
-					last = property;
-					property = property.Next;
-				}
-				{
-					var ret = NewProperty<T>(path);
-					last.Next = ret;
 					return ret;
 				}
+				Log.Error("Property Type Mismatch Path:{0} Registered:{1} Requested:{2}", path, property.GetBindType(), typeof(T));
+				return null;
 			}
-			else
 			{
 				var ret = NewProperty<T>(path);
 				m_Properties[path] = ret;
@@ -168,25 +164,16 @@ namespace UVMBinding.Core
 			Log.Trace("SetDirty {0}", path);
 			if (m_Properties.TryGetValue(path, out BindingProperty property))
 			{
-				while (property != null)
-				{
-					property.SetDirty();
-					property = property.Next;
-				}
+				property.SetDirty();
 			}
 		}
 
 		public void SetAllDirty()
 		{
 			Log.Trace("SetAllDirty");
-			foreach (var _property in m_Properties.Values)
+			foreach (var property in m_Properties.Values)
 			{
-				var property = _property;
-				while (property != null)
-				{
-					property.SetDirty();
-					property = property.Next;
-				}
+				property.SetDirty();
 			}
 		}
 
@@ -200,14 +187,9 @@ namespace UVMBinding.Core
 
 		internal List<IBindingProperty> GetAllImpl(List<IBindingProperty> ret)
 		{
-			foreach (var _property in m_Properties.Values)
+			foreach (var property in m_Properties.Values)
 			{
-				var property = _property;
-				while (property != null)
-				{
-					ret.Add(property);
-					property = property.Next;
-				}
+				ret.Add(property);
 			}
 			return ret;
 		}

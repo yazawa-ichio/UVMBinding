@@ -11,7 +11,6 @@ namespace UVMBinding.Core
 		List<IBinder> m_Binding = new();
 		IViewModel m_ViewModel;
 		bool m_Disposed;
-		BindingProperty m_Extend;
 
 		public void Init(IViewElement[] elements)
 		{
@@ -139,14 +138,6 @@ namespace UVMBinding.Core
 				foreach (var prop in m_ViewModel.Property.GetAllImpl(list))
 				{
 					BindToBinder(prop);
-				}
-				{
-					var prop = m_Extend;
-					while (prop != null)
-					{
-						BindToBinder(prop);
-						prop = prop.Next;
-					}
 				}
 			}
 			m_ViewModel.Property.OnNewProperty += BindToBinder;

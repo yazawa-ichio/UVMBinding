@@ -21,7 +21,9 @@ namespace UVMBinding
 
 		protected T GetImpl<T>(string path)
 		{
-			return m_Properties.Get<T>(path).Value;
+			var property = m_Properties.Get<T>(path);
+			//型不一致。Get<T> が理由を記録済み
+			return property != null ? property.Value : default;
 		}
 
 		void IViewModel.Set<T>(string path, T val) => SetImpl<T>(path, val);
@@ -29,7 +31,13 @@ namespace UVMBinding
 		protected void SetImpl<T>(string path, T val)
 		{
 			Log.Trace("{0} SetImpl<{1}> Path:{2} Value {3}", this, typeof(T), path, val);
-			m_Properties.Get<T>(path).Value = val;
+			var property = m_Properties.Get<T>(path);
+			if (property == null)
+			{
+				//型不一致。Get<T> が理由を記録済み
+				return;
+			}
+			property.Value = val;
 		}
 
 		public void SetDirty(string path)

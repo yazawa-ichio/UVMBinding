@@ -117,8 +117,6 @@ namespace UVMBinding.Tests
 			PropertyContainer container = new PropertyContainer();
 			int count1 = 0;
 			int value1 = 0;
-			int count2 = 0;
-			string value2 = "";
 			int count3 = 0;
 			object value3 = null;
 
@@ -127,11 +125,6 @@ namespace UVMBinding.Tests
 				count1++;
 				value1 = x;
 			});
-			var handel2 = container.Subscribe<string>("P1", (x) =>
-			{
-				count2++;
-				value2 = x;
-			});
 			var handle3 = container.SubscribeAssignable<object>("P1", (x) =>
 			{
 				count3++;
@@ -139,14 +132,11 @@ namespace UVMBinding.Tests
 			}, notifyCurrent: false);
 
 			container.Get<int>("P1").Value = 10;
-			container.Get<string>("P1").Value = "Test";
 
 			Assert.AreEqual(1, count1);
 			Assert.AreEqual(10, value1);
-			Assert.AreEqual(1, count2);
-			Assert.AreEqual("Test", value2);
-			Assert.AreEqual(2, count3);
-			Assert.AreEqual("Test", value3);
+			Assert.AreEqual(1, count3);
+			Assert.AreEqual(10, value3);
 
 			container.SetAllDirty();
 			container.SetDirty("P1");
@@ -154,32 +144,23 @@ namespace UVMBinding.Tests
 			//カウントだけ増える
 			Assert.AreEqual(3, count1);
 			Assert.AreEqual(10, value1);
-			Assert.AreEqual(3, count2);
-			Assert.AreEqual("Test", value2);
-			// 2 + 2 増加
-			Assert.AreEqual(6, count3);
-			Assert.AreEqual("Test", value3);
-
+			Assert.AreEqual(3, count3);
 
 			handel1.Dispose();
-			handel2.Dispose();
 			handle3.Dispose();
 
 			container.Get<int>("P1").Value = 20;
-			container.Get<string>("P1").Value = "Test2";
 			container.SetAllDirty();
 
 			// 解除済みなので増えない
 			Assert.AreEqual(3, count1);
 			Assert.AreEqual(10, value1);
-			Assert.AreEqual(3, count2);
-			Assert.AreEqual("Test", value2);
-			Assert.AreEqual(6, count3);
-			Assert.AreEqual("Test", value3);
-
+			Assert.AreEqual(3, count3);
+			Assert.AreEqual(10, value3);
 
 #if UNITY_EDITOR
-			Assert.AreEqual(2, container.GetAll().Count());
+			//1 path = 1 型なので、型が増えてもプロパティは増えない
+			Assert.AreEqual(1, container.GetAll().Count());
 #endif
 
 		}

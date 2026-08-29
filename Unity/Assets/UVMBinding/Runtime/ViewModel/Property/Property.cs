@@ -8,10 +8,11 @@ namespace UVMBinding
 		public readonly string Path;
 		IBindingProperty<T> m_Property;
 
+		//型不一致で m_Property が取れないことがある。落とさず既定値を返す
 		public T Value
 		{
-			get { return m_Property.Value; }
-			set { m_Property.Value = value; }
+			get { return m_Property != null ? m_Property.Value : default; }
+			set { if (m_Property != null) { m_Property.Value = value; } }
 		}
 
 		public event System.Action<T> OnChanged;
@@ -20,7 +21,10 @@ namespace UVMBinding
 		{
 			Path = path;
 			m_Property = vm.Property.Get<T>(Path);
-			m_Property.OnChanged += OnNotifyChanged;
+			if (m_Property != null)
+			{
+				m_Property.OnChanged += OnNotifyChanged;
+			}
 		}
 
 		public Property(string path, IViewModel vm, T val) : this(path, vm)
@@ -35,7 +39,7 @@ namespace UVMBinding
 
 		public void SetDirty()
 		{
-			m_Property.SetDirty();
+			m_Property?.SetDirty();
 		}
 
 		public static implicit operator T(Property<T> property)

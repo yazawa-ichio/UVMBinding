@@ -62,7 +62,13 @@ namespace UVMBinding.PropertyProvider
 
 		public void Set<T>(string name, T value)
 		{
-			m_PropertyContainer.Get<T>(name).Value = value;
+			var property = m_PropertyContainer.Get<T>(name);
+			if (property == null)
+			{
+				//型不一致。Get<T> が理由を記録済み
+				return;
+			}
+			property.Value = value;
 		}
 
 		internal void Init(IViewModel viewModel, Binding binding)
