@@ -211,14 +211,85 @@ vm.Set("P1", "Text"); // string で登録し直す
 `[Bind]` / `Property<T>` は宣言で型が決まるため、解除する理由が無い。**`ViewModel` 本体や
 `PropertyContainer` の public API には出さない。**
 
-#### 決めるべき細部
+#### 解除で影響を受けるもの（実装を読んで確認した範囲）
 
-| 項目 | 内容 |
+path 1 つに紐づく状態は以下。
+
+| 状態 | 保持している場所 | 解除時の扱い |
+| --- | --- | --- |
+| プロパティ実体 | `PropertyContainer.m_Properties[path]` | 辞書から外す |
+| 型付き購読（`OnChanged`） | **プロパティ実体**が持つ | 実体ごと外れる |
+| 型消去チャネルへの接続 | **プロパティ実体**の `m_OnChangedValue` | **論点 6-b** |
+| 型消去購読の登録 | `PropertyContainer.m_SubscribePaths`（path の集合） | **論点 6-c** |
+| `SubscribeAssignable` の購読本体 | **`PropertyContainer.OnChangedValue`**。実体を参照しない | 影響なし |
+| `Subscribe<T>` のハンドル | **プロパティ実体を直接参照** | **論点 6-d** |
+| `Property<T>` | **プロパティ実体を直接参照** | **論点 6-d** |
+| バインド済みの Binder | **プロパティ実体を直接参照** | 再登録時に貼り直される（下記） |
+
+#### Binder は貼り直される
+
+`Binding.Bind` は `Property.OnNewProperty += BindToBinder` を張っており、`BindToBinder` は
+path が一致する Binder に対して `binder.Bind(prop)` を呼ぶ。`NewProperty<T>` は生成時に
+`OnNewProperty` を発火する。
+
+したがって **`UnSet` → `Set<別の型>` の順なら Binder は新しいプロパティへ貼り直される。**
+`UnSet` だけして放置した場合は、Binder が古い実体を持ったまま最後の値を表示し続ける。
+
+#### 論点 6-a：戻り値
+
+解除できたかを `bool` で返すか、`void` にするか。**争点は無い。**
+
+#### 論点 6-b：古いプロパティの型消去チャネル接続を外すか
+
+解除された実体は、`Subscribe<T>` のハンドルや `Property<T>` からまだ書き込まれうる。
+接続を残したままだと、**孤立した実体への書き込みが `PropertyContainer.OnChangedValue` に
+流れ込み、`SubscribeAssignable` の購読者に古い値が届く。**
+
+| 案 | 挙動 |
 | --- | --- |
-| 戻り値 | 解除できたかを `bool` で返すか、`void` にするか |
-| バインド済みの Binder | 解除しても古いインスタンスを保持する。同じ path に新しいプロパティが作られた時点で `OnNewProperty` 経由で貼り直される |
-| `SubscribeAssignable` の購読 | `m_SubscribePaths` に残すか消すか。**残せば**再登録された別の型の値も届く |
-| `Subscribe<T>` の購読 | 解除されたプロパティを掴んだままになる。ハンドルは無効化すべきか |
+| **B-1** | 解除時に `OnChangedValue -= InvokeChangedValueCache` して切る |
+| B-2 | 何もしない |
+
+**B-1 を推す。** 孤立した実体からの通知が混ざるのは説明がつかない。
+
+#### 論点 6-c：`m_SubscribePaths` を残すか
+
+この集合は「その path に型消去の購読者が居る」という記録で、`NewProperty<T>` が新しい
+プロパティを作る際に接続するかどうかの判断に使う。
+
+| 案 | 挙動 |
+| --- | --- |
+| **C-1** | 残す。**再登録された別の型の値も `SubscribeAssignable` に届く** |
+| C-2 | 消す。再登録しても届かなくなる |
+
+**C-1 を推す。** 購読は path に対して行うものであり、型が変わったから止まるのは直感に反する。
+
+#### 論点 6-d：`Subscribe<T>` / `Property<T>` が孤立する
+
+**これが唯一の実質的な論点。**
+
+両者は**プロパティ実体を直接参照する**（`SubscribeHandle<T>.m_Property` /
+`Property<T>.m_Property`）。解除しても参照は生き続け、**孤立した実体を読み書きし続ける。**
+
+- 読み取り：解除前の最後の値を返す
+- 書き込み：孤立した実体にだけ反映され、Binder には届かない
+- 通知：孤立した実体の `OnChanged` は発火するので、購読者は**動いているように見える**
+
+**黙って壊れる。** 例外も警告も出ない。
+
+`SubscribeAssignable` は `PropertyContainer` に対して購読しているため、この問題は起きない。
+
+| 案 | 挙動 |
+| --- | --- |
+| **D-1** | 何もしない。`GeneralViewModel` で型付き購読を併用しない前提を文書化する |
+| **D-2** | 解除時に、その path に型付き購読が居れば `Log.Warning` を出す |
+| **D-3** | ハンドルを無効化する仕組みを入れる。`SubscribeHandle<T>` / `Property<T>` に解除を通知する |
+
+**D-3 は本タスクの規模を超える。** 実体への参照をやめて container 経由にする設計変更になる。
+
+**D-2 を推す。** 検出は安く、黙って壊れる状態は避けられる。ただし
+**「型付き購読が居るか」を知るには実体の `OnChanged` に購読者が居るかを見る必要があり、
+現在その判定手段は無い。** 追加が要る。
 
 ---
 
