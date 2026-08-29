@@ -34,19 +34,35 @@
 | **↑** | S が T に代入可 | S=`Dog`, T=`Animal` | **読み取り**（`Get<Animal>`） |
 | **×** | どちらでもない | S=`int`, T=`string` | 無し |
 
-### 「Error」の意味
+### 型が合わないときは例外を投げる
 
-本ドキュメントで **Error** と書いた場合は以下を指す。**例外は投げない。**
+**型の不一致はコードの誤り**であり、C# の代入規則に反する操作を要求している。
+**`InvalidCastException` を投げる。**
 
 | 項目 | 内容 |
 | --- | --- |
-| 出力 | `Log.Error`。Unity の `LogType.Error` として出る |
-| 内容 | path・格納されている型・要求された型 |
-| 操作の結果 | 書き込みは**無視**、読み取りは**既定値**を返す |
-| テスト | Unity のテストランナーでは失敗扱いになる |
+| 例外 | `InvalidCastException` |
+| メッセージ | path・格納されている型・要求された型 |
 
-理由は [TASK-003](TASK-003-bindingPropertyRedesign.md) の方針。**出荷後に落とさない。**
-型の不一致は [TASK-007](TASK-007-structuralLint.md) の静的検査で潰す。
+**落とさずに扱いたい場合のために `Try` 版を用意する。** 標準ライブラリと同じ組み方
+（`Dictionary` の添字は投げ、`TryGetValue` は投げない）。
+
+| 投げる | 投げない |
+| --- | --- |
+| `Get<T>` / `Set<T>` | `TryGetAs<T>` / `TrySet<T>` |
+| `Property<T>` の取得 | — |
+| `Subscribe` 系の購読 | — |
+
+**View 側の結線は例外を投げない。** 同じ prefab を複数の ViewModel で使い回す際、
+「結線しない」は正常な結果であるため（`Log.Debug` のみ）。
+
+#### TASK-003 の方針からの変更
+
+[TASK-003](TASK-003-bindingPropertyRedesign.md) では「出荷後に落とさないため `Log.Error` して
+無視する」と決めたが、**本タスクで例外を投げる方針に変更する（2026-08-29）。**
+
+落とさずに済ませたい箇所は `Try` 版を使う。これにより
+**層 3 の `SetObject` が例外を投げる現在の挙動とも一貫する**（従来は不整合として扱っていた）。
 
 ---
 
@@ -57,8 +73,8 @@
 | API | 層 | 役割 |
 | --- | --- | --- |
 | `IViewModel.Set<T>` / `Get<T>` | ViewModel | 値の読み書き |
-| `IViewModel.TryGet<T>` | ViewModel | **実行時の値の型で取り出す**（新規） |
-| `GeneralViewModel.Set<T>` / `Get<T>` / `TryGet<T>` | ViewModel | 同上 |
+| `IViewModel.TryGetAs<T>` / `TrySet<T>` | ViewModel | **落とさずに試す**（新規） |
+| `GeneralViewModel.Set<T>` / `Get<T>` / `TryGetAs<T>` / `TrySet<T>` | ViewModel | 同上 |
 | `GeneralViewModel.UnSet` | ViewModel | **格納型の解除**（新規） |
 | `Property<T>` | ViewModel | 型付きハンドル |
 | `PropertyContainer.Subscribe` 系 | Container | 購読 |
@@ -68,12 +84,15 @@
 
 | API | **=** | **↓** T→S | **↑** S→T | **×** |
 | --- | --- | --- | --- | --- |
-| `Set<T>` | 反映 | **反映** | Error + 無視 | Error + 無視 |
-| `Get<T>` | 値 | Error + 既定値 | **値（値型はボックス化）** | Error + 既定値 |
-| `TryGet<T>` | `true` + 値 | **実行時の値が T なら `true`** | **`true` + 値** | `false` + 既定値。**Error は出さない** |
-| `Property<T>` | 読み書き | Error + 無効 | Error + 無効 | Error + 無効 |
-| `Subscribe` 系 | 届く | — | **届く** | 届かない |
+| `Set<T>` | 反映 | **反映** | **例外** | **例外** |
+| `Get<T>` | 値 | **例外** | **値（値型はボックス化）** | **例外** |
+| `TrySet<T>` | `true` + 反映 | **`true` + 反映** | `false` | `false` |
+| `TryGetAs<T>` | `true` + 値 | **実行時の値が T なら `true`** | **`true` + 値** | `false` |
+| `Property<T>` | 読み書き | **例外** | **例外** | **例外** |
+| `Subscribe` 系 | 届く | — | **届く** | **例外**（購読時） |
 | `Binder<T>` の結線 | 結線 | — | **結線** | 結線されない（`Log.Debug`） |
+
+**`Try` 版は例外を投げず、ログも出さない。** 失敗が正常な結果に含まれるため。
 
 `UnSet` は型に依存しないため上表に含めない（後述）。
 
@@ -86,21 +105,33 @@
 
 **特別な規則を足していない。C# の代入規則をそのまま path に持ち込んでいる。**
 
-### なぜ `TryGet<T>` を足すか
+### なぜ `Try` 版を足すか
 
-**↓ の向き（ダウンキャスト）で値を取り出す手段が無い。**
+**ダウンキャストで値を取り出す手段が無い。**
 
 `Animal` として格納した値の実体が `Dog` のとき、`Get<Dog>` は静的な型（`Animal`）だけを見て
-Error になる。**実行時の値を見れば取り出せる**が、その経路が存在しない。
+例外になる。**実行時の値を見れば取り出せる**が、その経路が存在しない。
 
 ```csharp
 vm.Set<Animal>("Pet", new Dog());
-vm.Get<Dog>("Pet");            // Error。静的には Animal → Dog は不可
-vm.TryGet<Dog>("Pet", out var dog);  // true。実行時の値が Dog なので取り出せる
+vm.Get<Dog>("Pet");                    // 例外。静的には Animal → Dog は不可
+vm.TryGetAs<Dog>("Pet", out var dog);  // true。実行時の値が Dog なので取り出せる
 ```
 
-**`TryGet` は失敗しても Error を出さない。** 「型を確かめて取り出す」ための API であり、
-失敗が正常な結果に含まれる。
+`TrySet<T>` は書き込み側。型が静的に保証されない `GeneralViewModel` で、
+**落とさずに書き込みを試す**ために要る。
+
+#### 命名（未決）
+
+読み取り側は「**実行時の値の型を見てキャストする**」ことが分かる名前にしたい。
+
+| 案 | 読み | 備考 |
+| --- | --- | --- |
+| **`TryGetAs<T>`** | 「T として取り出せるか試す」 | C# の `as` 演算子と同じ含意。**推奨** |
+| `TryCast<T>` | 「T にキャストできるか試す」 | 取り出す動作が名前に出ない |
+| `TryGet<T>` | 「取り出せるか試す」 | **静的な型で判定するのか実行時の値で判定するのか読めない** |
+
+書き込み側は `TrySet<T>` でよい。判定に実行時の値が関わらないため。
 
 ### `Property<T>` が完全一致のみな理由
 
@@ -158,7 +189,7 @@ vm.Set("P1", "Text"); // string で格納し直す
 
 | 観測点 | `UnSet` 直後 | 再登録後 |
 | --- | --- | --- |
-| `Set<T>` / `Get<T>` / `TryGet<T>` | 未登録として扱う。`Get<T>` は T で格納型を決める | 通常どおり |
+| `Set<T>` / `Get<T>` / `TryGetAs<T>` / `TrySet<T>` | 未登録として扱う。`Get<T>` は T で格納型を決める | 通常どおり |
 | `Binder<T>` | 未結線に戻る | 結線し直される |
 | `SubscribeAssignable<T>` | 届かない | **届く**（path に対する購読のため） |
 | `Subscribe<T>` / `Property<T>` | **無効。取り直しが必要** | 無効のまま |
@@ -182,15 +213,17 @@ public API に `UnSet` は出さない。
 
 | 項目 | 現状 | 差 |
 | --- | --- | --- |
-| `Set<T>` の ↓ | **Error + 無視** | **許すよう変更が必要** |
-| `Get<T>` の ↑ | **Error + 既定値** | **許すよう変更が必要** |
-| `TryGet<T>` | 存在しない | **新規** |
+| `Set<T>` の ↓ | `Log.Error` + 無視 | **許すよう変更が必要** |
+| `Get<T>` の ↑ | `Log.Error` + 既定値 | **許すよう変更が必要** |
+| 型不一致（↑↓ 逆方向・×） | `Log.Error` + 無視 / 既定値 | **例外を投げるよう変更が必要** |
+| `TryGetAs<T>` / `TrySet<T>` | 存在しない | **新規** |
 | `UnSet` | 存在しない | **新規** |
 | `SubscribeAssignable` / Binder の結線 | 目標どおり | 無し |
+| 層 3 の `SetObject` | 例外を投げる | **目標どおり。変更不要** |
 | 購読 API の命名 | `Subscribe` / `SubscribeAssignable` | **案 X を採るなら変更** |
 
 ## 完了条件
 
 - 上表の差をすべて解消すること
-- 型の関係 4 種（= ↓ ↑ ×）それぞれについてテストを追加すること
+- 型の関係 4 種（= ↓ ↑ ×）それぞれについて、例外版と `Try` 版の両方のテストを追加すること
 - [TASK-003](TASK-003-bindingPropertyRedesign.md) の設計節を実装と一致させること
