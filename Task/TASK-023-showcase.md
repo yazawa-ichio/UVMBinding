@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | Phase | 0.5（基盤再設計） |
-| 状態 | **画面は完成 / チェックリスト未作成** |
+| 状態 | **画面完成 / 基準値で判定可能 / 文章チェックリストは最終確認用に保留** |
 | 依存 | TASK-000 |
 | 規模 | 大 |
 
@@ -23,6 +23,8 @@
 | `CastConverter` が Concatenate の中間段で使えない | [TASK-022](TASK-022-castConverterConsolidation.md) |
 | 型不一致のたびに Converter が要る（自動挿入の着想） | [TASK-026](TASK-026-implicitCast.md) |
 | `ConcatenateConverter` / `IConverter` が internal で外部から合成できない | [TASK-004](TASK-004-binderInfo.md) |
+| `PositionBinder` が `RectTransform` で非決定的になる | [TASK-027](TASK-027-transformBinderLayout.md) |
+| `UVMBinding.TMP` が Unity 6 で一切コンパイルされない | 本タスク内で修正済み |
 
 ### ストリッピング検証の基盤にもなった
 
@@ -35,16 +37,53 @@
 ただし現状の基準値は**表示テキストと結線の有無しか見ていない**。色・位置・アルファなど
 演出系の確認は含まれないため、チェックリストを完全に置き換えるには至っていない。
 
-### 残作業：チェックリスト
+### チェックリストの代わりに基準値を使う
 
-**完了条件のうち「観察可能な事象として書いたチェックリスト」が未作成。**
+**「観察可能な事象として書いたチェックリスト」は、文章ではなく基準値の形で用意した。**
 
-現状は目視と `eval` による値の照会で確認しているが、**正しさの基準が文書化されていない**。
-[TASK-003](TASK-003-bindingPropertyRedesign.md) の回帰検出に使う前に作成すること。
+`ShowcaseSelfCheck` が全 11 画面を巡回し、各画面について**操作前と操作後**の状態を採取する。
+採取するのは以下で、`Unity/Verify/selfcheck-baseline.txt` に基準値として置いてある。
 
-なお [export 計画](../History/plan-viewHtmlExportFoundation.prompt.md) に「検証用スナップショット出力」の
-提案を追記した。実現すれば**チェックリストを手で書く代わりに、動いている状態をベースラインにできる**。
-チェックリスト作成の前にそちらを検討する価値がある。
+| 項目 | 内容 |
+| --- | --- |
+| `active` | GameObject の活性 |
+| `text` | `Text.text` |
+| `col` | `Graphic.color`（8bit 16 進） |
+| `spr` / `tex` | `Image.sprite` / `RawImage.texture` の名前 |
+| `fill` | `Image.fillAmount` |
+| `alpha` | `CanvasGroup.alpha` |
+| `inter` | `Selectable.interactable` |
+| `val` | Slider / Scrollbar / Toggle / Dropdown / InputField の値 |
+| `pos` / `scale` | Binder を持つ対象の `anchoredPosition` / `localScale` |
+
+操作は画面ごとに決まった手順で行う。Slider は 0.75、Scrollbar は 0.25、Toggle は反転、
+Dropdown は 1、InputField は固定文字列、Button はパス順に全押し。**順序を固定しないと結果が
+変わる**ため、パス順に並べ替えてから実行する。
+
+これにより、以前は文字列しか見ていなかった範囲が広がった。
+
+| 分類 | 以前 | 現在 |
+| --- | --- | --- |
+| `TextBinder` | 見える | 見える |
+| 入力系（双方向） | エコー経由で間接的 | **往復が値として見える**（`0.40 → 0.75` など） |
+| Position / Scale / Color / Alpha / Fill / Interactable | **見えない** | **見える** |
+| Event / EventArgument | 型の解決のみ | **発火後の状態が見える** |
+
+操作によって 28 個の対象が変化し、`text` / `val` / `active` / `inter` / `pos` / `alpha` /
+`fill` / `scale` / `col` の 9 項目すべてで差分が出ることを確認している。
+
+判定は `make verify-strip` で行う。**基準値との差分がそのまま回帰の検出になる。**
+
+### 文章のチェックリストは書かない
+
+演出の質（トゥイーンが滑らかか、色が意図どおりか）は基準値では判定できない。
+これは**最終確認時に人が見る**方針とし、機能開発中は基準値のみで判定する。
+
+### 採取できない項目
+
+**`RectTransform` の `rect` サイズと `localPosition` は採取しない。** Editor 実行と
+プレイヤー実行でフォントの計測結果が 1px 単位で異なり、レイアウトの解決結果がずれるため。
+親の大きさに依存しない `anchoredPosition` を代わりに使っている。
 
 ## 目的
 
@@ -103,11 +142,14 @@
 
 ## 完了条件
 
-- 上記 11 区分すべてに対応する画面が存在すること
-- 各画面に確認項目チェックリストがあり、**観察可能な事象として記述されている**こと
-- Play して全画面を巡回し、Console にエラー・例外が出ないこと
-- TMP / Localization を**外した構成でもコンパイル・実行できる**こと（`defineConstraints` の確認）
-- チェックリストを他タスクから参照できる形で配置すること
+- ~~上記 11 区分すべてに対応する画面が存在すること~~ 済
+- ~~各画面に確認項目チェックリストがあり、観察可能な事象として記述されていること~~ **基準値
+  （`Unity/Verify/selfcheck-baseline.txt`）で代替。演出の質のみ最終確認時に人が見る**
+- ~~Play して全画面を巡回し、Console にエラー・例外が出ないこと~~ 済（`errors=0` で自動判定）
+- ~~TMP / Localization を外した構成でもコンパイル・実行できること~~ **TMP は未導入構成で
+  動作を確認済み。あわせて Unity 6 で `UVMB_TMP` が立たない不具合を修正した。Localization を
+  外した構成は未確認**
+- ~~チェックリストを他タスクから参照できる形で配置すること~~ 済（`make verify-strip`）
 
 ## 備考
 

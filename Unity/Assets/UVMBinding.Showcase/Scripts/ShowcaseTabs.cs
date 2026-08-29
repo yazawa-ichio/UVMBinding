@@ -29,6 +29,8 @@ namespace UVMBinding.Showcase
 
 		public int ScreenCount => m_Screens.Count;
 
+		public GameObject GetScreen(int index) => (index >= 0 && index < m_Screens.Count) ? m_Screens[index] : null;
+
 		public void Select(int index)
 		{
 			for (int i = 0; i < m_Screens.Count; i++)
