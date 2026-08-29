@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | Phase | 0.5（基盤再設計） |
-| 状態 | **仕様確定 / 実装未着手** |
+| 状態 | **仕様検討中** |
 | 依存 | TASK-003 |
 | 規模 | 小〜中 |
 
@@ -12,90 +12,156 @@
 [TASK-003](TASK-003-bindingPropertyRedesign.md) で 1 path = 1 型にした結果、**型が完全一致
 しない場合の扱いが未確定のまま残った。**
 
-## 用語：ここでの「多態性」
+**1 path = 1 型が縛るのは「格納する型」であって、代入の可否ではない。**
+`Animal` の枠に `Dog` を入れるのは通常の代入であり、これを拒むのは誤り。
 
-**CLR の代入互換のみ**を指す。
+## 用語
 
-| 組み合わせ | 可否 |
-| --- | --- |
-| 派生 → 基底 | 可 |
-| 実装型 → インターフェース | 可 |
-| 値型 → `object`（ボックス化） | 可 |
-| `int` → `float` / `int` → `long` / `T` → `T?` | **不可** |
+### 「代入可」
 
-**数値変換は多態性の範囲外。** Converter の責務であり、本タスクでは扱わない
-（[TASK-022](TASK-022-castConverterConsolidation.md) / [TASK-026](TASK-026-implicitCast.md)）。
+**CLR の代入互換のみ**を指す。`int` → `float` などの数値変換は含まない
+（Converter の責務。[TASK-022](TASK-022-castConverterConsolidation.md) /
+[TASK-026](TASK-026-implicitCast.md)）。
 
----
+### 型の関係
 
-## 目標仕様：どこで型を跨げるか
+格納されている型を **S**、API に渡す型を **T** とする。
 
-**原則：多態性は View 側でのみ許す。ViewModel 側は完全一致のみ。**
-
-**ViewModel は値の持ち主**であり、型が揺れると持ち主が誰か分からなくなる。
-**View は値の消費者**であり、受け取れる形が複数あってよい。
-
-### マトリクス
-
-登録されている型を **S**、API に渡す型を **T** とする。
-
-| 外から使う API | S == T | 代入可（安全な向き） | 代入不可 |
+| 記号 | 関係 | 例 | 自然な操作 |
 | --- | --- | --- | --- |
-| `IViewModel.Set<T>` / `GeneralViewModel.Set<T>` | 反映される | **`Log.Error` + 無視** | `Log.Error` + 無視 |
-| `IViewModel.Get<T>` / `GeneralViewModel.Get<T>` | 値が返る | **`Log.Error` + 既定値** | `Log.Error` + 既定値 |
-| `Property<T>` | 読み書きできる | **`Log.Error` + 無効** | `Log.Error` + 無効 |
-| `PropertyContainer.Subscribe<T>` | 届く | **`Log.Error` + 購読されない** | `Log.Error` + 購読されない |
-| `PropertyContainer.SubscribeAssignable<T>` | 届く | **届く** | **届かない（無言）** |
-| Binder の結線（`Binder<T>`） | 結線される | **結線される** | 結線されない（`Log.Debug`） |
-| Converter を挟んだ結線 | — | — | **変換できれば結線される** |
+| **=** | `T == S` | — | 読み書きとも |
+| **↓** | T が S に代入可 | S=`Animal`, T=`Dog` | **書き込み**（`Set<Dog>`） |
+| **↑** | S が T に代入可 | S=`Dog`, T=`Animal` | **読み取り**（`Get<Animal>`） |
+| **×** | どちらでもない | S=`int`, T=`string` | 無し |
 
-「安全な向き」は操作ごとに違う。
+### 「Error」の意味
 
-| 操作 | 安全な向き |
+本ドキュメントで **Error** と書いた場合は以下を指す。**例外は投げない。**
+
+| 項目 | 内容 |
 | --- | --- |
-| 読み取り（`Get` / 購読 / Binder への配信） | **S が T に代入可**（登録 `Derived` → 要求 `Base`） |
-| 書き込み（`Set` / Binder からの書き戻し） | **T が S に代入可**（要求 `Derived` → 登録 `Base`） |
+| 出力 | `Log.Error`。Unity の `LogType.Error` として出る |
+| 内容 | path・格納されている型・要求された型 |
+| 操作の結果 | 書き込みは**無視**、読み取りは**既定値**を返す |
+| テスト | Unity のテストランナーでは失敗扱いになる |
 
-### この形にする理由
-
-**ViewModel 側で代入可を許さない。** 許すと `[Bind]` の宣言型と実際に流れる型が食い違っても
-気付けず、1 path = 1 型にした意味が薄れる。型が違うなら Converter を挟むか、
-[TASK-007](TASK-007-structuralLint.md) の静的検査で潰す。
-
-**`SubscribeAssignable<T>` だけ例外的に代入可を許す。** 名前のとおり「代入可なら受け取る」ための
-API であり、型を前提にしない購読として既に成立している。
-
-**View 側は代入可を許す。** 1 つの ViewModel を複数の View が別の粒度で見るのは正常な使い方で、
-`Binder<Base>` が `Derived` の値を表示できないと共通 UI が書けない。
-
-**代入不可のときだけ挙動が分かれる。** ViewModel 側は `Log.Error`、View 側は無言または
-`Log.Debug`。**View 側は「結線しない」が正常な選択肢**（同じ prefab を複数の ViewModel で
-使い回す）であり、毎回 Error を出すと実用にならない。
+理由は [TASK-003](TASK-003-bindingPropertyRedesign.md) の方針。**出荷後に落とさない。**
+型の不一致は [TASK-007](TASK-007-structuralLint.md) の静的検査で潰す。
 
 ---
 
-## 補足：型を変えたい場合
+## 目標仕様
 
-ViewModel 側は完全一致のみなので、**一度確定した型は変えられない。** 型が静的に保証されない
-`GeneralViewModel` に限り、登録を解除する `UnSet` を用意する。
+### 外から使う API
+
+| API | 層 | 役割 |
+| --- | --- | --- |
+| `IViewModel.Set<T>` / `Get<T>` | ViewModel | 値の読み書き |
+| `IViewModel.TryGet<T>` | ViewModel | **実行時の値の型で取り出す**（新規） |
+| `GeneralViewModel.Set<T>` / `Get<T>` / `TryGet<T>` | ViewModel | 同上 |
+| `GeneralViewModel.UnSet` | ViewModel | **格納型の解除**（新規） |
+| `Property<T>` | ViewModel | 型付きハンドル |
+| `PropertyContainer.Subscribe` 系 | Container | 購読 |
+| `Binder<T>` の結線 | View | — |
+
+### 型の関係ごとの挙動
+
+| API | **=** | **↓** T→S | **↑** S→T | **×** |
+| --- | --- | --- | --- | --- |
+| `Set<T>` | 反映 | **反映** | Error + 無視 | Error + 無視 |
+| `Get<T>` | 値 | Error + 既定値 | **値（値型はボックス化）** | Error + 既定値 |
+| `TryGet<T>` | `true` + 値 | **実行時の値が T なら `true`** | **`true` + 値** | `false` + 既定値。**Error は出さない** |
+| `Property<T>` | 読み書き | Error + 無効 | Error + 無効 | Error + 無効 |
+| `Subscribe` 系 | 届く | — | **届く** | 届かない |
+| `Binder<T>` の結線 | 結線 | — | **結線** | 結線されない（`Log.Debug`） |
+
+`UnSet` は型に依存しないため上表に含めない（後述）。
+
+### なぜ `Set` は ↓ を許し ↑ を拒むか
+
+**代入の向きがそのまま可否になる。** `Animal` の枠に `Dog` を入れるのは通常の代入。
+逆に `Dog` の枠に `Animal` を入れるのは通常の代入でも不可。
+
+`Get` はその逆。`Dog` の枠から `Animal` として取り出すのは通常の代入。
+
+**特別な規則を足していない。C# の代入規則をそのまま path に持ち込んでいる。**
+
+### なぜ `TryGet<T>` を足すか
+
+**↓ の向き（ダウンキャスト）で値を取り出す手段が無い。**
+
+`Animal` として格納した値の実体が `Dog` のとき、`Get<Dog>` は静的な型（`Animal`）だけを見て
+Error になる。**実行時の値を見れば取り出せる**が、その経路が存在しない。
 
 ```csharp
-vm.Set("P1", 10);     // int で確定
+vm.Set<Animal>("Pet", new Dog());
+vm.Get<Dog>("Pet");            // Error。静的には Animal → Dog は不可
+vm.TryGet<Dog>("Pet", out var dog);  // true。実行時の値が Dog なので取り出せる
+```
+
+**`TryGet` は失敗しても Error を出さない。** 「型を確かめて取り出す」ための API であり、
+失敗が正常な結果に含まれる。
+
+### `Property<T>` が完全一致のみな理由
+
+`Property<T>` は**読み書き両方**を持つ。↑ を許すと書き込みが、↓ を許すと読み取りが
+成立しなくなる。**両立しないため完全一致のみとする。**
+
+---
+
+## 命名の検討（未決）
+
+現在の購読 API は以下。
+
+| 現在の名前 | 挙動 |
+| --- | --- |
+| `Subscribe<T>` | 完全一致のみ |
+| `SubscribeAssignable<T>` | ↑ を許す |
+
+**上表のとおり `Get` も Binder も ↑ を許すため、購読だけ完全一致が既定なのは一貫しない。**
+名前を入れ替える案がある。
+
+| 案 | 既定 | 厳密 |
+| --- | --- | --- |
+| 現状 | `Subscribe<T>`（完全一致） | — |
+| **案 X** | **`Subscribe<T>`（↑ を許す）** | `SubscribeStrict<T>` |
+
+**案 X の方が自然**と考える。理由は 3 つ。
+
+1. **他の API と揃う。** `Get` / Binder が ↑ を許すのに購読だけ違うのは説明しにくい
+2. **既定が安全側。** 完全一致は「型が変わったら黙って届かなくなる」ため、既定にすると事故が起きる
+3. **名前が長い方が特殊** という原則に合う
+
+ただし両者は**厳密さ以外にも違う**。
+
+| | `Subscribe<T>` | `SubscribeAssignable<T>` |
+| --- | --- | --- |
+| 通知の元 | プロパティの実体 | path |
+| 型が変わったとき | 届かなくなる | 代入可なら届く |
+
+**この差を名前で表すべきかは未決。** `Strict` は厳密さしか表さない。
+
+---
+
+## 補足：`UnSet`
+
+1 path = 1 型のため、**格納する型そのものを変える手段が無い。**
+型が静的に保証されない `GeneralViewModel` に限り `UnSet` を用意する。
+
+```csharp
+vm.Set("P1", 10);     // int で格納
 vm.UnSet("P1");       // 解除
-vm.Set("P1", "Text"); // string で登録し直す
+vm.Set("P1", "Text"); // string で格納し直す
 ```
 
 **原則：`UnSet` した path は「一度も使っていない状態」に戻る。**
 
 | 観測点 | `UnSet` 直後 | 再登録後 |
 | --- | --- | --- |
-| `Get<T>` / `Set<T>` | 未登録として扱う。`Get<T>` は T で登録する | 通常どおり |
-| Binder | 未結線に戻る | 結線し直される |
+| `Set<T>` / `Get<T>` / `TryGet<T>` | 未登録として扱う。`Get<T>` は T で格納型を決める | 通常どおり |
+| `Binder<T>` | 未結線に戻る | 結線し直される |
 | `SubscribeAssignable<T>` | 届かない | **届く**（path に対する購読のため） |
 | `Subscribe<T>` / `Property<T>` | **無効。取り直しが必要** | 無効のまま |
-
-`Subscribe<T>` と `Property<T>` を無効にするのは、**取得時の型を前提にしたハンドル**だから。
-`UnSet` はその前提を壊す操作なので、自動で繋ぎ直さず取り直させる。
 
 `[Bind]` / `Property<T>` は宣言で型が決まるため、`ViewModel` 本体や `PropertyContainer` の
 public API に `UnSet` は出さない。
@@ -109,27 +175,22 @@ public API に `UnSet` は出さない。
 ### 型付きハンドルを多態にできない理由
 
 `IBindingProperty<T>` は `T Value { get; set; }` を持つため**不変（invariant）**であり、
-`BindingProperty<Base>` を `IBindingProperty<Derived>` として返せない。
-
-したがって `Property<T>` / `Subscribe<T>` は、**仕様として選ぶまでもなく完全一致しか実現できない。**
-上表でこれらを完全一致のみとしたのは、この制約とも一致する。
+`BindingProperty<Base>` を `IBindingProperty<Derived>` としても返せない。
+`Property<T>` / `Subscribe<T>` が完全一致のみなのはこの制約による。
 
 ### 目標仕様と現状の差
 
 | 項目 | 現状 | 差 |
 | --- | --- | --- |
-| `Set` / `Get` / `Subscribe` / `Property<T>` の型不一致 | 目標どおり | 無し |
-| `SubscribeAssignable` | 目標どおり | 無し |
-| Binder の結線 | 目標どおり | 無し |
-| `UnSet` | **存在しない** | **新規** |
-| `UnSet` 後の `Subscribe<T>` / `Property<T>` | （実装すれば）解除前の実体を掴んだままになる | **無効化する仕組みが要る** |
-| `UnSet` 直後の Binder | （実装すれば）最後の値を表示し続ける | **未結線に戻す処理が要る** |
-
-**実装が必要なのは `UnSet` とその周辺のみ。** 多態性の扱い自体は現状で目標仕様を満たしている。
+| `Set<T>` の ↓ | **Error + 無視** | **許すよう変更が必要** |
+| `Get<T>` の ↑ | **Error + 既定値** | **許すよう変更が必要** |
+| `TryGet<T>` | 存在しない | **新規** |
+| `UnSet` | 存在しない | **新規** |
+| `SubscribeAssignable` / Binder の結線 | 目標どおり | 無し |
+| 購読 API の命名 | `Subscribe` / `SubscribeAssignable` | **案 X を採るなら変更** |
 
 ## 完了条件
 
-- `GeneralViewModel.UnSet` を実装し、「補足」の表の挙動を満たすこと
-- 型不一致の各ケースについてテストを追加すること
-- [TASK-003](TASK-003-bindingPropertyRedesign.md) の設計節の「`T == object` なら常に受け入れる」を
-  撤回済みとして直すこと
+- 上表の差をすべて解消すること
+- 型の関係 4 種（= ↓ ↑ ×）それぞれについてテストを追加すること
+- [TASK-003](TASK-003-bindingPropertyRedesign.md) の設計節を実装と一致させること
