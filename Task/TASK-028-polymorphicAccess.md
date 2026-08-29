@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | Phase | 0.5（基盤再設計） |
-| 状態 | **仕様検討中** |
+| 状態 | **仕様確定 / 実現方法を検討中** |
 | 依存 | TASK-003 |
 | 規模 | 小〜中 |
 
@@ -207,29 +207,112 @@ public API に `UnSet` は出さない。
 
 ---
 
-## 実装メモ
+## 実現方法：値を `ValueHolder` に集約する
 
-**ここから下は目標仕様ではなく、実装時に効いてくる制約。**
+### 何が複雑さの原因か
 
-### 型付きハンドルを多態にできない理由
+**`BindingProperty<TValue>` が型を持っていること。**
 
 `IBindingProperty<T>` は `T Value { get; set; }` を持つため**不変（invariant）**であり、
-`BindingProperty<Base>` を `IBindingProperty<Derived>` としても返せない。
-`Property<T>` / `Subscribe<T>` が完全一致のみなのはこの制約による。
+`BindingProperty<Base>` を `IBindingProperty<Derived>` として返せない。この 1 点から
+以下がすべて派生している。
 
-### 目標仕様と現状の差
+- `PropertyContainer.Get<T>` が完全一致しか返せない
+- `Property<T>` / `SubscribeStrict<T>` が完全一致に縛られる
+- 型消去のために `ObjectBindingProperty` という別クラスが要る
+- 型を跨ぐ通知のために `ValueHolder` を**別途プールして使い捨てる**
 
-| 項目 | 現状 | 差 |
-| --- | --- | --- |
-| `Set<T>` の ↓ | `Log.Error` + 無視 | **許すよう変更が必要** |
-| `Get<T>` の ↑ | `Log.Error` + 既定値 | **許すよう変更が必要** |
-| 型不一致（↑↓ 逆方向・×） | `Log.Error` + 無視 / 既定値 | **例外を投げるよう変更が必要** |
-| `TryGetAs<T>` / `TrySet<T>` | 存在しない | **新規** |
-| `UnSet` | 存在しない | **新規** |
-| ↑ を許す購読 / Binder の結線 | 目標どおり | 無し |
-| 層 3 の `SetObject` | 例外を投げる | **目標どおり。変更不要** |
-| 購読 API の命名 | `Subscribe` / `SubscribeAssignable` | **`SubscribeStrict` / `Subscribe` へ改名** |
-| `SubscribeStrict` の公開範囲 | public | **`internal` にする** |
+**1 path = 1 型になったことで、格納を型消去された 1 つの入れ物に寄せられる。**
+
+### 構造
+
+```
+現在
+  BindingProperty                     … 非ジェネリック。Path / Hash
+  └ BindingProperty<TValue>           … 値・型付きイベント・比較子
+     └ ObjectBindingProperty          … 型消去用の特例
+  ValueHolder<TValue>                 … 通知のたびにプールから借りる使い捨て
+
+案
+  BindingProperty                     … 非ジェネリック。Path / Hash / IValueHolder
+  └ （派生なし）
+  ValueHolder<TValue>                 … 値の格納そのもの。path ごとに 1 つ
+```
+
+**`BindingProperty` からジェネリクスが消える。** 型は `IValueHolder` の実装型が持つ。
+
+### 目標仕様との対応
+
+`IValueHolder` には既に読み取り側が実装されている。
+
+```csharp
+bool TryGetValue<T>(out T value)
+{
+    if (this is ValueHolder<T> h) { value = h.Value; return true; }  // = 完全一致・ボックス化なし
+    if (IsAssignable<T>())        { value = (T)GetObject(); return true; }  // ↑ 代入可
+    value = default; return false;
+}
+```
+
+**これは目標仕様の `Get<T>` の「=」と「↑」そのもの。** 足りないのは以下。
+
+| 目標仕様 | 追加するもの |
+| --- | --- |
+| `Set<T>` の「=」「↓」 | `IValueHolder.TrySetValue<T>` |
+| `TryGetAs<T>`（実行時の値で判定） | `IValueHolder` に実行時の型を見る経路 |
+| 型が合わないときの例外 | 呼び出し側（層 1・層 2）で `false` を例外に変換 |
+
+`TrySetValue<T>` は `ValueHolder<TValue>` 側にこう書ける。
+
+```csharp
+public bool TrySetValue<T>(T value)
+{
+    if (this is ValueHolder<T> h) { h.Value = value; return true; }   // = ボックス化なし
+    if (Assignable<T, TValue>.Is) { Value = (TValue)(object)value; return true; }  // ↓
+    return false;
+}
+```
+
+**参照型の ↓ はキャストのみでボックス化しない。** 値型の ↓ は格納が `object` の場合しか
+起こらず、その場合ボックス化は避けられない（現在も同じ）。
+
+### 得られるもの
+
+| 項目 | 効果 |
+| --- | --- |
+| `IBindingProperty<T>` | **不要になる。** 不変性の制約が消える |
+| `ObjectBindingProperty` | **不要になる。** `ValueHolder<object>` で足りる |
+| `PropertyContainer.Get<T>` | 型付きハンドルを返す必要が無くなり、値の読み書きに一本化できる |
+| 通知時の `ValueHolder` プール | **不要になる。** 格納がそのまま `IValueHolder` なので借りる必要が無い |
+| 型付きハンドル（`Property<T>`） | `ValueHolder<T>` を直接持てばよい。完全一致で取得できたときのみ |
+
+**プール（`ValueHolder<T>.Use` / `UseScope`）が丸ごと不要になる**のが大きい。
+現在は値が変わるたびにプールから借りて返している。
+
+### 検証が要る点
+
+**未検証。実装前に確かめる。**
+
+| 項目 | 内容 |
+| --- | --- |
+| **`object` 格納の代入可判定** | 現在 `ObjectBindingProperty.IsAssignable<T>` は**実行時の値の型**を見る。`Binder.Bind` がこれを使うため、`ReflectionViewModel`（全プロパティが `object`）の結線がこれに依存している。**静的判定に変えると結線しなくなる。** `ValueHolder<object>` に同じ特例が要る |
+| 型付きイベント | `BindingProperty<T>.OnChanged`（`Action<T>`）を誰が持つか。`ValueHolder<TValue>` に移すか、型消去チャネルに寄せるか |
+| 比較子 | `EqualityComparer<TValue>.Default` による差分検出を `ValueHolder<TValue>` に移す |
+| アロケーション | プール撤去で減るはずだが**実測していない**。[TASK-025](TASK-025-strippingVerification.md) の基準値と `Is.Not.AllocatingGCMemory` で確認する |
+| AOT | `ValueHolder<T>` の実体化数は `BindingProperty<T>` と同じはずだが、IL2CPP ビルドで確認する |
+
+### 段取り
+
+1. `IValueHolder` に `TrySetValue<T>` と実行時判定の経路を足す（既存構造のまま）
+2. `BindingProperty` を非ジェネリックにし、`IValueHolder` を持たせる
+3. `IBindingProperty<T>` / `ObjectBindingProperty` を除去
+4. 層 2 の API を値ベースに一本化し、層 1 から例外を投げる
+5. 購読 API を改名（`Subscribe` / `SubscribeStrict`）
+6. `UnSet` を追加
+7. `make verify-strip` と PlayMode テストで回帰を確認
+
+**各段を独立したコミットにする。** 問題が出た段だけ戻せるようにする
+（[A-13](../INDEX.md) の方針）。
 
 ## 完了条件
 
