@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | Phase | 0.5（基盤再設計） |
-| 状態 | **仕様検討中 / 未着手** |
+| 状態 | **一部決定 / 未着手** |
 | 依存 | TASK-003 |
 | 規模 | 小〜中 |
 
@@ -13,9 +13,10 @@
 しない場合の扱いが未確定のまま残った**。
 
 設計文書には「登録が `object` なら任意の型の書き込みを受け入れる」と書いたが、**実装は
-`PropertyContainer.Get<T>` の完全一致だけ**になっている。`ReflectionViewModel` は全プロパティが
-`object` かつ `ViewModel` の派生なので、`Set<int>("X", 1)` が `Log.Error` になって無視される
-経路が残っている。
+`PropertyContainer.Get<T>` の完全一致だけ**になっていた。
+
+**この不一致は「実装を設計に合わせる」ではなく「設計を撤回する」で解消する**（論点 1）。
+型は暗黙に跨がせず、変えたい場合は明示的に解除する。
 
 ## 用語：ここでの「多態性」
 
@@ -98,65 +99,96 @@ path とプロパティの対応を持つ層。
 
 ## 論点
 
-### 論点 1（層 1）：`ViewModel.Set<T>` で代入可を許すか
+### 論点 1（層 1）：`ViewModel.Set<T>` で代入可を許すか → **決定: A-1（完全一致のみ）**
 
 登録が `Base`、書き込みが `Derived` の場合の `IViewModel.Set<Derived>(path, val)`。
 
 | 案 | 挙動 |
 | --- | --- |
-| **A-1** | 完全一致のみ。`Derived` の書き込みは `Log.Error` して無視（**現状**） |
-| **A-2** | 代入可なら許す。`Derived` → `Base` は通る |
-| **A-3** | 登録が `object` のときだけ許す |
+| **A-1** | 完全一致のみ。`Derived` の書き込みは `Log.Error` して無視 |
+| A-2 | 代入可なら許す |
+| A-3 | 登録が `object` のときだけ許す |
 
-**A-3 は TASK-003 の設計文書に書いた内容**だが、`Base` / インターフェースのケースを拾えない。
+**A-1 を採る（2026-08-29 決定）。** 暗黙に型を跨がせず、型を変えたい場合は
+**明示的に解除する**（論点 6）。
 
-`ReflectionViewModel` を救うだけなら A-3 で足りる。`Set<Derived>` を `Base` の path に書く形が
-実プロジェクトで発生しうるかは**未調査**。
+これにより **TASK-003 の設計文書に書いた「`T == object` なら常に受け入れる」は撤回する。**
+実装しないのではなく、**仕様として持たない。**
 
-### 論点 2（層 1）：`ViewModel.Get<T>` で代入可を許すか
+### 論点 2（層 1）：`ViewModel.Get<T>` で代入可を許すか → **取り下げ**
 
-登録が `Derived`、読み取りが `Base` の場合の `IViewModel.Get<Base>(path)`。
+登録が `Derived`、読み取りが `Base` の場合の `IViewModel.Get<Base>(path)` を想定していた。
 
-| 案 | 挙動 |
+**論点として立てるべきではなかった。** 書き込み側との対称性から挙げただけで、
+**具体的な利用例を挙げられない。**
+
+- `[Bind]` は宣言型がそのまま T になるため、型が食い違わない
+- `IViewModel.Get<T>` を直接呼ぶ形は実プロジェクトに存在しない（[TASK-003](TASK-003-bindingPropertyRedesign.md) の調査）
+- 型を跨いで読みたい場合は層 2 の `SubscribeAssignable<T>` が既にある
+
+**論点 1 に揃えて完全一致のみとする。**
+
+### 論点 3（層 2）：値だけを扱う API を足すか → **不要**
+
+想定していた配置は以下。
+
+| 項目 | 内容 |
 | --- | --- |
-| **B-1** | 完全一致のみ。不一致は `Log.Error` して `default`（**現状**） |
-| **B-2** | 代入可ならボックス化して返す |
+| 置き場所 | **`PropertyContainer`**（層 2）。`Get<T>` と同じクラス |
+| 公開範囲 | `internal`。`Get<T>` と揃える |
+| シグネチャ | `bool TryGetValue<T>(string path, out T value)` / `bool TrySetValue<T>(string path, T value)` |
+| 呼び出し元 | **`ViewModel.GetImpl<T>` / `SetImpl<T>`**（層 1） |
+| 目的 | 層 1 で多態を許す際、判定を `ViewModel` と `GeneralViewModel` に二重に書かずに済ませる |
 
-論点 1 と対になる。**書き込みだけ許して読み取りを許さない構成は説明がつかない**ため、
-1 と 2 は揃えるべき。
-
-### 論点 3（層 2）：値だけを扱う API を足すか
-
-層 2 に `Get<T>` とは別に、ハンドルを返さない経路を用意するか。
-
-```
-bool TryGetValue<T>(string path, out T value)
-bool TrySetValue<T>(string path, T value)
-```
-
-**論点 1・2 を A-1 / B-1（完全一致のみ）にするなら不要。**
-A-2 / B-2 を採るなら、層 1 の実装先としてここに置くのが自然。層 1 に判定ロジックを直接書くと
-`ViewModel` と `GeneralViewModel` の両方に同じ処理が要る。
-
-公開範囲は別途決める（後述の論点 5）。
+**論点 1・2 が完全一致のみに決まったため不要。** 層 1 は現状どおり `Get<T>` を呼べばよい。
 
 ### 論点 4（層 3）：`SetObject` が例外を投げる
 
-`BindingProperty<TValue>.SetObject(object val)` は `Value = (TValue)val;` であり、
-**型が違えば `InvalidCastException` が飛ぶ**。
+`BindingProperty<TValue>.SetObject(object val)` の実装は以下。
 
-[TASK-003](TASK-003-bindingPropertyRedesign.md) で決めた「出荷後に落とさない。`Log.Error` して
-無視する」方針と食い違っている。**層 2 の `Get<T>` だけ方針を守り、層 3 は守っていない。**
+```csharp
+public override void SetObject(object val)
+{
+	Value = (TValue)val;
+}
+```
 
-`ReflectionViewModel` は層 3 の `SetObject` で書き込むため、データソース側の型が変わると落ちる。
+**検査なしのキャスト**であり、実行時の型が合わなければ `InvalidCastException` が飛ぶ。
+方針として選んだものではなく、[TASK-003](TASK-003-bindingPropertyRedesign.md) の
+「出荷後に落とさない」より前から存在する実装。
+
+#### 到達経路
+
+呼び出し元は 3 つ。
+
+| 呼び出し元 | 例外の可能性 |
+| --- | --- |
+| `ReflectionViewModel` | **無い。** 対象は必ず `ObjectBindingProperty`（`TValue` が `object`）でキャストが常に成功する |
+| **`Binder.Set<T>`（双方向の書き戻し）** | **有る** |
+| **`ConverterBase.OnChanged`（逆変換の書き戻し）** | **有る** |
+
+後者 2 つは同じ形。`Binder.Bind` は**完全一致だけでなく `IsAssignable<T>()` でも結線する**ため、
+`m_Property` が `IBindingProperty<T>` でないことがある。その場合 `Set` は `SetObject` へ落ちる。
+
+```csharp
+if (m_Property is IBindingProperty<T> prop) { prop.Value = val; }
+else                                        { m_Property.SetObject(val); }
+```
+
+**具体例：** ViewModel が `Dog` を登録し、View 側が `Binder<Animal>` の場合。
+`IsAssignable` により結線され、双方向の書き戻しで `Animal` を渡すと
+`(Dog)animal` が失敗して落ちる。
+
+#### 案
 
 | 案 | 挙動 |
 | --- | --- |
 | **C-1** | 現状維持。例外を投げる |
 | **C-2** | 型を検査し、不正なら `Log.Error` して無視する |
 
-**C-2 を推す。** 方針を全体で揃えるべきで、ここだけ例外なのは説明がつかない。
-**他の論点と独立に決められる。**
+**C-2 を推す。** 層 2 の `Get<T>` は落とさない方針を守っているのに、
+**層 3 だけ落ちる**のは説明がつかない。しかも落ちるのは実行時、しかも
+「View を操作したとき」なので、開発中に見つけにくい。
 
 ### 論点 5（層 2）：新しい API の公開範囲
 
@@ -168,34 +200,44 @@ A-2 / B-2 を採るなら、層 1 の実装先としてここに置くのが自�
 `internal` に留めれば、利用側から見える多態な経路は層 1 の `Get<T>` / `Set<T>` と
 層 2 の `SubscribeAssignable<T>` だけになる。
 
-### 論点 6（層 1）：型を変えて登録し直す手段
+### 論点 6（層 1）：型を変えて登録し直す手段 → **決定: `GeneralViewModel.UnSet`**
 
 1 path = 1 型のため、一度確定した型は変えられない。型が静的に保証されない
-`GeneralViewModel` では詰まる可能性がある。
+`GeneralViewModel` では詰まる。
 
-| 案 | 挙動 |
+**`GeneralViewModel` にのみ `UnSet` を用意する（2026-08-29 決定）。** 既存の型の登録を解除し、
+別の型で登録し直せるようにする。
+
+```csharp
+vm.Set("P1", 10);     // int で確定
+vm.UnSet("P1");       // 解除
+vm.Set("P1", "Text"); // string で登録し直す
+```
+
+`[Bind]` / `Property<T>` は宣言で型が決まるため、解除する理由が無い。**`ViewModel` 本体や
+`PropertyContainer` の public API には出さない。**
+
+#### 決めるべき細部
+
+| 項目 | 内容 |
 | --- | --- |
-| **E-1** | 用意しない。型を変えたい場合は別の path を使う |
-| **E-2** | `GeneralViewModel` にのみ解放（`RemoveProperty`）を用意する |
-
-`[Bind]` / `Property<T>` は宣言で型が決まるため、解放する理由が無い。**用意するなら
-`GeneralViewModel` 限定。**
-
-**E-2 の場合の副作用：** 解放してもバインド済みの `Binder` は古いインスタンスを保持する。
-同じ path に新しいプロパティが作られた時点で `OnNewProperty` 経由で貼り直される。
-`SubscribeAssignable` の購読は `m_SubscribePaths` に残るため、再登録された値も届く。
+| 戻り値 | 解除できたかを `bool` で返すか、`void` にするか |
+| バインド済みの Binder | 解除しても古いインスタンスを保持する。同じ path に新しいプロパティが作られた時点で `OnNewProperty` 経由で貼り直される |
+| `SubscribeAssignable` の購読 | `m_SubscribePaths` に残すか消すか。**残せば**再登録された別の型の値も届く |
+| `Subscribe<T>` の購読 | 解除されたプロパティを掴んだままになる。ハンドルは無効化すべきか |
 
 ---
 
 ## 決める順序
 
-| 順 | 論点 | 層 | 理由 |
+| 順 | 論点 | 層 | 状態 |
 | --- | --- | --- | --- |
-| 1 | 論点 4（`SetObject` の例外） | 3 | 方針の一貫性の問題。他と独立に決められる |
-| 2 | 論点 1・2（読み書きの多態） | 1 | 対になっており同時に決める。実プロジェクトの調査が必要 |
-| 3 | 論点 3（値だけの API） | 2 | 論点 1・2 が決まれば従属的に決まる |
-| 4 | 論点 5（公開範囲） | 2 | 実装時に決めればよい |
-| 5 | 論点 6（解放） | 1 | 独立。必要になった時点でよい |
+| — | 論点 1（`Set` の多態） | 1 | **決定: A-1 完全一致のみ** |
+| — | 論点 2（`Get` の多態） | 1 | **取り下げ** |
+| — | 論点 3（値だけの API） | 2 | **不要** |
+| — | 論点 6（型の解除） | 1 | **決定: `GeneralViewModel.UnSet`**。細部は未定 |
+| 1 | 論点 4（`SetObject` の例外） | 3 | **未決** |
+| 2 | 論点 5（公開範囲） | 2 | 論点 3 が不要になったため**対象が消えた**。`UnSet` の公開範囲のみ |
 
 ## 完了条件
 
