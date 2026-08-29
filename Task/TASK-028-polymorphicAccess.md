@@ -276,6 +276,30 @@ public bool TrySetValue<T>(T value)
 **参照型の ↓ はキャストのみでボックス化しない。** 値型の ↓ は格納が `object` の場合しか
 起こらず、その場合ボックス化は避けられない（現在も同じ）。
 
+### アロケーションの現状（実装を追った結果）
+
+**「プール撤去でアロケーションが減る」は誤り。** プールはアロケーションを防ぐために存在し、
+実際に防いでいる。
+
+| # | 箇所 | 定常状態でのアロケーション |
+| --- | --- | --- |
+| 1 | 値の変更時の `ValueHolder<T>.Use()` | **無い。** プールが最大 5 個を保持。`UseScope` は構造体で `using` から直接 `Dispose` が呼ばれる。さらに購読者が居なければプール操作自体を行わない（[TASK-016](TASK-016-writePathAllocation.md)） |
+| 2 | **`IValueHolder.TryGetValue<T>` の ↑ 経路** | **`(T)GetObject()` で値型がボックス化する。** 通知のたび |
+| 3 | **`Binder.TryUpdate` の非完全一致経路** | **`(T)m_Property.GetObject()` で値型がボックス化する。** 値が変わるたび、Binder ごと |
+| 4 | 購読時のクロージャ | 購読ごとに 1 回。定常では発生しない |
+| 5 | `Log.Trace` の文字列整形 | 有効時のみ。既定（Editor=Debug / Player=Warning）では通らない |
+
+**定常状態で効くのは 2 と 3 のボックス化だけ。** どちらも**型消去に由来**しており、
+プールとは無関係。`ValueHolder` へ集約しても ↑ 経路のボックス化は消えない。
+
+**3 が最も効く。** `ReflectionViewModel` は全プロパティが `object` 格納なので、
+**結線したすべての Binder が値の変更ごとにボックス化する。**
+
+### プールを外して得られるのはアロケーションではなく手数
+
+値の変更 1 回あたり `ThreadLocal<Queue<...>>.Value` のアクセス、`Queue` の出し入れ、
+返却時の初期化が不要になる。**アロケーションは変わらない。**
+
 ### 得られるもの
 
 | 項目 | 効果 |
@@ -298,8 +322,26 @@ public bool TrySetValue<T>(T value)
 | **`object` 格納の代入可判定** | 現在 `ObjectBindingProperty.IsAssignable<T>` は**実行時の値の型**を見る。`Binder.Bind` がこれを使うため、`ReflectionViewModel`（全プロパティが `object`）の結線がこれに依存している。**静的判定に変えると結線しなくなる。** `ValueHolder<object>` に同じ特例が要る |
 | 型付きイベント | `BindingProperty<T>.OnChanged`（`Action<T>`）を誰が持つか。`ValueHolder<TValue>` に移すか、型消去チャネルに寄せるか |
 | 比較子 | `EqualityComparer<TValue>.Default` による差分検出を `ValueHolder<TValue>` に移す |
+| **ジェネリックなインターフェースメソッド** | `IValueHolder.TryGetValue<T>` は**インターフェース経由のジェネリックメソッド**。IL2CPP では呼び出しごとに解決が入り、直接呼び出しより遅い可能性がある。**実測する** |
 | アロケーション | プール撤去で減るはずだが**実測していない**。[TASK-025](TASK-025-strippingVerification.md) の基準値と `Is.Not.AllocatingGCMemory` で確認する |
 | AOT | `ValueHolder<T>` の実体化数は `BindingProperty<T>` と同じはずだが、IL2CPP ビルドで確認する |
+
+### 代替案との比較が要る
+
+**不変性の問題は `IBindingProperty<T>` を「公開しない」だけでも解ける。**
+クラスがジェネリックであること自体は問題ではない。
+
+| 案 | 内容 | path あたりのオブジェクト数 |
+| --- | --- | --- |
+| **案 A** | `IBindingProperty<T>` を API から外し、値ベースの読み書きに一本化する。クラス構成は現状のまま | 1（現状と同じ） |
+| **案 B** | 値を `ValueHolder` に集約する。`BindingProperty` は非ジェネリックになる | **2**（`BindingProperty` + `ValueHolder<T>`） |
+
+**案 B は path ごとにオブジェクトが 1 つ増える。**
+
+`ValueHolder<T>` に `Path` / `Hash` / イベントを持たせて 1 つに統合する形もあるが、
+それは実質的に `BindingProperty<T>` の改名であり、**案 A に戻る。**
+
+**どちらを採るかは実測してから決める。**
 
 ### 段取り
 
@@ -316,6 +358,24 @@ public bool TrySetValue<T>(T value)
 
 ## 完了条件
 
-- 上表の差をすべて解消すること
+### 機能
+
 - 型の関係 4 種（= ↓ ↑ ×）それぞれについて、例外版と `Try` 版の両方のテストを追加すること
+- `GeneralViewModel.UnSet` を実装し、「補足」の表の挙動を満たすこと
+- 購読 API を `Subscribe`（↑ 許容）/ `SubscribeStrict`（完全一致）に改名すること
 - [TASK-003](TASK-003-bindingPropertyRedesign.md) の設計節を実装と一致させること
+- `make verify-strip` の基準値が一致すること
+
+### 性能
+
+**現行実装との比較を取り、悪化していないことを示すこと。** 数字を本ファイルに記録する。
+
+| 指標 | 測り方 | 判定 |
+| --- | --- | --- |
+| 値変更 1 回のアロケーション（完全一致） | `Is.Not.AllocatingGCMemory` | **0 であること** |
+| 値変更 1 回のアロケーション（↑ 経路・値型） | 同上 | **現行と同じかそれ以下**（現行はボックス化 1 回） |
+| 値変更 1 回の所要時間 | Binder を N 個結線して計測 | **現行比で悪化しないこと** |
+| path あたりのメモリ | オブジェクト数と実測 | 増える場合は理由を記録すること |
+| IL2CPP 実機での所要時間 | [TASK-025](TASK-025-strippingVerification.md) のプレイヤーで計測 | **現行比で悪化しないこと** |
+
+**案 A と案 B の両方を測ってから採用を決める。** 片方だけ実装して比較なしに進めない。
