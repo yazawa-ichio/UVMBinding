@@ -66,10 +66,10 @@ Converter / PropertyProvider / EventArgument は prefab 内に `{class, ns, asm}
 **[TASK-023](TASK-023-showcase.md) のショーケースを本タスクの主たる検証対象とする。** 単体テストより
 被覆が広く、Provider・EventArgument・Converter の合成まで含む。
 
-検証は 2 段構えにする。
+検証は 2 段構えにする。**両方とも実施し、両方とも通った。**
 
-1. **ショーケースを IL2CPP でビルドし、実行してログを見る** — 最も広く、最も安価
-2. **PlayMode テストをプレイヤー上で実行する** — 合否が機械判定できる
+1. **ショーケースを IL2CPP でビルドして実行し、Editor 実行と突き合わせる**（`make verify-strip`）— 被覆が広い
+2. **PlayMode テストをプレイヤー上で実行する**（`make test-player`）— 合否が機械判定できる
 
 ## 検証方法
 
@@ -143,23 +143,28 @@ Unity のビルドパイプラインが**シーン・prefab の直列化デー�
 | コードから `new` せずリフレクションのみで生成する Converter | 静的参照が一切無い |
 | ビルドに含まれるどのアセットからも参照されていない型 | 削除されるのが正しい挙動 |
 
-### プレイヤー上でのテスト実行は成立しなかった
+### プレイヤー上での PlayMode テスト（段 2）
 
-当初の計画では**段 2 として PlayMode テストをプレイヤー上で実行**する予定だった。実行を試みたが、
-テストプレイヤーのビルドと起動には成功するものの、**プレイヤーが Editor へ接続を返さずタイムアウト**した
-（`Test execution timed out. No activity received from the player in 600 seconds.`）。
+**34 件すべて通過した。** ショーケースの突き合わせとは独立した、合否が機械判定できる結果。
 
-接続経路の問題であり、ライブラリの検証結果ではない。深追いしていない。理由は以下。
+| 項目 | 値 |
+| --- | --- |
+| 実行場所 | スタンドアロンプレイヤー（IL2CPP / `GameAssembly.dll` 35MB） |
+| 結果 | `result="Passed" total="34" passed="34" failed="0"` |
 
-- `unity test` はプレイヤー実行に対応していない（Editor 内実行のみ）。Editor を直接起動して
-  `-runTests -testPlatform StandaloneWindows64` を渡す必要があり、**再実行手段として脆い**
-- **被覆はショーケースの方が広い。** テストの prefab が持つ `[SerializeReference]` 型 6 種は
-  ショーケースの 14 種に**完全に含まれる**
-- 段 1 が全画面・全表示内容の一致という**機械判定可能な結果**を出しており、段 2 で得られる
-  情報が上乗せにならない
+`unity test` は Editor 内実行にしか対応しておらず、`unity run` は batchmode 固定でプレイヤーテストが
+動かない。**`unity open --args` で非 batchmode のまま引数を渡す**必要がある。
 
-**唯一この方式でしか触れない経路は `Resources.Load` 経由の prefab だが**、リンカが直列化データから
-型を収集する仕組みはシーンでも `Resources` でも同一であるため、差が出る余地は小さいと判断した。
+```
+make test-player
+```
+
+**`-buildPlayerPath` を渡さないと `Temp/UnityTempFile-<GUID>/` に出力され、毎回パスが変わる。**
+必ず指定する。指定すると `<指定パス>/PlayerWithTests/PlayerWithTests.exe` に固定される。
+
+ショーケースの突き合わせ（段 1）と役割が違う。段 2 は**合否が機械判定できる**が被覆はテストの
+範囲に限られ、段 1 は**被覆が広い**（`[SerializeReference]` 型がテストの 6 種に対して 14 種）が
+基準値との差分でしか判定できない。**両方を回す。**
 
 ## 検証で見つかった不具合
 
@@ -192,6 +197,9 @@ make verify-strip
 | `BuildPlayer` の相対パスは作業ディレクトリ基準 | `Application.dataPath` から絶対パスを組み立てる |
 | `FindObjectsByType` の順序が非決定的 | 出力前に `StringComparer.Ordinal` で並べ替える |
 | 1 メッセージが長いとログ側で切り詰められる | 本体はファイルに書き、ログには要約だけ出す |
+| テストプレイヤーが `Temp/UnityTempFile-<GUID>/` に出る | `-buildPlayerPath` で `Unity/Build/PlayerTests` に固定する |
+| `-logFile` はプロセスの作業ディレクトリ基準、`-buildPlayerPath` と `-testResults` はプロジェクト基準 | Makefile では `${CURDIR}` で絶対パスに統一する |
+| `Assets/InitTestScene<GUID>.unity` が残る | 名前は Test Framework 側で固定されており変更できない。中断時のみ残るため `Unity/.gitignore` で除外する |
 
 ## 完了条件
 

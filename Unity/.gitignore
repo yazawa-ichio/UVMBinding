@@ -11,3 +11,7 @@ Build
 CodeCoverage
 UserSettings
 *.slnx
+# テストプレイヤー実行時の一時シーン。名前が GUID 固定で変更できず、
+# 実行を中断すると Assets 直下に残る
+Assets/InitTestScene*.unity
+Assets/InitTestScene*.unity.meta

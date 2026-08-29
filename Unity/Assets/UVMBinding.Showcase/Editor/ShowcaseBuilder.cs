@@ -36,10 +36,10 @@ public static partial class ShowcaseBuilder
 	{
 		const string ScenePath = "Assets/UVMBinding.Showcase/Scenes/Showcase.unity";
 		//相対パスは Unity プロセスの作業ディレクトリ基準になり、CLI 経由だと場所が変わる。
-		//また Unity/Temp は Editor 終了時に消えるため、リポジトリ直下の Build に出す。
+		//また Unity/Temp は Editor 終了時に消えるため、Build に出す（.gitignore 済み）。
 		var projectRoot = System.IO.Path.GetDirectoryName(Application.dataPath);
 		var outputPath = System.IO.Path.GetFullPath(
-			System.IO.Path.Combine(projectRoot, "../Build/Showcase/Showcase.exe"));
+			System.IO.Path.Combine(projectRoot, "Build/Showcase/Showcase.exe"));
 		var options = new BuildPlayerOptions
 		{
 			scenes = new[] { ScenePath },
