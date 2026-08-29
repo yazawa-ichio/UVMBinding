@@ -193,14 +193,19 @@ vm.UnSet("P1");       // 解除
 vm.Set("P1", "Text"); // string で格納し直す
 ```
 
-**原則：`UnSet` した path は「一度も使っていない状態」に戻る。**
+**`UnSet` は「格納する型の登録」を解除する機能であり、購読は解除しない。**
+path そのものは残る。利用者から見て**購読やハンドルは繋がったまま**で、
+**繋ぎ直しはライブラリ内部で行う。**
 
-| 観測点 | `UnSet` 直後 | 再登録後 |
-| --- | --- | --- |
-| `Set<T>` / `Get<T>` / `TryGetAs<T>` / `TrySet<T>` | 未登録として扱う。`Get<T>` は T で格納型を決める | 通常どおり |
-| `Binder<T>` | 未結線に戻る | 結線し直される |
-| `Subscribe<T>`（↑ 許容） | 届かない | **届く**（path に対する購読のため） |
-| `SubscribeStrict<T>` / `Property<T>` | **無効。取り直しが必要** | 無効のまま |
+| 観測点 | `UnSet` 直後 | 同じ型で再登録 | 別の型で再登録 |
+| --- | --- | --- | --- |
+| `Set<T>` / `Get<T>` | 未登録として扱う。`Get<T>` は T で格納型を決める | 通常どおり | 通常どおり |
+| `Binder<T>` | 未結線に戻る | 結線し直される | 型が合えば結線 |
+| `Subscribe<T>`（↑ 許容） | 届かない | **届く** | **代入可なら届く** |
+| `SubscribeStrict<T>` | 届かない | **届く**（内部で繋ぎ直す） | 届かない（型が違う） |
+| `Property<T>` | 読み書きできない | **繋がる**（内部で繋ぎ直す） | 繋がらない |
+
+**利用者が取り直す必要は無い。**
 
 `[Bind]` / `Property<T>` は宣言で型が決まるため、`ViewModel` 本体や `PropertyContainer` の
 public API に `UnSet` は出さない。
@@ -270,64 +275,61 @@ public bool TrySetValue<T>(T value)
 | CPU | **変わらない。** `Binder` は Bind 時に T を知っているため `ValueHolder<T>` を直接持てる。完全一致の読み取りは**フィールド直読み**になり、現在のインターフェース経由のプロパティ取得より速い |
 | AOT | **変わらない。** 非ジェネリックインターフェース上のジェネリックメソッド（`IBindingProperty.IsAssignable<T>` / `IValueHolder.TryGetValue<T>`）は**既に存在し、既に使われており**、[TASK-025](TASK-025-strippingVerification.md) で IL2CPP + Stripping High が通っている。必要な実体化の型の集合も変わらない |
 
-### 型付きイベントをどこに置くか
+### `UnSet` の実装形
 
-`BindingProperty` が非ジェネリックになるため `Action<T>` を持てない。置き場所は 2 つ。
+**path のエントリ（`BindingProperty`）は残し、`ValueHolder` だけを差し替える。**
 
-| 案 | 置き場所 | 通知の仕方 |
-| --- | --- | --- |
-| **案 1** | `ValueHolder<TValue>` | 直接呼び出し |
-| 案 2 | `PropertyContainer` に集約 | path で引く |
-
-#### `UnSet` との関係
-
-**どちらを選んでも明示的な無効化が要る。**
-
-目標仕様では `SubscribeStrict<T>` / `Property<T>` は `UnSet` 後に無効になり、
-**同じ型で再登録しても無効のまま**である。案 2（container 集約）でも、型が一致すれば
-通知が再開してしまうため、これは自動では実現しない。
-
-**したがって置き場所の選択は `UnSet` の難易度では決まらない。**
-無効化フラグは、どちらにせよ必要。
-
-#### 案 1 を採る
-
-| 観点 | 案 1（`ValueHolder`） | 案 2（container 集約） |
-| --- | --- | --- |
-| 通知のコスト | **直接呼び出し** | path の比較が入る |
-| 凝集度 | 値と通知が同じ場所 | 値と通知が分かれる |
-| `Property<T>.Value` | **holder を直接読む** | holder を持てば同じ |
-| [TASK-013](TASK-013-versionGate.md) の version | `BindingProperty` から進める | 同じ場所で完結する |
-
-**案 1 を採る。** 通知が直接呼び出しで済み、ポーリング方式の軽さを保てる。
-container 集約の利点（version と同じ場所）は、書き込みの流れが
-**層 1 → `BindingProperty` → `ValueHolder`** である以上、`BindingProperty` が
-`Hash` と version を進めれば同様に得られる。
-
-#### 書き込みの流れ
-
-`BindingProperty` は非ジェネリックなので型付きイベントを直接発火できない。
-**発火の指示だけを出し、順序は `BindingProperty` が握る。**
+`UnSet` が消すのは「格納する型」であって path ではない。エントリを残せば、
+そこに紐づく購読とハンドルはすべて生き残る。
 
 ```
-BindingProperty.TrySetValue<T>(value)
-  ├ holder.TrySetValue(value, out changed)   … 型判定と代入。ボックス化なし
-  └ changed なら
-       ├ Hash++ / version++
-       ├ holder.NotifyChanged()              … 型付きイベント（非ジェネリックな指示）
-       └ 型消去イベントの発火
+UnSet  … BindingProperty はそのまま。m_Holder を null にする
+Set<T> … 新しい ValueHolder<T> を作って m_Holder に入れる
 ```
 
-#### 無効化
+### 型付きイベントは `BindingProperty` に型消去で持つ
 
-`UnSet` で `ValueHolder` に無効の印を付ける。`SubscribeStrict<T>` / `Property<T>` は
-holder を持っているため、**これだけで両方が無効になる。**
+`ValueHolder` に置くと、差し替えのたびに購読を移し替える必要がある。
+`BindingProperty` は非ジェネリックなので `Action<T>` を直接は持てないが、
+**型消去した委譲として持ち、配信時に型で振り分ければよい。**
 
-- 読み取り → 既定値
-- 書き込み → 何もしない
-- 通知 → 届かない
+```
+BindingProperty
+  └ 購読リスト（型消去）… 配信時に holder の型で振り分ける
+```
 
-**内部に状態が 1 つ増えるが、目標仕様を素直に満たせる。**
+| 購読 | 配信の条件 |
+| --- | --- |
+| `Subscribe<T>`（↑ 許容） | `holder.TryGetValue<T>` が成功したら配信 |
+| `SubscribeStrict<T>` | `holder is ValueHolder<T>` のときだけ配信 |
+
+**差し替えで何もしなくてよい。** 購読は path のエントリに付いており、
+配信のたびにその時点の holder を見るため、自動的に新しい値が流れる。
+
+#### 現在より安くなる
+
+現在の `SubscribeAssignable` は `PropertyContainer.OnChangedValue` に集約されており、
+**購読者ごとに path の文字列比較**が入る。
+
+```csharp
+m_Action = (p, value) => { if (p == path) { ... } };   // 購読者ごとに比較
+```
+
+購読を path のエントリ側に持てば、**そのエントリの購読者にしか通知が行かないため
+文字列比較が消える。**
+
+### `Property<T>` の繋ぎ直し
+
+`Property<T>` は読み書きのハンドルなので、型付きの参照が要る。
+**`BindingProperty` を持ち、`ValueHolder<T>` をキャッシュする。**
+
+差し替えを検出したらキャッシュを取り直す。参照の比較 1 回で済む。
+
+```
+Value の取得 … キャッシュした holder が現在の holder と違えば取り直す
+```
+
+**利用者からは、`UnSet` → 同じ型で `Set` の後もそのまま使える。**
 
 ### 変更検出
 
