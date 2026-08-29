@@ -77,7 +77,7 @@
 | `GeneralViewModel.Set<T>` / `Get<T>` / `TryGetAs<T>` / `TrySet<T>` | ViewModel | 同上 |
 | `GeneralViewModel.UnSet` | ViewModel | **格納型の解除**（新規） |
 | `Property<T>` | ViewModel | 型付きハンドル |
-| `PropertyContainer.Subscribe` 系 | Container | 購読 |
+| `PropertyContainer.Subscribe<T>` | Container | 購読（↑ を許す） |
 | `Binder<T>` の結線 | View | — |
 
 ### 型の関係ごとの挙動
@@ -89,10 +89,15 @@
 | `TrySet<T>` | `true` + 反映 | **`true` + 反映** | `false` | `false` |
 | `TryGetAs<T>` | `true` + 値 | **実行時の値が T なら `true`** | **`true` + 値** | `false` |
 | `Property<T>` | 読み書き | **例外** | **例外** | **例外** |
-| `Subscribe` 系 | 届く | — | **届く** | **例外**（購読時） |
+| `Subscribe<T>`（↑ 許容） | 届く | — | **届く** | **例外**（※） |
+| `SubscribeStrict<T>` | 届く | — | 例外 | 例外 |
 | `Binder<T>` の結線 | 結線 | — | **結線** | 結線されない（`Log.Debug`） |
 
 **`Try` 版は例外を投げず、ログも出さない。** 失敗が正常な結果に含まれるため。
+
+**※ 購読は登録前に行うのが通常**（View が先に購読し、後から ViewModel が値を入れる）。
+そのため**購読時点で格納型が決まっていない場合は判定できず、例外も投げられない。**
+判定できるのは既に登録済みの path を購読する場合のみ。
 
 `UnSet` は型に依存しないため上表に含めない（後述）。
 
@@ -140,37 +145,40 @@ vm.TryGetAs<Dog>("Pet", out var dog);  // true。実行時の値が Dog なの�
 
 ---
 
-## 命名の検討（未決）
+## 購読 API の命名 → **決定**
 
-現在の購読 API は以下。
+| 変更前 | 変更後 | 挙動 |
+| --- | --- | --- |
+| `SubscribeAssignable<T>` | **`Subscribe<T>`** | ↑ を許す。**既定** |
+| `Subscribe<T>` | **`SubscribeStrict<T>`** | 完全一致のみ |
 
-| 現在の名前 | 挙動 |
+**↑ を許す方を既定にする（2026-08-29 決定）。** 理由は 2 つ。
+
+1. **他の API と揃う。** `Get` も Binder も ↑ を許すのに、購読だけ完全一致が既定なのは説明しにくい
+2. **完全一致を使うケースが極端。** 名前が長い方を特殊な用途に充てる
+
+### `SubscribeStrict` は利用者向けの一覧から外す
+
+**実プロジェクトでの利用は 0 件**（[TASK-003](TASK-003-bindingPropertyRedesign.md) の調査。
+検出された `Subscribe<` は `EventBroker` に対するもの）。パッケージ内部では
+`Collection<T>` / `ValueCollection<T>` が使っている。
+
+| 案 | 内容 |
 | --- | --- |
-| `Subscribe<T>` | 完全一致のみ |
-| `SubscribeAssignable<T>` | ↑ を許す |
+| **案 1** | **`internal` にする。** 利用者向けの API 一覧から外れる。必要になれば public に上げられる（逆は破壊的） |
+| 案 2 | public のまま残し、ドキュメントで「通常は `Subscribe` を使う」と書く |
 
-**上表のとおり `Get` も Binder も ↑ を許すため、購読だけ完全一致が既定なのは一貫しない。**
-名前を入れ替える案がある。
+**案 1 を推す。**
 
-| 案 | 既定 | 厳密 |
+### 両者の違いは厳密さだけではない
+
+| | `Subscribe<T>`（↑ 許容） | `SubscribeStrict<T>` |
 | --- | --- | --- |
-| 現状 | `Subscribe<T>`（完全一致） | — |
-| **案 X** | **`Subscribe<T>`（↑ を許す）** | `SubscribeStrict<T>` |
+| 通知の元 | **path** | プロパティの実体 |
+| 通知ごとの処理 | path の比較 + 型判定 | 直接呼び出し |
+| `UnSet` 後 | **生き残る** | 無効になる |
 
-**案 X の方が自然**と考える。理由は 3 つ。
-
-1. **他の API と揃う。** `Get` / Binder が ↑ を許すのに購読だけ違うのは説明しにくい
-2. **既定が安全側。** 完全一致は「型が変わったら黙って届かなくなる」ため、既定にすると事故が起きる
-3. **名前が長い方が特殊** という原則に合う
-
-ただし両者は**厳密さ以外にも違う**。
-
-| | `Subscribe<T>` | `SubscribeAssignable<T>` |
-| --- | --- | --- |
-| 通知の元 | プロパティの実体 | path |
-| 型が変わったとき | 届かなくなる | 代入可なら届く |
-
-**この差を名前で表すべきかは未決。** `Strict` は厳密さしか表さない。
+**`SubscribeStrict` の方が安い。** 内部で使う理由はここにある。
 
 ---
 
@@ -191,8 +199,8 @@ vm.Set("P1", "Text"); // string で格納し直す
 | --- | --- | --- |
 | `Set<T>` / `Get<T>` / `TryGetAs<T>` / `TrySet<T>` | 未登録として扱う。`Get<T>` は T で格納型を決める | 通常どおり |
 | `Binder<T>` | 未結線に戻る | 結線し直される |
-| `SubscribeAssignable<T>` | 届かない | **届く**（path に対する購読のため） |
-| `Subscribe<T>` / `Property<T>` | **無効。取り直しが必要** | 無効のまま |
+| `Subscribe<T>`（↑ 許容） | 届かない | **届く**（path に対する購読のため） |
+| `SubscribeStrict<T>` / `Property<T>` | **無効。取り直しが必要** | 無効のまま |
 
 `[Bind]` / `Property<T>` は宣言で型が決まるため、`ViewModel` 本体や `PropertyContainer` の
 public API に `UnSet` は出さない。
@@ -218,9 +226,10 @@ public API に `UnSet` は出さない。
 | 型不一致（↑↓ 逆方向・×） | `Log.Error` + 無視 / 既定値 | **例外を投げるよう変更が必要** |
 | `TryGetAs<T>` / `TrySet<T>` | 存在しない | **新規** |
 | `UnSet` | 存在しない | **新規** |
-| `SubscribeAssignable` / Binder の結線 | 目標どおり | 無し |
+| ↑ を許す購読 / Binder の結線 | 目標どおり | 無し |
 | 層 3 の `SetObject` | 例外を投げる | **目標どおり。変更不要** |
-| 購読 API の命名 | `Subscribe` / `SubscribeAssignable` | **案 X を採るなら変更** |
+| 購読 API の命名 | `Subscribe` / `SubscribeAssignable` | **`SubscribeStrict` / `Subscribe` へ改名** |
+| `SubscribeStrict` の公開範囲 | public | **`internal` にする** |
 
 ## 完了条件
 
