@@ -326,6 +326,54 @@ public bool TrySetValue<T>(T value)
 | アロケーション | プール撤去で減るはずだが**実測していない**。[TASK-025](TASK-025-strippingVerification.md) の基準値と `Is.Not.AllocatingGCMemory` で確認する |
 | AOT | `ValueHolder<T>` の実体化数は `BindingProperty<T>` と同じはずだが、IL2CPP ビルドで確認する |
 
+### 案 B で新規に発生する問題
+
+**現在は発生しておらず、案 B にすると発生するもの。** アロケーションの現状（前節）は
+案 A・案 B のどちらでも変わらない既存の話であり、ここでは扱わない。
+
+#### 1. 値の読み取りがジェネリックなインターフェースメソッド経由になる
+
+現在の `Binder.TryUpdate` は以下。
+
+```csharp
+if (m_Property is IBindingProperty<T> prop)
+{
+	UpdateValue(prop.Value);          // 型テスト + インターフェースのプロパティ取得
+}
+```
+
+**完全一致の経路は「型テスト → 直接取得」で完結している。**
+
+案 B では `IBindingProperty<T>` が無くなるため、`IValueHolder.TryGetValue<T>` を通す。
+これは**インターフェース上のジェネリックメソッド**であり、IL2CPP では呼び出しごとに
+実体の解決が入る。**Binder ごと・値の変更ごとに発生する。**
+
+さらに `TryGetValue<T>` は**デフォルトインターフェース実装**であり、解決の段数が増える。
+
+#### 2. path あたりのオブジェクトが 1 つ増える
+
+`BindingProperty` と `ValueHolder<T>` の 2 つになる。ViewModel が数十、path がその数倍
+あるため、**個数として無視できない可能性がある。**
+
+#### 3. 間接参照が 1 段増える
+
+`BindingProperty` → `IValueHolder` → `Value`。現在は `BindingProperty<T>.m_Value` で
+1 段。**キャッシュ効率に効く可能性がある。**
+
+#### 4. AOT で実体が落ちる経路が増える
+
+`ValueHolder<T>.TryGetValue<U>` のように**ジェネリック型のジェネリックメソッド**になる。
+値型の組み合わせごとに実体が要るため、**IL2CPP が生成し損ねる可能性が現在より高い。**
+[TASK-025](TASK-025-strippingVerification.md) の検証で確認する。
+
+#### 案 A では上記が発生しない
+
+**`IBindingProperty<T>` を `internal` のまま残し、利用者向け API から外すだけなら、
+`Binder.TryUpdate` は現在のコードのままでよい。** 上記 1〜4 はいずれも起きない。
+
+目標仕様が要求するのは**層 1 の `Get<T>` / `Set<T>` が ↑ ↓ を許すこと**であり、
+Binder の読み取り経路を変える必要は無い。
+
 ### 代替案との比較が要る
 
 **不変性の問題は `IBindingProperty<T>` を「公開しない」だけでも解ける。**
