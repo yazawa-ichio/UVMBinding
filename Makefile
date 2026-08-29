@@ -47,6 +47,8 @@ test-all: test test-edit
 # プレイヤー上での PlayMode テスト。実機・IL2CPP・ストリッピング下の合否を機械判定する。
 # unity run は batchmode 固定でプレイヤーテストが動かないため unity open --args を使う。
 # -buildPlayerPath を渡さないと Temp/UnityTempFile-<GUID> に出るため必ず指定する。
+# プレイヤーは結果を返すために Editor と通信する。ファイアウォールの規則は
+# 実行ファイルのパス単位なので、固定しないと毎回許可を求められる。
 # 実行前に Editor を閉じること。
 PLAYER_TEST_DIR = ${CURDIR}/Unity/Build/PlayerTests
 
