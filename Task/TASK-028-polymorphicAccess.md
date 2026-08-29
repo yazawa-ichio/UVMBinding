@@ -142,53 +142,47 @@ path とプロパティの対応を持つ層。
 
 **論点 1・2 が完全一致のみに決まったため不要。** 層 1 は現状どおり `Get<T>` を呼べばよい。
 
-### 論点 4（層 3）：`SetObject` が例外を投げる
+### 論点 4（層 3）：`SetObject` が例外を投げる → **取り下げ**
 
-`BindingProperty<TValue>.SetObject(object val)` の実装は以下。
+`BindingProperty<TValue>.SetObject(object val)` は検査なしのキャスト（`Value = (TValue)val;`）で、
+型が合わなければ `InvalidCastException` が飛ぶ。
 
-```csharp
-public override void SetObject(object val)
-{
-	Value = (TValue)val;
-}
-```
+これを「[TASK-003](TASK-003-bindingPropertyRedesign.md) の『出荷後に落とさない』方針と矛盾する」
+として論点に挙げたが、**この理由は成り立たない。**
 
-**検査なしのキャスト**であり、実行時の型が合わなければ `InvalidCastException` が飛ぶ。
-方針として選んだものではなく、[TASK-003](TASK-003-bindingPropertyRedesign.md) の
-「出荷後に落とさない」より前から存在する実装。
+#### 挙げた理由が誤っていた
 
-#### 到達経路
+**1. 失敗の種類が違う。**
 
-呼び出し元は 3 つ。
+| 箇所 | 失敗の内容 | 誘発するもの |
+| --- | --- | --- |
+| 層 2 `Get<T>` | **登録の型と要求の型が違う** | prefab の結線など**データ** |
+| 層 3 `SetObject` | **書き込む値の実体が型に合わない** | **コード** |
 
-| 呼び出し元 | 例外の可能性 |
+TASK-003 で「落とさない」と決めたのは前者。**データ起因の食い違いで出荷後に落とさないため**で
+あり、コード側の誤りにまで広げる決定ではなかった。**失敗の種類を確認せずに方針を横展開した。**
+
+**2. 到達しない。** 双方向で書き戻す組み込み Binder の T は以下で、**すべて sealed か値型**。
+
+| Binder | T |
 | --- | --- |
-| `ReflectionViewModel` | **無い。** 対象は必ず `ObjectBindingProperty`（`TValue` が `object`）でキャストが常に成功する |
-| **`Binder.Set<T>`（双方向の書き戻し）** | **有る** |
-| **`ConverterBase.OnChanged`（逆変換の書き戻し）** | **有る** |
+| `InputFieldBinder` | `string` |
+| `SliderBinder` / `ScrollbarBinder` | `float` |
+| `ToggleBinder` / `EventSystemSelectBinder` / `EventSystemPointerStayBinder` | `bool` |
+| `DropdownSelectBinder` | `int` |
+| `PointerMovePositionBinder` | `Vector2` |
+| `EnumPopupBinderBase` | enum |
 
-後者 2 つは同じ形。`Binder.Bind` は**完全一致だけでなく `IsAssignable<T>()` でも結線する**ため、
-`m_Property` が `IBindingProperty<T>` でないことがある。その場合 `Set` は `SetObject` へ落ちる。
+`Binder.Bind` が `SetObject` へ落ちる分岐に入るのは `prop.IsAssignable<T>()` が真かつ
+`prop is IBindingProperty<T>` が偽のときだが、**T が sealed か値型なら代入可＝完全一致**に
+なるため、この状態は起こらない。
 
-```csharp
-if (m_Property is IBindingProperty<T> prop) { prop.Value = val; }
-else                                        { m_Property.SetObject(val); }
-```
+**先に挙げた `Dog` / `Animal` の例は、利用側が非 sealed な型で双方向 Binder を自作した場合に
+限られる。** そしてその状況で誤った型を書くのは**コードの誤り**であり、例外で即座に分かる方が良い。
 
-**具体例：** ViewModel が `Dog` を登録し、View 側が `Binder<Animal>` の場合。
-`IsAssignable` により結線され、双方向の書き戻しで `Animal` を渡すと
-`(Dog)animal` が失敗して落ちる。
+#### 結論
 
-#### 案
-
-| 案 | 挙動 |
-| --- | --- |
-| **C-1** | 現状維持。例外を投げる |
-| **C-2** | 型を検査し、不正なら `Log.Error` して無視する |
-
-**C-2 を推す。** 層 2 の `Get<T>` は落とさない方針を守っているのに、
-**層 3 だけ落ちる**のは説明がつかない。しかも落ちるのは実行時、しかも
-「View を操作したとき」なので、開発中に見つけにくい。
+**現状維持（C-1）。** 何も変えない。
 
 ### 論点 5（層 2）：新しい API の公開範囲
 
@@ -236,8 +230,8 @@ vm.Set("P1", "Text"); // string で登録し直す
 | — | 論点 2（`Get` の多態） | 1 | **取り下げ** |
 | — | 論点 3（値だけの API） | 2 | **不要** |
 | — | 論点 6（型の解除） | 1 | **決定: `GeneralViewModel.UnSet`**。細部は未定 |
-| 1 | 論点 4（`SetObject` の例外） | 3 | **未決** |
-| 2 | 論点 5（公開範囲） | 2 | 論点 3 が不要になったため**対象が消えた**。`UnSet` の公開範囲のみ |
+| — | 論点 4（`SetObject` の例外） | 3 | **取り下げ。現状維持** |
+| 1 | 論点 5（公開範囲） | 2 | 論点 3 が不要になったため**対象は `UnSet` のみ** |
 
 ## 完了条件
 
