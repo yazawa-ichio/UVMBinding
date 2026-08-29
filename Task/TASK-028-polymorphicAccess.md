@@ -333,12 +333,14 @@ public bool TrySetValue<T>(T value)
 
 #### アロケーション
 
-| 項目 | 内容 |
-| --- | --- |
-| **path あたりのオブジェクトが 1 つ増える** | `BindingProperty` と `ValueHolder<T>` の 2 つになる。ViewModel が数十、path がその数倍あるため個数として無視できない可能性がある |
+| 項目 | 内容 | 判定 |
+| --- | --- | --- |
+| path あたりのオブジェクトが 1 つ増える | `BindingProperty` と `ValueHolder<T>` の 2 つになる | **許容する（2026-08-29 決定）** |
 
 **値の変更 1 回あたりのアロケーションは増えない。**
 完全一致は `this is ValueHolder<T>` で非ボックス、↑ 経路は現状と同じくボックス化 1 回。
+
+**アロケーション面で案 B を退ける理由は無い。** 残る懸念は CPU と AOT のみ。
 
 #### CPU
 
@@ -380,16 +382,33 @@ Binder の読み取り経路を変える必要は無い。
 
 ### 段取り
 
-1. `IValueHolder` に `TrySetValue<T>` と実行時判定の経路を足す（既存構造のまま）
-2. `BindingProperty` を非ジェネリックにし、`IValueHolder` を持たせる
-3. `IBindingProperty<T>` / `ObjectBindingProperty` を除去
-4. 層 2 の API を値ベースに一本化し、層 1 から例外を投げる
-5. 購読 API を改名（`Subscribe` / `SubscribeStrict`）
-6. `UnSet` を追加
-7. `make verify-strip` と PlayMode テストで回帰を確認
+**第 1 段階（案の分岐前）— 仕様を満たす**
+
+1. 層 3 に値ベースの読み書きを足す（`TrySetValue<T>` と実行時判定）
+2. 層 2 の API を値ベースに一本化する。`Get<T>` が型付きハンドルを返す形をやめる
+3. 層 1 の `Get<T>` / `Set<T>` を ↑ ↓ 対応にし、型が合わなければ例外を投げる
+4. `TryGetAs<T>` / `TrySet<T>` を追加する
+5. 購読 API を改名する（`Subscribe` / `SubscribeStrict`）。`SubscribeStrict` は `internal` にする
+6. `GeneralViewModel.UnSet` を追加する
+7. `IBindingProperty<T>` を利用者向け API から外す
+
+**この時点で目標仕様を満たす。** ここまでが**案 A**。
+
+**第 2 段階（案 B を採る場合のみ）— 構造を寄せる**
+
+8. `BindingProperty` を非ジェネリックにし、`IValueHolder` を持たせる
+9. `ObjectBindingProperty` を除去する
+10. `ValueHolder` のプールを撤去する
+
+**第 2 段階は仕様の要求ではなく、構造の整理。** 実施前に第 1 段階との性能比較を取る。
+
+**検証**
+
+11. `make test` / `make test-edit` / `make verify-strip`
+12. 性能比較（下記「完了条件・性能」）
 
 **各段を独立したコミットにする。** 問題が出た段だけ戻せるようにする
-（[A-13](../INDEX.md) の方針）。
+（[A-13](../INDEX.md) の方針）。第 1 段階と第 2 段階を分けているのはこのため。
 
 ## 完了条件
 
@@ -413,4 +432,5 @@ Binder の読み取り経路を変える必要は無い。
 | path あたりのメモリ | オブジェクト数と実測 | 増える場合は理由を記録すること |
 | IL2CPP 実機での所要時間 | [TASK-025](TASK-025-strippingVerification.md) のプレイヤーで計測 | **現行比で悪化しないこと** |
 
-**案 A と案 B の両方を測ってから採用を決める。** 片方だけ実装して比較なしに進めない。
+**第 1 段階（案 A）を実装して測り、そのうえで第 2 段階（案 B）に進むかを決める。**
+第 2 段階は仕様の要求ではないため、性能が悪化するなら実施しない。
