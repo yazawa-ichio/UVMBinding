@@ -74,6 +74,11 @@ m_VM.Set<List<IViewModel>>(Path, m_List);                  // List<IViewModel> �
 型変換    Binder 層の Converter の責務。PropertyContainer は型を跨がない
 ```
 
+**このうち「T == object は常に受け入れる」と `TryGetValue<U>` は実装していない。**
+実装は `Get<T>` の完全一致のみで、`ReflectionViewModel`（全プロパティが `object`）への
+型付き `Set` / `Get` は `Log.Error` になる。**型を跨ぐ範囲は
+[TASK-028](TASK-028-polymorphicAccess.md) で決める。**
+
 ### 要点：型変換を Binder 層に押し出す
 
 `PropertyContainer` が型を跨ぐ責務を持っていたことが複雑さの根源だった。**Converter という正しい置き場が既にある。**
