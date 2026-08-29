@@ -239,15 +239,31 @@ path が一致する Binder に対して `binder.Bind(prop)` を呼ぶ。`NewPro
 
 内部構造から積み上げると判断がぶれるため、**先に外から観測される状態を決める。**
 
-行は path に触る手段、列は `UnSet` 後の状態。
+行は **外から触れる手段**（public なもののみ）。層 2 の `Get<T>` は `internal` なので対象外。
+列は `UnSet` 後の状態。
 
-| 触る手段 | A: `UnSet` 直後 | B: `UnSet` → `Set<同じ型>` | C: `UnSet` → `Set<別の型>` |
-| --- | --- | --- | --- |
-| `Set<T>` / `Get<T>`（都度呼び） | 未登録と同じ。`Get<T>` は T で新規登録 | 通常どおり | 通常どおり |
-| `SubscribeAssignable<T>` | 通知が来ない | **届く** | **代入可なら届く** |
-| `Subscribe<T>` のハンドル | ★1 | ★2 | ★3 |
-| `Property<T>` のインスタンス | ★1 | ★2 | ★3 |
-| 結線済みの Binder | ★4 | 貼り直されて更新 | 型が合えば貼り直し、合わなければ未結線 |
+| # | 触る手段 | 層 | A: `UnSet` 直後 | B: `UnSet` → `Set<同じ型>` | C: `UnSet` → `Set<別の型>` |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `GeneralViewModel.Set<T>` / `Get<T>` | 1 | 未登録と同じ | 通常どおり | 通常どおり |
+| 2 | `IViewModel.Set<T>` / `Get<T>` | 1 | 同上（実装は 1 と同じ） | 同上 | 同上 |
+| 3 | `PropertyContainer.SubscribeAssignable<T>` | 2 | 通知が来ない | **届く** | **代入可なら届く** |
+| 4 | `PropertyContainer.Subscribe<T>` のハンドル | 2 | ★1 | ★2 | ★3 |
+| 5 | `Property<T>` のインスタンス | 1 | ★1 | ★2 | ★3 |
+| 6 | 結線済みの Binder | View | ★4 | 貼り直されて更新 | 型が合えば貼り直し、合わなければ未結線 |
+
+##### 行 1・2 の「未登録と同じ」の意味
+
+**`Get<T>` は読み取りだが、未登録の path に対しては T で新規登録する。**
+`ViewModel.GetImpl<T>` → `PropertyContainer.Get<T>` が「無ければ作る」実装のため。
+
+```csharp
+vm.Set("P1", 10);      // int で確定
+vm.UnSet("P1");        // 解除
+var x = vm.Get<string>("P1");  // ← 読んだだけで string として再登録される。x は null
+```
+
+**読み取りが型を確定させる**点は `UnSet` に限らず現在の仕様だが、`UnSet` と組み合わせると
+意図せず型が決まる事故が起きやすい。**これを許容するかも決める必要がある**（後述の 4 点目）。
 
 **基本の考え方：`UnSet` した path は「未登録に戻る」。** 以後の挙動は、その path を一度も
 使っていない場合と同じにする。これが一番説明が短い。
@@ -284,6 +300,7 @@ path が一致する Binder に対して `binder.Bind(prop)` を呼ぶ。`NewPro
 1. **★1〜★3 は案 1 か案 2 か**（案 2 は設計変更を伴う）
 2. **★4 は案 a か案 b か**
 3. `SubscribeAssignable` を「届く」にする前提でよいか（上表の B・C 列）
+4. **`Get<T>` が未登録の path を新規登録する挙動を、`UnSet` 後も許すか**
 
 #### 論点 6-a：戻り値
 
