@@ -58,7 +58,7 @@
 [SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Toggle Visible:EventButton.m_Argument
 [SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Group:CanvasGroupAlphaBinder.m_Converter
 [SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Fill:ImageFillAmountBinder.m_Converter
-[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving:PositionBinder.m_Converter
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving:Position3DBinder.m_Converter
 [SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/ScaleHost/Scaling:ScaleBinder.m_Converter
 [SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Tint:GraphicColorBinder.m_Converter
 [SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Visible:ActiveBinder.m_Converter
@@ -408,8 +408,8 @@
 [SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Label active=1 text=CanvasGroupAlphaBinder (Alpha) col=A6ADBDFF
 [SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Fill active=1 col=4C8CE6FF spr=- fill=0.600 pos=554.0,-38.0 scale=1.00,1.00,1.00
 [SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Label active=1 text=ImageFillAmountBinder (Fill) col=A6ADBDFF
-[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/Label active=1 text=PositionBinder (Offset) col=A6ADBDFF
-[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving active=1 col=F0F2F7FF spr=- fill=1.000 pos=160.0,0.0 scale=1.00,1.00,1.00
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/Label active=1 text=Position3DBinder (Offset) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving active=1 col=F0F2F7FF spr=- fill=1.000 pos=0.0,0.0 scale=1.00,1.00,1.00
 [SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/Label active=1 text=ScaleBinder (Scale) col=A6ADBDFF
 [SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/ScaleHost/Scaling active=1 col=4C8CE6FF spr=- fill=1.000 pos=0.0,0.0 scale=1.00,1.00,1.00
 [SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Label active=1 text=GraphicColorBinder (Tint) col=A6ADBDFF
@@ -431,8 +431,8 @@
 [SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Label active=1 text=CanvasGroupAlphaBinder (Alpha) col=A6ADBDFF
 [SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Fill active=1 col=4C8CE6FF spr=- fill=0.111 pos=554.0,-38.0 scale=1.00,1.00,1.00
 [SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Label active=1 text=ImageFillAmountBinder (Fill) col=A6ADBDFF
-[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/Label active=1 text=PositionBinder (Offset) col=A6ADBDFF
-[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving active=1 col=F0F2F7FF spr=- fill=1.000 pos=151.9,0.0 scale=1.00,1.00,1.00
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/Label active=1 text=Position3DBinder (Offset) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving active=1 col=F0F2F7FF spr=- fill=1.000 pos=-8.1,0.0 scale=1.00,1.00,1.00
 [SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/Label active=1 text=ScaleBinder (Scale) col=A6ADBDFF
 [SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/ScaleHost/Scaling active=1 col=4C8CE6FF spr=- fill=1.000 pos=0.0,0.0 scale=0.88,0.88,0.88
 [SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Label active=1 text=GraphicColorBinder (Tint) col=A6ADBDFF
@@ -501,8 +501,8 @@
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move/Text active=1 text=Move col=FFFFFFFF
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover active=1 col=4C8CE6FF spr=- fill=1.000 pos=40.0,0.0 scale=1.00,1.00,1.00
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label active=1 text=AnchoredPositionBinder (AnchoredPosition) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=AnchoredPositionBinder + 操作 col=4C8CE6FF
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=GeneralBinder（任意のプロパティ） col=4C8CE6FF
-[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=PositionBinder + 操作 col=4C8CE6FF
 [SelfCheck] state after Canvas/Body/11 その他/Description active=1 text=GeneralBinder と ComponentSetter。任意コンポーネントのプロパティを更新する。 col=A6ADBDFF
 [SelfCheck] state after Canvas/Body/11 その他/Header active=1 text=11 その他 col=F0F2F7FF
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
@@ -512,6 +512,6 @@
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move/Text active=1 text=Move col=FFFFFFFF
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover active=1 col=4C8CE6FF spr=- fill=1.000 pos=240.0,0.0 scale=1.00,1.00,1.00
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label active=1 text=AnchoredPositionBinder (AnchoredPosition) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=AnchoredPositionBinder + 操作 col=4C8CE6FF
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=GeneralBinder（任意のプロパティ） col=4C8CE6FF
-[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=PositionBinder + 操作 col=4C8CE6FF
 [SelfCheck] END slots=83 nulls=55 types=14 errors=0 states=446

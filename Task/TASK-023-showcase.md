@@ -23,7 +23,7 @@
 | `CastConverter` が Concatenate の中間段で使えない | [TASK-022](TASK-022-castConverterConsolidation.md) |
 | 型不一致のたびに Converter が要る（自動挿入の着想） | [TASK-026](TASK-026-implicitCast.md) |
 | `ConcatenateConverter` / `IConverter` が internal で外部から合成できない | [TASK-004](TASK-004-binderInfo.md) |
-| `PositionBinder` が `RectTransform` で非決定的になる | [TASK-027](TASK-027-transformBinderLayout.md)（`AnchoredPositionBinder` 追加で対応） |
+| `Position3DBinder` が `RectTransform` で非決定的になる | [TASK-027](TASK-027-transformBinderLayout.md)（`AnchoredPositionBinder` 追加で対応） |
 | `UVMBinding.TMP` が Unity 6 で一切コンパイルされない | 本タスク内で修正済み |
 
 ### ストリッピング検証の基盤にもなった
@@ -116,7 +116,7 @@ Dropdown は 1、InputField は固定文字列、Button はパス順に全押し
 | 5 | 派生値 | `CombineBoolProvider` / `CombineStringProvider` / `ViewModelPropertyExtension` / 汎用 `PropertyProvider`（TASK-018 後） |
 | 6 | View 合成 | ネストした View / `ParentViewBind` / `SelectViewBind` / `ViewBinder` / `DataSourceProvider` / `ViewModelSourceProvider` |
 | 7 | ViewModel 種別 | `[Bind]` / `[Event]` / `Property<T>` / `ReflectionViewModel` / `GeneralViewModel` / `SetDirty` / `SetAllDirty` |
-| 8 | 演出系 Binder | `PositionBinder` / `AnchoredPositionBinder` / `RotationBinder` / `ScaleBinder` / `CanvasGroupAlphaBinder` / `CanvasGroupBlocksRaycastsBinder` / `GraphicColorBinder` / `AnimatorBool/Float/IntBinder` / `ImageFillAmountBinder` |
+| 8 | 演出系 Binder | `Position3DBinder` / `AnchoredPositionBinder` / `RotationBinder` / `ScaleBinder` / `CanvasGroupAlphaBinder` / `CanvasGroupBlocksRaycastsBinder` / `GraphicColorBinder` / `AnimatorBool/Float/IntBinder` / `ImageFillAmountBinder` |
 | 9 | Event と引数 | `EventButton` / `InputFieldSubmitEvent` / `DropdownSelectEvent` / `EventSystemSelectBinder` / `EventSystemPointerStayBinder` / `PointerMovePositionBinder` / 各 `EventArgument` |
 | 10 | 任意パッケージ | TMP 系 Binder / Localization 系 Binder。**`defineConstraints` で切り替わることを確認できる形にする** |
 | 11 | その他 | `GeneralBinder` / `ComponentSetter`（`TransformSetter` / `RectTransformSetter`） |

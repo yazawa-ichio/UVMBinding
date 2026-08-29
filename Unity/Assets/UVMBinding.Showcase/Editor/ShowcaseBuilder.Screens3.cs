@@ -142,12 +142,15 @@ public static partial class ShowcaseBuilder
 		SetPath(tint.AddComponent<GraphicColorBinder>(), "Tint");
 
 		Section(c.transform, "Transform");
-		var r4 = Row(c.transform, "Row_Pos", 90); Label(r4.transform, "PositionBinder (Offset)");
+		var r4 = Row(c.transform, "Row_Pos", 90); Label(r4.transform, "Position3DBinder (Offset)");
 		var posHost = New("PosHost", r4.transform); Size(posHost, 320, 80);
 		var pos = New("Moving", posHost.transform); AddImage(pos, Ink, false);
-		var pr = Rect(pos); pr.anchorMin = new Vector2(0f, 0.5f); pr.anchorMax = new Vector2(0f, 0.5f); pr.pivot = new Vector2(0.5f, 0.5f);
-		pr.sizeDelta = new Vector2(48, 48); pr.anchoredPosition = new Vector2(40, 0);
-		SetPath(pos.AddComponent<PositionBinder>(), "Offset");
+		//Position3DBinder は localPosition に書く。RectTransform の localPosition は
+		//端アンカーだと親の解決済み幅に依存するため、中央アンカーにして依存を外す。
+		//端アンカーのまま使う場合は AnchoredPositionBinder を選ぶ（画面 11・TASK-027）
+		var pr = Rect(pos); pr.anchorMin = new Vector2(0.5f, 0.5f); pr.anchorMax = new Vector2(0.5f, 0.5f); pr.pivot = new Vector2(0.5f, 0.5f);
+		pr.sizeDelta = new Vector2(48, 48); pr.anchoredPosition = Vector2.zero;
+		SetPath(pos.AddComponent<Position3DBinder>(), "Offset");
 
 		var r5 = Row(c.transform, "Row_Scale", 90); Label(r5.transform, "ScaleBinder (Scale)");
 		var scaleHost = New("ScaleHost", r5.transform); Size(scaleHost, 200, 80);
@@ -238,11 +241,11 @@ public static partial class ShowcaseBuilder
 		SetRef(gb, "m_Target", target.GetComponent<UnityEngine.UI.Text>());
 		SetProp(gb, "m_Property", "text");
 
-		Section(c.transform, "PositionBinder + 操作");
+		Section(c.transform, "AnchoredPositionBinder + 操作");
 		var r2 = Row(c.transform, "Row_Move", 90); Label(r2.transform, "AnchoredPositionBinder (AnchoredPosition)");
 		var host = New("Host", r2.transform); Size(host, 320, 80);
 		var mover = New("Mover", host.transform); AddImage(mover, Accent, false);
-		//端アンカーのまま置く。PositionBinder ではここで結果が安定しない（TASK-027）。
+		//端アンカーのまま置く。Position3DBinder ではここで結果が安定しない（TASK-027）。
 		//AnchoredPositionBinder は親の幅に依存しないため成立する
 		var mr = Rect(mover); mr.anchorMin = new Vector2(0f, 0.5f); mr.anchorMax = new Vector2(0f, 0.5f);
 		mr.sizeDelta = new Vector2(48, 48); mr.anchoredPosition = new Vector2(40, 0);

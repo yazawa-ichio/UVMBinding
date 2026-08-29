@@ -75,7 +75,7 @@ namespace UVMBinding
 | 入力 | `DropdownSelectBinder`, `TMP_DropdownSelectBinder` | `ComboBox` |
 | 構造 | `CollectionBinder` | `List` |
 | 操作 | `EventButton` | `Button` |
-| **演出** | `GraphicColorBinder`, `PositionBinder`, `RotationBinder`, `ScaleBinder`, `AnimatorBoolBinder` 他 | **`None`** |
+| **演出** | `GraphicColorBinder`, `Position3DBinder`, `RotationBinder`, `ScaleBinder`, `AnimatorBoolBinder` 他 | **`None`** |
 
 **演出系は `None` とし、収集対象から除外する。** 操作対象でも表示内容でもないため、検査にも出力にもノイズにしかならない。
 

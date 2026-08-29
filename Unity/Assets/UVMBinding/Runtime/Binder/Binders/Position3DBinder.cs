@@ -2,7 +2,7 @@
 
 namespace UVMBinding.Binders
 {
-	public class PositionBinder : Binder<Vector3>
+	public class Position3DBinder : Binder<Vector3>
 	{
 		[SerializeField]
 		bool m_Global;
