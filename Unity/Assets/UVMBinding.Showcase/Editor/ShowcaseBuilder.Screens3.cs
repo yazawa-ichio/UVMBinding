@@ -239,14 +239,14 @@ public static partial class ShowcaseBuilder
 		SetProp(gb, "m_Property", "text");
 
 		Section(c.transform, "PositionBinder + 操作");
-		var r2 = Row(c.transform, "Row_Move", 90); Label(r2.transform, "PositionBinder (Position)");
+		var r2 = Row(c.transform, "Row_Move", 90); Label(r2.transform, "AnchoredPositionBinder (AnchoredPosition)");
 		var host = New("Host", r2.transform); Size(host, 320, 80);
 		var mover = New("Mover", host.transform); AddImage(mover, Accent, false);
-		//アンカーを中央にする。端に寄せると localPosition が親の解決済み幅に依存し、
-		//PositionBinder がレイアウト確定前に書いた場合に結果がぶれる
-		var mr = Rect(mover); mr.anchorMin = new Vector2(0.5f, 0.5f); mr.anchorMax = new Vector2(0.5f, 0.5f);
-		mr.sizeDelta = new Vector2(48, 48); mr.anchoredPosition = Vector2.zero;
-		SetPath(mover.AddComponent<PositionBinder>(), "Position");
+		//端アンカーのまま置く。PositionBinder ではここで結果が安定しない（TASK-027）。
+		//AnchoredPositionBinder は親の幅に依存しないため成立する
+		var mr = Rect(mover); mr.anchorMin = new Vector2(0f, 0.5f); mr.anchorMax = new Vector2(0f, 0.5f);
+		mr.sizeDelta = new Vector2(48, 48); mr.anchoredPosition = new Vector2(40, 0);
+		SetPath(mover.AddComponent<AnchoredPositionBinder>(), "AnchoredPosition");
 		Button(r2.transform, "Move", "OnMove", 150);
 
 		screens.Add(screen);

@@ -14,7 +14,7 @@ namespace UVMBinding.Showcase
 				vm.OnMove = () =>
 				{
 					right = !right;
-					vm.Position = right ? new Vector3(160f, 0f, 0f) : Vector3.zero;
+					vm.AnchoredPosition = right ? new Vector2(240f, 0f) : new Vector2(40f, 0f);
 				};
 			});
 		}

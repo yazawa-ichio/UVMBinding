@@ -67,7 +67,7 @@
 [SelfCheck] null Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row/Value:TextBinder.m_Converter
 [SelfCheck] null Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Target:GeneralBinder.m_Converter
 [SelfCheck] null Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move:EventButton.m_Argument
-[SelfCheck] null Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover:PositionBinder.m_Converter
+[SelfCheck] null Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover:AnchoredPositionBinder.m_Converter
 [SelfCheck] state before Canvas/Body/01 基本バインド/Description active=1 text=表示系 Binder。Text / Image / RawImage / Active / Enabled。 col=A6ADBDFF
 [SelfCheck] state before Canvas/Body/01 基本バインド/Header active=1 text=01 基本バインド col=F0F2F7FF
 [SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
@@ -499,8 +499,8 @@
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Target active=1 text=GeneralBinder col=F0F2F7FF pos=594.0,-22.0 scale=1.00,1.00,1.00
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move/Text active=1 text=Move col=FFFFFFFF
-[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover active=1 col=4C8CE6FF spr=- fill=1.000 pos=0.0,0.0 scale=1.00,1.00,1.00
-[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label active=1 text=PositionBinder (Position) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover active=1 col=4C8CE6FF spr=- fill=1.000 pos=40.0,0.0 scale=1.00,1.00,1.00
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label active=1 text=AnchoredPositionBinder (AnchoredPosition) col=A6ADBDFF
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=GeneralBinder（任意のプロパティ） col=4C8CE6FF
 [SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=PositionBinder + 操作 col=4C8CE6FF
 [SelfCheck] state after Canvas/Body/11 その他/Description active=1 text=GeneralBinder と ComponentSetter。任意コンポーネントのプロパティを更新する。 col=A6ADBDFF
@@ -510,8 +510,8 @@
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Target active=1 text=GeneralBinder col=F0F2F7FF pos=594.0,-22.0 scale=1.00,1.00,1.00
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move/Text active=1 text=Move col=FFFFFFFF
-[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover active=1 col=4C8CE6FF spr=- fill=1.000 pos=160.0,0.0 scale=1.00,1.00,1.00
-[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label active=1 text=PositionBinder (Position) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover active=1 col=4C8CE6FF spr=- fill=1.000 pos=240.0,0.0 scale=1.00,1.00,1.00
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label active=1 text=AnchoredPositionBinder (AnchoredPosition) col=A6ADBDFF
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=GeneralBinder（任意のプロパティ） col=4C8CE6FF
 [SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=PositionBinder + 操作 col=4C8CE6FF
 [SelfCheck] END slots=83 nulls=55 types=14 errors=0 states=446

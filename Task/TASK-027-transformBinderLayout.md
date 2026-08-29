@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | Phase | 3（コア品質） |
-| 状態 | 未着手 |
+| 状態 | **AnchoredPositionBinder を追加して対応済み / PositionBinder 自体は未修正** |
 | 依存 | なし |
 | 規模 | 小〜中 |
 
@@ -47,41 +47,71 @@ transform.localPosition = m_Offset + value;
 利用側では UI 要素の移動演出に使われる可能性が高く、**レイアウトグループの下に置くと再現性のない
 挙動になる**。
 
-## 対応案
+## 対応
 
-### 案 A: `RectTransform` の場合は `anchoredPosition` に書く
+### 採用: 専用の Binder を追加する（案 B）
+
+`AnchoredPositionBinder` を追加した。`PositionBinder` は変更していない。
 
 ```csharp
-if (transform is RectTransform rect)
+public class AnchoredPositionBinder : Binder<Vector2, RectTransform>
 {
-    rect.anchoredPosition = m_Offset + value;
+	[SerializeField]
+	Vector2 m_Offset;
+
+	protected override void UpdateValue(Vector2 value)
+	{
+		Target.anchoredPosition = m_Offset + value;
+	}
 }
 ```
 
-`anchoredPosition` は親の幅に依存しないため、いつ書いても結果が同じになる。
-**ただし既存の利用箇所の見た目が変わる**（`localPosition` 基準で座標を決めていた場合）。
+`anchoredPosition` は親の大きさに依存しないため、レイアウトが確定する前に書いても結果が変わらない。
 
-### 案 B: 専用の Binder を追加する
+**既存の利用箇所に影響しない**ことを優先した。`PositionBinder` の挙動を変えると、
+`localPosition` 基準で座標を決めていた箇所の見た目が変わってしまう。
 
-`AnchoredPositionBinder` を別に用意し、`PositionBinder` は現状のまま残す。
-破壊的変更にならないが、**どちらを使うべきかの判断を利用側に押し付ける**。
+### 検証
 
-### 案 C: ドキュメントに制限として書くだけ
+ショーケース画面 11 の対象を `AnchoredPositionBinder` に置き換え、**端アンカーのまま**に戻した。
 
-[A-13](../INDEX.md) の方針（利用側に制限を課さない）に反するため、**採らない。**
+| Binder | アンカー | 結果 |
+| --- | --- | --- |
+| `PositionBinder` | 端 | **実行のたびに `0` と `50` で揺れる** |
+| `PositionBinder` | 中央 | 安定（回避策） |
+| `AnchoredPositionBinder` | 端 | **安定。`40` → `240` とバインド値がそのまま出る** |
 
-## 判断の材料
+Editor 実行 2 回と IL2CPP プレイヤー実行で一致することを確認済み。
 
-**実プロジェクトでの `PositionBinder` の使用箇所を数えてから決める。** 使用が少なければ案 A、
-多ければ案 B が現実的。
+### 採らなかった案
 
-## 暫定対応
+**`PositionBinder` の挙動を `anchoredPosition` に変える案は採らない。** 破壊的変更になる。
 
-ショーケース側でアンカーを中央に変更し、`localPosition` が親の幅に依存しないようにした。
-**これは検証の基準値を安定させるための回避であり、本体の修正ではない。**
+**ドキュメントに制限として書くだけの案も採らない。** [A-13](../INDEX.md) の方針
+（利用側に制限を課さない）に反する。
+
+## 残っている課題
+
+**`PositionBinder` を `RectTransform` に対して使うと、依然として結果が安定しない。**
+`AnchoredPositionBinder` という正しい選択肢はできたが、誤った選択をしても警告は出ない。
+
+対応の候補は以下。**どれも未着手。**
+
+| 案 | 内容 |
+| --- | --- |
+| 静的検査 | [TASK-007](TASK-007-lint.md) の lint で `RectTransform` 上の `PositionBinder` を検出する |
+| 実行時警告 | `PositionBinder` の `OnBind` で `RectTransform` を検出したら一度だけ警告する |
+| 何もしない | 選択を利用側に委ねる |
+
+**`RotationBinder` は未確認。** `localRotation` はレイアウトが書き換えないため影響を受けない
+見込みだが、実測していない。
+
+**`Vector3` から `Vector2` への Converter が存在しない。** `PositionBinder`（`Vector3`）から
+`AnchoredPositionBinder`（`Vector2`）へ移行する際、ViewModel 側のプロパティ型を変える必要がある。
+`FloatToVector2` / `Vector2ToFloat` はあるが `Vector3ToVector2` は無い。
 
 ## 完了条件
 
-- `RectTransform` に対する `PositionBinder` の結果が実行ごとに変わらないこと
-- ショーケースのアンカー回避を戻しても基準値が安定すること
-- `RotationBinder` についても同様の問題がないか確認すること
+- ~~ショーケースのアンカー回避を戻しても基準値が安定すること~~ 済（`AnchoredPositionBinder` で成立）
+- `RectTransform` に対する `PositionBinder` の誤用を検出できること（未着手）
+- `RotationBinder` についても同様の問題がないか確認すること（未着手）

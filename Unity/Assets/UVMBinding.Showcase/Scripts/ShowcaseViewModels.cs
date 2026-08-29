@@ -122,7 +122,7 @@ namespace UVMBinding.Showcase
 	public class MiscViewModel : ViewModel
 	{
 		[Bind] public string GeneralText { get; set; } = "GeneralBinder";
-		[Bind] public Vector3 Position { get; set; } = Vector3.zero;
+		[Bind] public Vector2 AnchoredPosition { get; set; } = new Vector2(40f, 0f);
 		[Event] public Action OnMove { get; set; }
 	}
 }
