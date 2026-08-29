@@ -34,6 +34,7 @@
 | 023 | [ショーケースシーンの構築](Task/TASK-023-showcase.md) | 基準値で判定可能 / Localization 除外構成のみ未 | 000 | 大 |
 | 022 | [Cast Converter の集約](Task/TASK-022-castConverterConsolidation.md) | **完了** | 000,017 | 中 |
 | 003 | [BindingProperty の再設計（1 path = 1 値）](Task/TASK-003-bindingPropertyRedesign.md) | **完了** | 001,002,016,023 | **大** |
+| 028 | [多態性を許す範囲の決定](Task/TASK-028-polymorphicAccess.md) | **仕様検討中** | 003 | 小〜中 |
 
 ### Phase 1 — メタデータ公開層
 
