@@ -270,13 +270,69 @@ public bool TrySetValue<T>(T value)
 | CPU | **変わらない。** `Binder` は Bind 時に T を知っているため `ValueHolder<T>` を直接持てる。完全一致の読み取りは**フィールド直読み**になり、現在のインターフェース経由のプロパティ取得より速い |
 | AOT | **変わらない。** 非ジェネリックインターフェース上のジェネリックメソッド（`IBindingProperty.IsAssignable<T>` / `IValueHolder.TryGetValue<T>`）は**既に存在し、既に使われており**、[TASK-025](TASK-025-strippingVerification.md) で IL2CPP + Stripping High が通っている。必要な実体化の型の集合も変わらない |
 
-### 決めること
+### 型付きイベントをどこに置くか
 
-| 項目 | 内容 |
-| --- | --- |
-| **型付きイベント**（`Action<T>`） | `BindingProperty` が非ジェネリックになるため持てない。`ValueHolder<TValue>` に置くのが素直（値の変更を知っているのは holder のため） |
-| **変更検出**（`EqualityComparer<TValue>.Default`） | 同上。値の保持に伴う判断なので `ValueHolder<TValue>` 側 |
-| `Hash` の更新 | 値が実際に変わったときのみ進める。`BindingProperty` が `ValueHolder` から変更の有無を受け取る形になる |
+`BindingProperty` が非ジェネリックになるため `Action<T>` を持てない。置き場所は 2 つ。
+
+| 案 | 置き場所 | 通知の仕方 |
+| --- | --- | --- |
+| **案 1** | `ValueHolder<TValue>` | 直接呼び出し |
+| 案 2 | `PropertyContainer` に集約 | path で引く |
+
+#### `UnSet` との関係
+
+**どちらを選んでも明示的な無効化が要る。**
+
+目標仕様では `SubscribeStrict<T>` / `Property<T>` は `UnSet` 後に無効になり、
+**同じ型で再登録しても無効のまま**である。案 2（container 集約）でも、型が一致すれば
+通知が再開してしまうため、これは自動では実現しない。
+
+**したがって置き場所の選択は `UnSet` の難易度では決まらない。**
+無効化フラグは、どちらにせよ必要。
+
+#### 案 1 を採る
+
+| 観点 | 案 1（`ValueHolder`） | 案 2（container 集約） |
+| --- | --- | --- |
+| 通知のコスト | **直接呼び出し** | path の比較が入る |
+| 凝集度 | 値と通知が同じ場所 | 値と通知が分かれる |
+| `Property<T>.Value` | **holder を直接読む** | holder を持てば同じ |
+| [TASK-013](TASK-013-versionGate.md) の version | `BindingProperty` から進める | 同じ場所で完結する |
+
+**案 1 を採る。** 通知が直接呼び出しで済み、ポーリング方式の軽さを保てる。
+container 集約の利点（version と同じ場所）は、書き込みの流れが
+**層 1 → `BindingProperty` → `ValueHolder`** である以上、`BindingProperty` が
+`Hash` と version を進めれば同様に得られる。
+
+#### 書き込みの流れ
+
+`BindingProperty` は非ジェネリックなので型付きイベントを直接発火できない。
+**発火の指示だけを出し、順序は `BindingProperty` が握る。**
+
+```
+BindingProperty.TrySetValue<T>(value)
+  ├ holder.TrySetValue(value, out changed)   … 型判定と代入。ボックス化なし
+  └ changed なら
+       ├ Hash++ / version++
+       ├ holder.NotifyChanged()              … 型付きイベント（非ジェネリックな指示）
+       └ 型消去イベントの発火
+```
+
+#### 無効化
+
+`UnSet` で `ValueHolder` に無効の印を付ける。`SubscribeStrict<T>` / `Property<T>` は
+holder を持っているため、**これだけで両方が無効になる。**
+
+- 読み取り → 既定値
+- 書き込み → 何もしない
+- 通知 → 届かない
+
+**内部に状態が 1 つ増えるが、目標仕様を素直に満たせる。**
+
+### 変更検出
+
+`EqualityComparer<TValue>.Default` による比較は**値の保持に伴う判断**なので
+`ValueHolder<TValue>` 側に置く。`TrySetValue` が「変わったか」を返す。
 
 ### 落としてはいけない既存挙動
 
@@ -297,7 +353,7 @@ return Assignable.Is(m_Value.GetType(), typeof(T));
 ### 段取り
 
 1. `IValueHolder` に書き込み側（`TrySetValue<T>`）と実行時判定を足す
-2. `ValueHolder<TValue>` に型付きイベントと変更検出を移す
+2. `ValueHolder<TValue>` に型付きイベント・変更検出・無効の印を移す
 3. `BindingProperty` を非ジェネリックにし、`IValueHolder` を持たせる
 4. `ObjectBindingProperty` を除去し、`ValueHolder<object>` に特例を移す
 5. `IBindingProperty<T>` を除去する
