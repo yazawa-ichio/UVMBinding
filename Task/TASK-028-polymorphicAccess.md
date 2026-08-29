@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | Phase | 0.5（基盤再設計） |
-| 状態 | **仕様確定 / 実現方法を検討中** |
+| 状態 | **目標確定 / 実現方法を検討中** |
 | 依存 | TASK-003 |
 | 規模 | 小〜中 |
 
@@ -207,62 +207,61 @@ public API に `UnSet` は出さない。
 
 ---
 
-## 実現方法：値を `ValueHolder` に集約する
+## 実現方法
 
-### 何が複雑さの原因か
+### 制約の出どころ
 
-**`IBindingProperty<T>` を外部に露出していること。** クラスがジェネリックであること自体ではない。
+**`IBindingProperty<T>` を外部に露出していること。**
 
-`IBindingProperty<T>` は `T Value { get; set; }` を持つため**不変（invariant）**であり、
-`BindingProperty<Base>` を `IBindingProperty<Derived>` として返せない。この 1 点から
-以下がすべて派生している。
+この型は `T Value { get; set; }` を持つため**不変（invariant）**であり、
+`BindingProperty<Base>` を `IBindingProperty<Derived>` として返せない。
+型を跨げないのはこれが理由。
 
-- `PropertyContainer.Get<T>` が完全一致しか返せない
-- `Property<T>` / `SubscribeStrict<T>` が完全一致に縛られる
-- 型消去のために `ObjectBindingProperty` という別クラスが要る
-- 型を跨ぐ通知のために `ValueHolder` を**別途プールして使い捨てる**
+**クラスがジェネリックであること自体は制約ではない。** 露出をやめ、値ベースの読み書きに
+一本化すれば、目標仕様は満たせる。
 
-**1 path = 1 型になったことで、格納を型消去された 1 つの入れ物に寄せられる。**
+### 現状のアロケーション
 
-### 構造
+変更の影響を測る基準として記録する。
+
+| # | 箇所 | 定常状態 |
+| --- | --- | --- |
+| 1 | 値の変更時の `ValueHolder<T>.Use()` | **無し。** プールが最大 5 個を保持。`UseScope` は構造体。購読者が居なければプール操作自体を行わない（[TASK-016](TASK-016-writePathAllocation.md)） |
+| 2 | `IValueHolder.TryGetValue<T>` の ↑ 経路 | **値型のボックス化 1 回。** 通知のたび |
+| 3 | `Binder.TryUpdate` の非完全一致経路 | **値型のボックス化 1 回。** 値の変更のたび、Binder ごと |
+| 4 | 購読時のクロージャ | 購読ごとに 1 回。定常では発生しない |
+| 5 | `Log.Trace` の文字列整形 | 有効時のみ。既定では通らない |
+
+**定常状態で効くのは 2 と 3 のボックス化。** どちらも型消去に由来し、どちらの案でも消えない。
+**3 が最も効く**（`ReflectionViewModel` は全プロパティが `object` 格納のため、結線した
+すべての Binder が該当する）。
+
+---
+
+### 案 A：`IBindingProperty<T>` を利用者向け API から外す
+
+`internal` のまま残し、層 1・層 2 の API を値ベースに一本化する。
 
 ```
-現在
-  BindingProperty                     … 非ジェネリック。Path / Hash
-  └ BindingProperty<TValue>           … 値・型付きイベント・比較子
-     └ ObjectBindingProperty          … 型消去用の特例
-  ValueHolder<TValue>                 … 通知のたびにプールから借りる使い捨て
-
-案
-  BindingProperty                     … 非ジェネリック。Path / Hash / IValueHolder
-  └ （派生なし）
-  ValueHolder<TValue>                 … 値の格納そのもの。path ごとに 1 つ
+BindingProperty                     … 非ジェネリック。Path / Hash
+└ BindingProperty<TValue>           … 値・型付きイベント・比較子
+   └ ObjectBindingProperty          … 型消去用の特例
+ValueHolder<TValue>                 … 通知のたびにプールから借りる使い捨て
 ```
 
-**`BindingProperty` からジェネリクスが消える。** 型は `IValueHolder` の実装型が持つ。
+**クラス構成は現状のまま。** `Binder.TryUpdate` も現在のコードのままでよい。
 
-### 目標仕様との対応
+### 案 B：値を `ValueHolder` に集約する
 
-`IValueHolder` には既に読み取り側が実装されている。
+`BindingProperty` を非ジェネリックにし、値を `IValueHolder` に持たせる。
 
-```csharp
-bool TryGetValue<T>(out T value)
-{
-    if (this is ValueHolder<T> h) { value = h.Value; return true; }  // = 完全一致・ボックス化なし
-    if (IsAssignable<T>())        { value = (T)GetObject(); return true; }  // ↑ 代入可
-    value = default; return false;
-}
+```
+BindingProperty                     … 非ジェネリック。Path / Hash / IValueHolder
+ValueHolder<TValue>                 … 値の格納そのもの。path ごとに 1 つ
 ```
 
-**これは目標仕様の `Get<T>` の「=」と「↑」そのもの。** 足りないのは以下。
-
-| 目標仕様 | 追加するもの |
-| --- | --- |
-| `Set<T>` の「=」「↓」 | `IValueHolder.TrySetValue<T>` |
-| `TryGetAs<T>`（実行時の値で判定） | `IValueHolder` に実行時の型を見る経路 |
-| 型が合わないときの例外 | 呼び出し側（層 1・層 2）で `false` を例外に変換 |
-
-`TrySetValue<T>` は `ValueHolder<TValue>` 側にこう書ける。
+`IValueHolder` には既に `TryGetValue<T>` があり、**目標仕様の `Get<T>` の「=」と「↑」が
+そのまま実装されている。** 対称に `TrySetValue<T>` を足せば「=」と「↓」も揃う。
 
 ```csharp
 public bool TrySetValue<T>(T value)
@@ -273,116 +272,44 @@ public bool TrySetValue<T>(T value)
 }
 ```
 
-**参照型の ↓ はキャストのみでボックス化しない。** 値型の ↓ は格納が `object` の場合しか
-起こらず、その場合ボックス化は避けられない（現在も同じ）。
+---
 
-### アロケーションの現状（実装を追った結果）
+### 比較
 
-**「プール撤去でアロケーションが減る」は誤り。** プールはアロケーションを防ぐために存在し、
-実際に防いでいる。
-
-| # | 箇所 | 定常状態でのアロケーション |
+| 項目 | 案 A | 案 B |
 | --- | --- | --- |
-| 1 | 値の変更時の `ValueHolder<T>.Use()` | **無い。** プールが最大 5 個を保持。`UseScope` は構造体で `using` から直接 `Dispose` が呼ばれる。さらに購読者が居なければプール操作自体を行わない（[TASK-016](TASK-016-writePathAllocation.md)） |
-| 2 | **`IValueHolder.TryGetValue<T>` の ↑ 経路** | **`(T)GetObject()` で値型がボックス化する。** 通知のたび |
-| 3 | **`Binder.TryUpdate` の非完全一致経路** | **`(T)m_Property.GetObject()` で値型がボックス化する。** 値が変わるたび、Binder ごと |
-| 4 | 購読時のクロージャ | 購読ごとに 1 回。定常では発生しない |
-| 5 | `Log.Trace` の文字列整形 | 有効時のみ。既定（Editor=Debug / Player=Warning）では通らない |
+| 目標仕様を満たすか | **満たす** | **満たす** |
+| `IBindingProperty<T>` の露出 | 無くなる | 無くなる |
+| `ObjectBindingProperty` | 残る | **除去できる** |
+| `ValueHolder` のプール | 残る | **撤去できる**（CPU の手数が減る） |
+| クラス階層 | 現状のまま | **浅くなる** |
+| `Binder.TryUpdate` | **変更不要** | ジェネリックなインターフェースメソッド経由になる |
+| path あたりのオブジェクト | 1 | **2**（許容と判断済み） |
+| 間接参照 | 1 段 | **2 段** |
+| AOT の実体化 | 現状のまま | **組み合わせが増える** |
 
-**定常状態で効くのは 2 と 3 のボックス化だけ。** どちらも**型消去に由来**しており、
-プールとは無関係。`ValueHolder` へ集約しても ↑ 経路のボックス化は消えない。
+### 案 B にのみ伴うリスク
 
-**3 が最も効く。** `ReflectionViewModel` は全プロパティが `object` 格納なので、
-**結線したすべての Binder が値の変更ごとにボックス化する。**
-
-### プールを外して得られるのはアロケーションではなく手数
-
-値の変更 1 回あたり `ThreadLocal<Queue<...>>.Value` のアクセス、`Queue` の出し入れ、
-返却時の初期化が不要になる。**アロケーションは変わらない。**
-
-### 得られるもの
-
-| 項目 | 効果 |
+| 分類 | 内容 |
 | --- | --- |
-| `IBindingProperty<T>` | **不要になる。** 不変性の制約が消える |
-| `ObjectBindingProperty` | **不要になる。** `ValueHolder<object>` で足りる |
-| `PropertyContainer.Get<T>` | 型付きハンドルを返す必要が無くなり、値の読み書きに一本化できる |
-| 通知時の `ValueHolder` プール | **不要になる。** 格納がそのまま `IValueHolder` なので借りる必要が無い |
-| 型付きハンドル（`Property<T>`） | `ValueHolder<T>` を直接持てばよい。完全一致で取得できたときのみ |
+| **CPU** | 値の読み取りが `IValueHolder.TryGetValue<T>` 経由になる。**インターフェース上のジェネリックメソッド**で、IL2CPP では呼び出しごとに実体の解決が入る。しかも**デフォルトインターフェース実装**で段数が増える。**Binder ごと・値の変更ごとに効く** |
+| CPU | 間接参照が 1 段増える |
+| **AOT** | `ValueHolder<T>.TryGetValue<U>` は**ジェネリック型のジェネリックメソッド**。値型の組み合わせごとに実体が要り、IL2CPP が生成し損ねる可能性が現在より高い |
+| 移設 | `BindingProperty<T>` が持つ**型付きイベント**（`Action<T>`）と**比較子**（`EqualityComparer<TValue>.Default`）の持ち先を決める必要がある |
+| **既存挙動の維持** | `ObjectBindingProperty.IsAssignable<T>` は**実行時の値の型**を見ている。`Binder.Bind` がこれを使うため、`ReflectionViewModel`（全プロパティが `object`）の結線がこれに依存する。**同じ特例を `ValueHolder<object>` に持たせないと結線しなくなる** |
 
-**プール（`ValueHolder<T>.Use` / `UseScope`）が丸ごと不要になる**のが大きい。
-現在は値が変わるたびにプールから借りて返している。
+### 判断
 
-### 検証が要る点
+**案 A を先に実装し、目標仕様を満たした状態で計測する。** そのうえで案 B に進むかを決める。
 
-**未検証。実装前に確かめる。**
+案 B は**仕様の要求ではなく構造の整理**であり、上記のリスクを負う価値があるかは計測で判断する。
+**悪化するなら案 A で止める。**
 
-| 項目 | 内容 |
-| --- | --- |
-| **`object` 格納の代入可判定** | 現在 `ObjectBindingProperty.IsAssignable<T>` は**実行時の値の型**を見る。`Binder.Bind` がこれを使うため、`ReflectionViewModel`（全プロパティが `object`）の結線がこれに依存している。**静的判定に変えると結線しなくなる。** `ValueHolder<object>` に同じ特例が要る |
-| 型付きイベント | `BindingProperty<T>.OnChanged`（`Action<T>`）を誰が持つか。`ValueHolder<TValue>` に移すか、型消去チャネルに寄せるか |
-| 比較子 | `EqualityComparer<TValue>.Default` による差分検出を `ValueHolder<TValue>` に移す |
-| **ジェネリックなインターフェースメソッド** | `IValueHolder.TryGetValue<T>` は**インターフェース経由のジェネリックメソッド**。IL2CPP では呼び出しごとに解決が入り、直接呼び出しより遅い可能性がある。**実測する** |
-| アロケーション | プール撤去で減るはずだが**実測していない**。[TASK-025](TASK-025-strippingVerification.md) の基準値と `Is.Not.AllocatingGCMemory` で確認する |
-| AOT | `ValueHolder<T>` の実体化数は `BindingProperty<T>` と同じはずだが、IL2CPP ビルドで確認する |
-
-### 案 B で新規に発生する問題
-
-**現在は発生しておらず、案 B にすると発生するもの。** 前節のボックス化は
-案 A・案 B のどちらでも変わらない既存の話であり、ここには含めない。
-
-#### アロケーション
-
-| 項目 | 内容 | 判定 |
-| --- | --- | --- |
-| path あたりのオブジェクトが 1 つ増える | `BindingProperty` と `ValueHolder<T>` の 2 つになる | **許容する（2026-08-29 決定）** |
-
-**値の変更 1 回あたりのアロケーションは増えない。**
-完全一致は `this is ValueHolder<T>` で非ボックス、↑ 経路は現状と同じくボックス化 1 回。
-
-**アロケーション面で案 B を退ける理由は無い。** 残る懸念は CPU と AOT のみ。
-
-#### CPU
-
-| 項目 | 内容 |
-| --- | --- |
-| **値の読み取りがジェネリックなインターフェースメソッド経由になる** | 現在の `Binder.TryUpdate` は `m_Property is IBindingProperty<T>` の型テストと直接取得で完結している。案 B では `IValueHolder.TryGetValue<T>` を通す。**インターフェース上のジェネリックメソッド**であり IL2CPP では呼び出しごとに実体の解決が入る。しかも**デフォルトインターフェース実装**で段数が増える。**Binder ごと・値の変更ごとに効く** |
-| 間接参照が 1 段増える | 現在は `BindingProperty<T>.m_Value` で 1 段。案 B は `BindingProperty` → `IValueHolder` → `Value` |
-
-#### AOT / ストリッピング
-
-| 項目 | 内容 |
-| --- | --- |
-| 実体が落ちる経路が増える | `ValueHolder<T>.TryGetValue<U>` は**ジェネリック型のジェネリックメソッド**。値型の組み合わせごとに実体が要るため、IL2CPP が生成し損ねる可能性が現在より高い。[TASK-025](TASK-025-strippingVerification.md) の検証で確認する |
-
-#### 案 A では上記が発生しない
-
-**`IBindingProperty<T>` を `internal` のまま残し、利用者向け API から外すだけなら、
-`Binder.TryUpdate` は現在のコードのままでよい。** 上記はいずれも起きない。
-
-目標仕様が要求するのは**層 1 の `Get<T>` / `Set<T>` が ↑ ↓ を許すこと**であり、
-Binder の読み取り経路を変える必要は無い。
-
-### 代替案との比較が要る
-
-**不変性の問題は `IBindingProperty<T>` を「公開しない」だけでも解ける。**
-クラスがジェネリックであること自体は問題ではない。
-
-| 案 | 内容 | path あたりのオブジェクト数 |
-| --- | --- | --- |
-| **案 A** | `IBindingProperty<T>` を API から外し、値ベースの読み書きに一本化する。クラス構成は現状のまま | 1（現状と同じ） |
-| **案 B** | 値を `ValueHolder` に集約する。`BindingProperty` は非ジェネリックになる | **2**（`BindingProperty` + `ValueHolder<T>`） |
-
-**案 B は path ごとにオブジェクトが 1 つ増える。**
-
-`ValueHolder<T>` に `Path` / `Hash` / イベントを持たせて 1 つに統合する形もあるが、
-それは実質的に `BindingProperty<T>` の改名であり、**案 A に戻る。**
-
-**どちらを採るかは実測してから決める。**
+---
 
 ### 段取り
 
-**第 1 段階（案の分岐前）— 仕様を満たす**
+**第 1 段階（案 A）— 目標仕様を満たす**
 
 1. 層 3 に値ベースの読み書きを足す（`TrySetValue<T>` と実行時判定）
 2. 層 2 の API を値ベースに一本化する。`Get<T>` が型付きハンドルを返す形をやめる
@@ -392,23 +319,20 @@ Binder の読み取り経路を変える必要は無い。
 6. `GeneralViewModel.UnSet` を追加する
 7. `IBindingProperty<T>` を利用者向け API から外す
 
-**この時点で目標仕様を満たす。** ここまでが**案 A**。
+**ここまでで目標仕様を満たす。**
 
-**第 2 段階（案 B を採る場合のみ）— 構造を寄せる**
+**第 2 段階（案 B）— 構造を寄せる。実施は計測後に判断**
 
 8. `BindingProperty` を非ジェネリックにし、`IValueHolder` を持たせる
 9. `ObjectBindingProperty` を除去する
 10. `ValueHolder` のプールを撤去する
 
-**第 2 段階は仕様の要求ではなく、構造の整理。** 実施前に第 1 段階との性能比較を取る。
-
 **検証**
 
 11. `make test` / `make test-edit` / `make verify-strip`
-12. 性能比較（下記「完了条件・性能」）
+12. 性能比較（「完了条件・性能」）
 
-**各段を独立したコミットにする。** 問題が出た段だけ戻せるようにする
-（[A-13](../INDEX.md) の方針）。第 1 段階と第 2 段階を分けているのはこのため。
+**各段を独立したコミットにする。** 問題が出た段だけ戻せるようにする（[A-13](../INDEX.md) の方針）。
 
 ## 完了条件
 
