@@ -1,0 +1,17 @@
+{
+    "name": "UVMBinding.Export",
+    "rootNamespace": "",
+    "references": [
+        "UVMBinding",
+        "UVMBinding.Semantics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

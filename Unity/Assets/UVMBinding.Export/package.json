@@ -1,0 +1,15 @@
+{
+  "name": "jp.ilib.uvmb.export",
+  "displayName": "UVMBinding Export",
+  "version": "0.1.0",
+  "unity": "6000.3",
+  "description": "View を HTML / JSON / C# ソースとして書き出す。本体には要らないため分けてある。実行時に有効にするには UVMBINDING_EXPORT を定義する",
+  "author": {
+    "name": "yazawa-ichio",
+    "email": "yazawa922473@gmail.com"
+  },
+  "license": "zlib",
+  "dependencies": {
+    "jp.ilib.uvmb": "0.1.0"
+  }
+}
