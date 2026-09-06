@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" shape-rendering="geometricPrecision">
+<rect x="0" y="0" width="1024" height="1024" fill="#E8DCC0"/>
+<polygon points="320,430 360,335 455,305 520,320 595,300 692,350 725,440 700,575 742,720 690,720 640,600 600,735 548,735 545,600 480,600 460,735 408,735 385,610 335,725 285,720 325,570 295,505" fill="#5B6B78" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="470,430 505,555 545,430 562,605 510,570 458,610" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="395,280 430,210 478,235 520,198 570,235 620,210 650,285 625,370 575,410 510,398 452,415 410,365" fill="#5B6B78" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="420,255 360,180 455,215" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="595,230 670,175 640,270" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 443 315 C 482 270, 560 270, 603 315 C 595 370, 560 398, 515 398 C 468 398, 438 368, 443 315 Z" fill="#C8A24A" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<ellipse cx="488" cy="310" rx="18" ry="12" fill="#2A2622" stroke="#2A2622" stroke-width="6"/>
+<ellipse cx="552" cy="310" rx="18" ry="12" fill="#2A2622" stroke="#2A2622" stroke-width="6"/>
+<path d="M 500 342 C 520 330, 545 333, 558 342 C 552 365, 509 365, 500 342 Z" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 463 372 C 500 442, 565 438, 605 372 C 570 402, 500 405, 463 372 Z" fill="#A8432F" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="486,380 504,380 495,418" fill="#E8DCC0" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="515,380 533,380 524,418" fill="#E8DCC0" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="548,380 566,380 557,418" fill="#E8DCC0" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="575,380 593,380 584,418" fill="#E8DCC0" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="500,423 518,423 509,392" fill="#E8DCC0" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="540,423 558,423 549,392" fill="#E8DCC0" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="350,390 388,418 342,435" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="310,470 348,498 302,515" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="720,440 758,468 712,485" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="690,320 728,348 682,365" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="410,215 448,243 402,260" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="625,230 663,258 617,275" fill="#35543F" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="355,600 393,628 347,645" fill="#35543F" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="690,610 728,638 682,655" fill="#2A2622" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 335 610 C 305 685, 317 770, 330 845 L 397 845 C 379 790, 379 675, 360 610 Z" fill="#5B6B78" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 327 845 C 347 880, 387 880, 410 845" fill="none" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 430 610 C 400 685, 412 770, 425 845 L 492 845 C 474 790, 474 675, 455 610 Z" fill="#5B6B78" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 422 845 C 442 880, 482 880, 505 845" fill="none" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 570 610 C 540 685, 552 770, 565 845 L 632 845 C 614 790, 614 675, 595 610 Z" fill="#5B6B78" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 562 845 C 582 880, 622 880, 645 845" fill="none" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 665 610 C 635 685, 647 770, 660 845 L 727 845 C 709 790, 709 675, 690 610 Z" fill="#5B6B78" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 657 845 C 677 880, 717 880, 740 845" fill="none" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 705 435 C 825 392, 858 478, 750 520" fill="none" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="810,405 880,395 835,455" fill="#5B6B78" stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="385" y1="455" x2="430" y2="480" stroke="#2A2622" stroke-width="6" stroke-linecap="round"/>
+<line x1="610" y1="405" x2="650" y2="430" stroke="#2A2622" stroke-width="6" stroke-linecap="round"/>
+<line x1="350" y1="520" x2="390" y2="535" stroke="#2A2622" stroke-width="6" stroke-linecap="round"/>
+<line x1="615" y1="555" x2="660" y2="585" stroke="#2A2622" stroke-width="6" stroke-linecap="round"/>
+<line x1="445" y1="260" x2="480" y2="280" stroke="#2A2622" stroke-width="6" stroke-linecap="round"/>
+<line x1="575" y1="260" x2="605" y2="285" stroke="#2A2622" stroke-width="6" stroke-linecap="round"/>
+<line x1="455" y1="675" x2="440" y2="725" stroke="#2A2622" stroke-width="6" stroke-linecap="round"/>
+<line x1="595" y1="670" x2="620" y2="720" stroke="#2A2622" stroke-width="6" stroke-linecap="round"/>
+</svg>
