@@ -1,0 +1,559 @@
+[SelfCheck] BEGIN
+[SelfCheck] type UVMBinding.Arguments.CollectionIndexArgument 4
+[SelfCheck] type UVMBinding.Arguments.GraphicColorArgument 1
+[SelfCheck] type UVMBinding.Arguments.TextArgument 1
+[SelfCheck] type UVMBinding.Converters.BoolInverse 1
+[SelfCheck] type UVMBinding.Converters.BoolSwitchTweenColor 1
+[SelfCheck] type UVMBinding.Converters.DelaySetBoolConverter 1
+[SelfCheck] type UVMBinding.Converters.IntComparison 1
+[SelfCheck] type UVMBinding.Converters.ObjectToString 10
+[SelfCheck] type UVMBinding.Converters.StringComparison 1
+[SelfCheck] type UVMBinding.Converters.StringToLength 2
+[SelfCheck] type UVMBinding.PropertyProvider.CombineBoolProvider 1
+[SelfCheck] type UVMBinding.PropertyProvider.CombineStringProvider 1
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Increment:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Toggle Enabled:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Button_Toggle Panel:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_Toggle:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Add:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Clear:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Remove:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Increment:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Toggle Bool:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle A:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle B:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Button_子を差し替え:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_SetDirty:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_変更:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Randomize:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Toggle Visible:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Plain:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Button_言語を切り替える:EventButton.m_Argument
+[SelfCheck] null Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move:EventButton.m_Argument
+[SelfCheck] state before Canvas/Body/01 基本バインド/Description active=1 text=表示系 Binder。Text / Image / RawImage / Active / Enabled。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/Header active=1 text=01 基本バインド col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Increment active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Increment/Text active=1 text=Increment col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Toggle Enabled active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Toggle Enabled/Text active=1 text=Toggle Enabled col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_対象ボタン active=1 col=4C8CE6FF spr=- fill=1.000 inter=1 pos=534.0,-22.0 scale=1.00,1.00,1.00 size=200.0,44.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_対象ボタン/Text active=1 text=対象ボタン col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label active=1 text=InteractableBinder (IsEnabled) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label active=1 text=TextBinder (CounterText) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label active=1 text=TextBinder (Message) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Value active=1 text=Count : 0 col=F0F2F7FF pos=544.0,-22.0 scale=1.00,1.00,1.00 size=220.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Value active=1 text=Hello UVMBinding col=F0F2F7FF pos=664.0,-22.0 scale=1.00,1.00,1.00 size=460.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Button_Toggle Panel active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Button_Toggle Panel/Text active=1 text=Toggle Panel col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Label active=1 text=ActiveBinder (ShowPanel) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/TogglePanel active=1 col=333845FF spr=- fill=1.000 pos=564.0,-32.0 scale=1.00,1.00,1.00 size=260.0,56.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/TogglePanel/Text active=1 text=表示中 col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_AvatarIcon/AvatarIcon active=1 col=FFFFFFFF spr=Knob fill=1.000 pos=472.0,-44.0 scale=1.00,1.00,1.00 size=76.0,76.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_AvatarIcon/Label active=1 text=ImageSpriteBinder (AvatarIcon) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Preview/Label active=1 text=RawImageTextureBinder (Preview) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Preview/Preview active=1 col=FFFFFFFF tex=Knob pos=500.0,-44.0 scale=1.00,1.00,1.00 size=132.0,76.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section active=1 text=テキスト col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section active=1 text=画像 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section active=1 text=表示・活性 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/01 基本バインド/Description active=1 text=表示系 Binder。Text / Image / RawImage / Active / Enabled。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/Header active=1 text=01 基本バインド col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Increment active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Increment/Text active=1 text=Increment col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Toggle Enabled active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_Toggle Enabled/Text active=1 text=Toggle Enabled col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_対象ボタン active=1 col=4C8CE6FF spr=- fill=1.000 inter=0 pos=534.0,-22.0 scale=1.00,1.00,1.00 size=200.0,44.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Button_対象ボタン/Text active=1 text=対象ボタン col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label active=1 text=InteractableBinder (IsEnabled) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label active=1 text=TextBinder (CounterText) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Label active=1 text=TextBinder (Message) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Value active=1 text=Count : 1 col=F0F2F7FF pos=544.0,-22.0 scale=1.00,1.00,1.00 size=220.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row/Value active=1 text=Hello UVMBinding col=F0F2F7FF pos=664.0,-22.0 scale=1.00,1.00,1.00 size=460.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Button_Toggle Panel active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Button_Toggle Panel/Text active=1 text=Toggle Panel col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/Label active=1 text=ActiveBinder (ShowPanel) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/TogglePanel active=0 col=333845FF spr=- fill=1.000 pos=564.0,-32.0 scale=1.00,1.00,1.00 size=260.0,56.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Active/TogglePanel/Text active=1 text=表示中 col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_AvatarIcon/AvatarIcon active=1 col=FFFFFFFF spr=Knob fill=1.000 pos=472.0,-44.0 scale=1.00,1.00,1.00 size=76.0,76.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_AvatarIcon/Label active=1 text=ImageSpriteBinder (AvatarIcon) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Preview/Label active=1 text=RawImageTextureBinder (Preview) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Row_Preview/Preview active=1 col=FFFFFFFF tex=Knob pos=500.0,-44.0 scale=1.00,1.00,1.00 size=132.0,76.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section active=1 text=テキスト col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section active=1 text=画像 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/01 基本バインド/ScrollView/Viewport/Content/Section active=1 text=表示・活性 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/Description active=1 text=入力系 Binder。View の変更が ViewModel に戻ることを確認する。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/Header active=1 text=02 入力（双方向） col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_Toggle active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_Toggle/Text active=1 text=Toggle col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_対象ボタン active=1 col=4C8CE6FF spr=- fill=1.000 inter=1 pos=534.0,-22.0 scale=1.00,1.00,1.00 size=200.0,44.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_対象ボタン/Text active=1 text=対象ボタン col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Label active=1 text=InteractableBinder (IsInteractable) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown active=1 col=333845FF spr=- fill=1.000 inter=1 val=0 pos=564.0,-28.0 scale=1.00,1.00,1.00 size=260.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Label active=1 text=Alpha col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template/Viewport/Content/Item active=1 inter=1 val=0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template/Viewport/Content/Item/Item Background active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template/Viewport/Content/Item/Item Label active=1 text=Option col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Label active=1 text=DropdownSelectBinder (DropdownIndex) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Value active=1 text=0 col=F0F2F7FF pos=788.0,-28.0 scale=1.00,1.00,1.00 size=160.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField active=1 col=333845FF spr=- fill=1.000 inter=1 val= pos=594.0,-28.0 scale=1.00,1.00,1.00 size=320.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField/Placeholder active=1 text=入力してください col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField/Text active=1 text= col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/Label active=1 text=InputFieldBinder (TextValue) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/Value active=1 text=(未入力) col=F0F2F7FF pos=898.0,-28.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Scrollbar/Label active=1 text=ScrollbarBinder (ScrollbarValue) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Scrollbar/Scrollbar active=1 col=333845FF spr=- fill=1.000 inter=1 val=0.250 pos=584.0,-26.0 scale=1.00,1.00,1.00 size=300.0,26.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Scrollbar/Scrollbar/SlidingArea/Handle active=1 col=4C8CE6FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Label active=1 text=SliderBinder (SliderValue) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider active=1 inter=1 val=0.400 pos=584.0,-28.0 scale=1.00,1.00,1.00 size=300.0,32.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider/Background active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider/Fill Area/Fill active=1 col=4C8CE6FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider/Handle Slide Area/Handle active=1 col=F0F2F7FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Value active=1 text=0.40 col=F0F2F7FF pos=828.0,-28.0 scale=1.00,1.00,1.00 size=160.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Label active=1 text=ToggleBinder (ToggleValue) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Toggle active=1 inter=1 val=1 pos=462.0,-26.0 scale=1.00,1.00,1.00 size=56.0,44.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Toggle/Background active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Toggle/Background/Checkmark active=1 col=4C8CE6FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Value active=1 text=ON col=F0F2F7FF pos=584.0,-26.0 scale=1.00,1.00,1.00 size=160.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section active=1 text=スライダー / トグル col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section active=1 text=テキスト入力 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section active=1 text=選択 / 活性 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/Description active=1 text=入力系 Binder。View の変更が ViewModel に戻ることを確認する。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/Header active=1 text=02 入力（双方向） col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_Toggle active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_Toggle/Text active=1 text=Toggle col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_対象ボタン active=1 col=4C8CE6FF spr=- fill=1.000 inter=0 pos=534.0,-22.0 scale=1.00,1.00,1.00 size=200.0,44.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Button_対象ボタン/Text active=1 text=対象ボタン col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row/Label active=1 text=InteractableBinder (IsInteractable) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown active=1 col=333845FF spr=- fill=1.000 inter=1 val=1 pos=564.0,-28.0 scale=1.00,1.00,1.00 size=260.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Label active=1 text=Beta col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template/Viewport/Content/Item active=1 inter=1 val=0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template/Viewport/Content/Item/Item Background active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Dropdown/Template/Viewport/Content/Item/Item Label active=1 text=Option col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Label active=1 text=DropdownSelectBinder (DropdownIndex) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Dropdown/Value active=1 text=1 col=F0F2F7FF pos=788.0,-28.0 scale=1.00,1.00,1.00 size=160.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField active=1 col=333845FF spr=- fill=1.000 inter=1 val=SelfCheck pos=594.0,-28.0 scale=1.00,1.00,1.00 size=320.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField/Placeholder active=1 text=入力してください col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/InputField/Text active=1 text=SelfCheck col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/Label active=1 text=InputFieldBinder (TextValue) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Input/Value active=1 text=SelfCheck col=F0F2F7FF pos=898.0,-28.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Scrollbar/Label active=1 text=ScrollbarBinder (ScrollbarValue) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Scrollbar/Scrollbar active=1 col=333845FF spr=- fill=1.000 inter=1 val=0.250 pos=584.0,-26.0 scale=1.00,1.00,1.00 size=300.0,26.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Scrollbar/Scrollbar/SlidingArea/Handle active=1 col=4C8CE6FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Label active=1 text=SliderBinder (SliderValue) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider active=1 inter=1 val=0.750 pos=584.0,-28.0 scale=1.00,1.00,1.00 size=300.0,32.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider/Background active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider/Fill Area/Fill active=1 col=4C8CE6FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Slider/Handle Slide Area/Handle active=1 col=F0F2F7FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Slider/Value active=1 text=0.75 col=F0F2F7FF pos=828.0,-28.0 scale=1.00,1.00,1.00 size=160.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Label active=1 text=ToggleBinder (ToggleValue) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Toggle active=1 inter=1 val=0 pos=462.0,-26.0 scale=1.00,1.00,1.00 size=56.0,44.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Toggle/Background active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Toggle/Background/Checkmark active=1 col=4C8CE6FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Row_Toggle/Value active=1 text=OFF col=F0F2F7FF pos=584.0,-26.0 scale=1.00,1.00,1.00 size=160.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section active=1 text=スライダー / トグル col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section active=1 text=テキスト入力 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/02 入力（双方向）/ScrollView/Viewport/Content/Section active=1 text=選択 / 活性 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/03 コレクション/Description active=1 text=CollectionBinder と Collection<T>。要素の追加・削除と CollectionIndexArgument。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/03 コレクション/Header active=1 text=03 コレクション col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/03 コレクション/RowTemplate active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/03 コレクション/RowTemplate/Button_Pick active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/03 コレクション/RowTemplate/Button_Pick/Text active=1 text=Pick col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/03 コレクション/RowTemplate/Label active=1 text=- col=F0F2F7FF pos=0.0,0.0 scale=1.00,1.00,1.00 size=100.0,100.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List active=1 pos=758.0,-142.0 scale=1.00,1.00,1.00 size=1516.0,60.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone) active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone) active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone) active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text active=1 text=Pick col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text active=1 text=Pick col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text active=1 text=Pick col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label active=1 text=Item 01 col=F0F2F7FF pos=164.0,-22.0 scale=1.00,1.00,1.00 size=300.0,24.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label active=1 text=Item 02 col=F0F2F7FF pos=164.0,-22.0 scale=1.00,1.00,1.00 size=300.0,24.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label active=1 text=Item 03 col=F0F2F7FF pos=164.0,-22.0 scale=1.00,1.00,1.00 size=300.0,24.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Add active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Add/Text active=1 text=Add col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Clear active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Clear/Text active=1 text=Clear col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Remove active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Remove/Text active=1 text=Remove col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Label active=1 text=操作 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Value active=1 text=3 件 col=F0F2F7FF pos=1046.0,-28.0 scale=1.00,1.00,1.00 size=300.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Section active=1 text=CollectionBinder (Rows) col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/03 コレクション/Description active=1 text=CollectionBinder と Collection<T>。要素の追加・削除と CollectionIndexArgument。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/03 コレクション/Header active=1 text=03 コレクション col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/03 コレクション/RowTemplate active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/03 コレクション/RowTemplate/Button_Pick active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/03 コレクション/RowTemplate/Button_Pick/Text active=1 text=Pick col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/03 コレクション/RowTemplate/Label active=1 text=- col=F0F2F7FF pos=0.0,0.0 scale=1.00,1.00,1.00 size=100.0,100.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List active=1 pos=758.0,-142.0 scale=1.00,1.00,1.00 size=1516.0,60.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone) active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone) active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone) active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text active=1 text=Pick col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text active=1 text=Pick col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Button_Pick/Text active=1 text=Pick col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label active=1 text=Item 01 col=F0F2F7FF pos=164.0,-22.0 scale=1.00,1.00,1.00 size=300.0,24.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label active=1 text=Item 02 col=F0F2F7FF pos=164.0,-22.0 scale=1.00,1.00,1.00 size=300.0,24.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/List/RowTemplate(Clone)/Label active=1 text=Item 03 col=F0F2F7FF pos=164.0,-22.0 scale=1.00,1.00,1.00 size=300.0,24.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Add active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Add/Text active=1 text=Add col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Clear active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Clear/Text active=1 text=Clear col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Remove active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Button_Remove/Text active=1 text=Remove col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Label active=1 text=操作 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Row_Ops/Value active=1 text=0 件 col=F0F2F7FF pos=1046.0,-28.0 scale=1.00,1.00,1.00 size=300.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/03 コレクション/ScrollView/Viewport/Content/Section active=1 text=CollectionBinder (Rows) col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/04 Converter/Description active=1 text=Binder に設定する変換。Cast / Comparison / BoolSwitch / Concatenate ほか。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/Header active=1 text=04 Converter col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolInverse : bool → bool/Label active=1 text=BoolInverse : bool → bool col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolInverse : bool → bool/Value active=1 text=False col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolSwitch/Label active=1 text=BoolSwitchTweenColor (BoolValue) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolSwitch/Target active=1 col=00000000 spr=- fill=1.000 pos=534.0,-26.0 scale=1.00,1.00,1.00 size=200.0,40.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Cast/Fill active=1 col=4C8CE6FF spr=- fill=1.000 pos=554.0,-30.0 scale=1.00,1.00,1.00 size=240.0,40.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Cast/Label active=1 text=AllowCast : int → float（許可が要る） col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Concat/Label active=1 text=Concatenate : string → int → string col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Concat/Value active=1 text=10 col=F0F2F7FF pos=584.0,-26.0 scale=1.00,1.00,1.00 size=300.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Delay/Label active=1 text=DelaySetBoolConverter (BoolValue) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Delay/Value active=1 text=True col=F0F2F7FF pos=554.0,-26.0 scale=1.00,1.00,1.00 size=240.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ImplicitCast/Fill active=1 col=4C8CE6FF spr=- fill=1.000 pos=554.0,-30.0 scale=1.00,1.00,1.00 size=240.0,40.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ImplicitCast/Label active=1 text=自動挿入 : byte → float（Converter 無し） col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_IntComparison : int → bool/Label active=1 text=IntComparison : int → bool col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_IntComparison : int → bool/Value active=1 text=False col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ObjectToString : int → string/Label active=1 text=ObjectToString : int → string col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ObjectToString : int → string/Value active=1 text=3 col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Increment active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Increment/Text active=1 text=Increment col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Toggle Bool active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Toggle Bool/Text active=1 text=Toggle Bool col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Label active=1 text=元の値 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Value active=1 text=3 col=F0F2F7FF pos=494.0,-28.0 scale=1.00,1.00,1.00 size=120.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringComparison : string → bool/Label active=1 text=StringComparison : string → bool col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringComparison : string → bool/Value active=1 text=False col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringToLength : string → int/Label active=1 text=StringToLength : string → int col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringToLength : string → int/Value active=1 text=10 col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=合成 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=数値の型合わせ col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=文字列 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=比較・真偽 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=視覚効果（bool → 値） col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/04 Converter/Description active=1 text=Binder に設定する変換。Cast / Comparison / BoolSwitch / Concatenate ほか。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/Header active=1 text=04 Converter col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolInverse : bool → bool/Label active=1 text=BoolInverse : bool → bool col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolInverse : bool → bool/Value active=1 text=True col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolSwitch/Label active=1 text=BoolSwitchTweenColor (BoolValue) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_BoolSwitch/Target active=1 col=00000000 spr=- fill=1.000 pos=534.0,-26.0 scale=1.00,1.00,1.00 size=200.0,40.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Cast/Fill active=1 col=4C8CE6FF spr=- fill=1.000 pos=554.0,-30.0 scale=1.00,1.00,1.00 size=240.0,40.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Cast/Label active=1 text=AllowCast : int → float（許可が要る） col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Concat/Label active=1 text=Concatenate : string → int → string col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Concat/Value active=1 text=10 col=F0F2F7FF pos=584.0,-26.0 scale=1.00,1.00,1.00 size=300.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Delay/Label active=1 text=DelaySetBoolConverter (BoolValue) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Delay/Value active=1 text=False col=F0F2F7FF pos=554.0,-26.0 scale=1.00,1.00,1.00 size=240.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ImplicitCast/Fill active=1 col=4C8CE6FF spr=- fill=0.000 pos=554.0,-30.0 scale=1.00,1.00,1.00 size=240.0,40.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ImplicitCast/Label active=1 text=自動挿入 : byte → float（Converter 無し） col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_IntComparison : int → bool/Label active=1 text=IntComparison : int → bool col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_IntComparison : int → bool/Value active=1 text=False col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ObjectToString : int → string/Label active=1 text=ObjectToString : int → string col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_ObjectToString : int → string/Value active=1 text=4 col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Increment active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Increment/Text active=1 text=Increment col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Toggle Bool active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Button_Toggle Bool/Text active=1 text=Toggle Bool col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Label active=1 text=元の値 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_Ops/Value active=1 text=4 col=F0F2F7FF pos=494.0,-28.0 scale=1.00,1.00,1.00 size=120.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringComparison : string → bool/Label active=1 text=StringComparison : string → bool col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringComparison : string → bool/Value active=1 text=False col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringToLength : string → int/Label active=1 text=StringToLength : string → int col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Row_StringToLength : string → int/Value active=1 text=10 col=F0F2F7FF pos=564.0,-23.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=合成 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=数値の型合わせ col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=文字列 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=比較・真偽 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/04 Converter/ScrollView/Viewport/Content/Section active=1 text=視覚効果（bool → 値） col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/05 派生値/Description active=1 text=View 側で複数のパスから値を導出する。CombineBoolProvider / CombineStringProvider。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/05 派生値/Header active=1 text=05 派生値 col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle A active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle A/Text active=1 text=Toggle A col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle B active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle B/Text active=1 text=Toggle B col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Label active=1 text=Caption = "{0} / Lv.{1}" col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Label active=1 text=FlagA / FlagB col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Value active=1 text=Player / Lv.12 col=F0F2F7FF pos=614.0,-22.0 scale=1.00,1.00,1.00 size=360.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Label active=1 text=BothFlags = FlagA && FlagB col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Panel active=1 col=4C8CE6FF spr=- fill=1.000 pos=554.0,-30.0 scale=1.00,1.00,1.00 size=240.0,52.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Panel/Text active=1 text=両方 ON col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/InputField active=1 col=333845FF spr=- fill=1.000 inter=1 val=Player pos=554.0,-28.0 scale=1.00,1.00,1.00 size=240.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/InputField/Placeholder active=1 text=名前 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/InputField/Text active=1 text=Player col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/Label active=1 text=Name / Level col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/Value active=1 text=12 col=F0F2F7FF pos=748.0,-28.0 scale=1.00,1.00,1.00 size=120.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Section active=1 text=CombineBoolProvider（All） col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/05 派生値/ScrollView/Viewport/Content/Section active=1 text=CombineStringProvider（書式） col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/05 派生値/Description active=1 text=View 側で複数のパスから値を導出する。CombineBoolProvider / CombineStringProvider。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/05 派生値/Header active=1 text=05 派生値 col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle A active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle A/Text active=1 text=Toggle A col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle B active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Button_Toggle B/Text active=1 text=Toggle B col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Label active=1 text=Caption = "{0} / Lv.{1}" col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Label active=1 text=FlagA / FlagB col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row/Value active=1 text=SelfCheck / Lv.12 col=F0F2F7FF pos=614.0,-22.0 scale=1.00,1.00,1.00 size=360.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Label active=1 text=BothFlags = FlagA && FlagB col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Panel active=0 col=4C8CE6FF spr=- fill=1.000 pos=554.0,-30.0 scale=1.00,1.00,1.00 size=240.0,52.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Both/Panel/Text active=1 text=両方 ON col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/InputField active=1 col=333845FF spr=- fill=1.000 inter=1 val=SelfCheck pos=554.0,-28.0 scale=1.00,1.00,1.00 size=240.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/InputField/Placeholder active=1 text=名前 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/InputField/Text active=1 text=SelfCheck col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/Label active=1 text=Name / Level col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Row_Source/Value active=1 text=12 col=F0F2F7FF pos=748.0,-28.0 scale=1.00,1.00,1.00 size=120.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Section active=1 text=CombineBoolProvider（All） col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/05 派生値/ScrollView/Viewport/Content/Section active=1 text=CombineStringProvider（書式） col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/06 View 合成/Description active=1 text=View の入れ子と ViewBinder。子 ViewModel を差し替える。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/06 View 合成/Header active=1 text=06 View 合成 col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView active=1 col=333845FF spr=- fill=1.000 pos=758.0,-145.0 scale=1.00,1.00,1.00 size=1516.0,90.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView/Label active=1 text=子 View (ChildText) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView/Value active=1 text=子 A col=F0F2F7FF pos=424.0,-45.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Button_子を差し替え active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Button_子を差し替え/Text active=1 text=子を差し替え col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Label active=1 text=親 View (Title) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Value active=1 text=親 ViewModel col=F0F2F7FF pos=584.0,-22.0 scale=1.00,1.00,1.00 size=300.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Section active=1 text=ViewBinder（子 View に ViewModel を流す） col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/06 View 合成/Description active=1 text=View の入れ子と ViewBinder。子 ViewModel を差し替える。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/06 View 合成/Header active=1 text=06 View 合成 col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView active=1 col=333845FF spr=- fill=1.000 pos=758.0,-145.0 scale=1.00,1.00,1.00 size=1516.0,90.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView/Label active=1 text=子 View (ChildText) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport/Content/ChildView/Value active=1 text=子 B col=F0F2F7FF pos=424.0,-45.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Button_子を差し替え active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Button_子を差し替え/Text active=1 text=子を差し替え col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Label active=1 text=親 View (Title) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Row/Value active=1 text=親 ViewModel col=F0F2F7FF pos=584.0,-22.0 scale=1.00,1.00,1.00 size=300.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/06 View 合成/ScrollView/Viewport/Content/Section active=1 text=ViewBinder（子 View に ViewModel を流す） col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/Description active=1 text=Property<T> / SetDirty / ReflectionViewModel。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/Header active=1 text=07 ViewModel 種別 col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/ItemCount active=1 text=7 col=F0F2F7FF pos=688.0,-45.0 scale=1.00,1.00,1.00 size=120.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/Label active=1 text=public フィールド Title / ItemCount col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/Value active=1 text=ReflectionViewModel col=F0F2F7FF pos=484.0,-45.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_SetDirty active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_SetDirty/Text active=1 text=SetDirty col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_変更 active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_変更/Text active=1 text=変更 col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Label active=1 text=DirtyTarget col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Label active=1 text=Property<string> (Tracked) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Value active=1 text=Property<string> col=F0F2F7FF pos=594.0,-22.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Value active=1 text=SetDirty で強制更新 col=F0F2F7FF pos=594.0,-22.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section active=1 text=Property<T> col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section active=1 text=ReflectionViewModel（素の POCO をバインド） col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section active=1 text=SetDirty（値を変えずに再通知） col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/Description active=1 text=Property<T> / SetDirty / ReflectionViewModel。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/Header active=1 text=07 ViewModel 種別 col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/ItemCount active=1 text=7 col=F0F2F7FF pos=688.0,-45.0 scale=1.00,1.00,1.00 size=120.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/Label active=1 text=public フィールド Title / ItemCount col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/ReflectionView/Value active=1 text=ReflectionViewModel col=F0F2F7FF pos=484.0,-45.0 scale=1.00,1.00,1.00 size=260.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_SetDirty active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_SetDirty/Text active=1 text=SetDirty col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_変更 active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Button_変更/Text active=1 text=変更 col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Label active=1 text=DirtyTarget col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Label active=1 text=Property<string> (Tracked) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Value active=1 text=Property<string> #1 col=F0F2F7FF pos=594.0,-22.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Row/Value active=1 text=SetDirty で強制更新 col=F0F2F7FF pos=594.0,-22.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section active=1 text=Property<T> col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section active=1 text=ReflectionViewModel（素の POCO をバインド） col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/07 ViewModel 種別/ScrollView/Viewport/Content/Section active=1 text=SetDirty（値を変えずに再通知） col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/Description active=1 text=SemanticRole.None に分類される表示効果。走査対象から除外される予定。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/Header active=1 text=08 演出系 Binder col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Randomize active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Randomize/Text active=1 text=Randomize col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Toggle Visible active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Toggle Visible/Text active=1 text=Toggle Visible col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Label active=1 text=操作 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Group active=1 col=4C8CE6FF spr=- fill=1.000 alpha=1.000 pos=534.0,-38.0 scale=1.00,1.00,1.00 size=200.0,64.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Label active=1 text=CanvasGroupAlphaBinder (Alpha) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Fill active=1 col=4C8CE6FF spr=- fill=0.600 pos=554.0,-38.0 scale=1.00,1.00,1.00 size=240.0,40.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Label active=1 text=ImageFillAmountBinder (Fill) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/Label active=1 text=Position3DBinder (Offset) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving active=1 col=F0F2F7FF spr=- fill=1.000 pos=0.0,0.0 scale=1.00,1.00,1.00 size=48.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Rot/Label active=1 text=RotationBinder (Rotation) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Rot/RotHost/Rotating active=1 col=4C8CE6FF spr=- fill=1.000 pos=0.0,0.0 scale=1.00,1.00,1.00 size=56.0,80.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/Label active=1 text=ScaleBinder (Scale) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/ScaleHost/Scaling active=1 col=4C8CE6FF spr=- fill=1.000 pos=0.0,0.0 scale=1.00,1.00,1.00 size=56.0,56.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Label active=1 text=GraphicColorBinder (Tint) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Tint active=1 col=FFFFFFFF spr=- fill=1.000 pos=534.0,-38.0 scale=1.00,1.00,1.00 size=200.0,64.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Label active=1 text=ActiveBinder (Visible) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Visible active=1 col=333845FF spr=- fill=1.000 pos=534.0,-38.0 scale=1.00,1.00,1.00 size=200.0,64.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Visible/Text active=1 text=表示中 col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Section active=1 text=CanvasGroup / Image col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Section active=1 text=Transform col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/Description active=1 text=SemanticRole.None に分類される表示効果。走査対象から除外される予定。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/Header active=1 text=08 演出系 Binder col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Randomize active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Randomize/Text active=1 text=Randomize col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Toggle Visible active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Button_Toggle Visible/Text active=1 text=Toggle Visible col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row/Label active=1 text=操作 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Group active=1 col=4C8CE6FF spr=- fill=1.000 alpha=0.474 pos=534.0,-38.0 scale=1.00,1.00,1.00 size=200.0,64.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Alpha/Label active=1 text=CanvasGroupAlphaBinder (Alpha) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Fill active=1 col=4C8CE6FF spr=- fill=0.111 pos=554.0,-38.0 scale=1.00,1.00,1.00 size=240.0,40.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Fill/Label active=1 text=ImageFillAmountBinder (Fill) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/Label active=1 text=Position3DBinder (Offset) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Pos/PosHost/Moving active=1 col=F0F2F7FF spr=- fill=1.000 pos=-8.1,0.0 scale=1.00,1.00,1.00 size=48.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Rot/Label active=1 text=RotationBinder (Rotation) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Rot/RotHost/Rotating active=1 col=4C8CE6FF spr=- fill=1.000 pos=0.0,0.0 scale=1.00,1.00,1.00 size=56.0,80.0 rot=0.0,0.0,169.9
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/Label active=1 text=ScaleBinder (Scale) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Scale/ScaleHost/Scaling active=1 col=4C8CE6FF spr=- fill=1.000 pos=0.0,0.0 scale=0.88,0.88,0.88 size=56.0,56.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Label active=1 text=GraphicColorBinder (Tint) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Tint/Tint active=1 col=77C5A8FF spr=- fill=1.000 pos=534.0,-38.0 scale=1.00,1.00,1.00 size=200.0,64.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Label active=1 text=ActiveBinder (Visible) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Visible active=0 col=333845FF spr=- fill=1.000 pos=534.0,-38.0 scale=1.00,1.00,1.00 size=200.0,64.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Row_Visible/Visible/Text active=1 text=表示中 col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Section active=1 text=CanvasGroup / Image col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/08 演出系 Binder/ScrollView/Viewport/Content/Section active=1 text=Transform col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/09 Event と引数/Description active=1 text=EventButton と EventArgument。引数付きイベントの発火。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/09 Event と引数/Header active=1 text=09 Event と引数 col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Plain active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Plain/Text active=1 text=Plain col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Color active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Color/Text active=1 text=Send Color col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Text active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Text/Text active=1 text=Send Text col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label active=1 text=Action col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label active=1 text=Action<Color> (GraphicColorArgument) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label active=1 text=Action<string> (TextArgument) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label active=1 text=受信ログ col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Payload active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Payload/Text active=1 text=送る文字列 col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Swatch active=1 col=F27340FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Value active=1 text=(イベント待ち) col=F0F2F7FF pos=674.0,-22.0 scale=1.00,1.00,1.00 size=480.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Section active=1 text=引数なし / 引数あり col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/09 Event と引数/Description active=1 text=EventButton と EventArgument。引数付きイベントの発火。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/09 Event と引数/Header active=1 text=09 Event と引数 col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Plain active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Plain/Text active=1 text=Plain col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Color active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Color/Text active=1 text=Send Color col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Text active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Button_Send Text/Text active=1 text=Send Text col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label active=1 text=Action col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label active=1 text=Action<Color> (GraphicColorArgument) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label active=1 text=Action<string> (TextArgument) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Label active=1 text=受信ログ col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Payload active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Payload/Text active=1 text=送る文字列 col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Swatch active=1 col=F27340FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Row/Value active=1 text=Action<string> : 送る文字列 col=F0F2F7FF pos=674.0,-22.0 scale=1.00,1.00,1.00 size=480.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/09 Event と引数/ScrollView/Viewport/Content/Section active=1 text=引数なし / 引数あり col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/Description active=1 text=TMP / Localization。defineConstraints により未導入でもコンパイルできる。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/Header active=1 text=10 任意パッケージ col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Note active=1 text=TMP / Localization 向けの Binder は別アセンブリにあり、versionDefines で自動的に有効化される。 未導入の環境ではアセンブリごと無効になるため、この画面はコンパイルエラーにならない。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row/Label active=1 text=導入状況 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row/Value active=1 text=TMP : 有効 (UVMB_TMP)   /   Localization : 有効 (UVMB_LOCALIZATION) col=F0F2F7FF pos=744.0,-22.0 scale=1.00,1.00,1.00 size=620.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Button_言語を切り替える active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Button_言語を切り替える/Text active=1 text=言語を切り替える col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Label active=1 text=選択中の言語 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Value active=1 text=en col=F0F2F7FF pos=494.0,-28.0 scale=1.00,1.00,1.00 size=120.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Parameterized/Label active=1 text=LocalizeTextBinder : {count} に値を渡す col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Parameterized/Parameterized active=1 text=You picked up 3 items. col=F0F2F7FF pos=634.0,-26.0 scale=1.00,1.00,1.00 size=400.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_RawText/Label active=1 text=LocalizeTextBinder : 生文字列 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_RawText/RawText active=1 text=生文字列（テーブルを引かない） col=F0F2F7FF pos=634.0,-26.0 scale=1.00,1.00,1.00 size=400.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_TableEntry/Label active=1 text=LocalizeTextBinder : テーブル参照 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_TableEntry/TableEntry active=1 text=Hello UVMBinding col=F0F2F7FF pos=634.0,-26.0 scale=1.00,1.00,1.00 size=400.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Section active=1 text=Localization（実際に使う） col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Section active=1 text=備考 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/Description active=1 text=TMP / Localization。defineConstraints により未導入でもコンパイルできる。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/Header active=1 text=10 任意パッケージ col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Note active=1 text=TMP / Localization 向けの Binder は別アセンブリにあり、versionDefines で自動的に有効化される。 未導入の環境ではアセンブリごと無効になるため、この画面はコンパイルエラーにならない。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row/Label active=1 text=導入状況 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row/Value active=1 text=TMP : 有効 (UVMB_TMP)   /   Localization : 有効 (UVMB_LOCALIZATION) col=F0F2F7FF pos=744.0,-22.0 scale=1.00,1.00,1.00 size=620.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Button_言語を切り替える active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Button_言語を切り替える/Text active=1 text=言語を切り替える col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Label active=1 text=選択中の言語 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Locale/Value active=1 text=ja col=F0F2F7FF pos=494.0,-28.0 scale=1.00,1.00,1.00 size=120.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Parameterized/Label active=1 text=LocalizeTextBinder : {count} に値を渡す col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_Parameterized/Parameterized active=1 text=3 個 拾いました。 col=F0F2F7FF pos=634.0,-26.0 scale=1.00,1.00,1.00 size=400.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_RawText/Label active=1 text=LocalizeTextBinder : 生文字列 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_RawText/RawText active=1 text=生文字列（テーブルを引かない） col=F0F2F7FF pos=634.0,-26.0 scale=1.00,1.00,1.00 size=400.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_TableEntry/Label active=1 text=LocalizeTextBinder : テーブル参照 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Row_TableEntry/TableEntry active=1 text=ようこそ UVMBinding col=F0F2F7FF pos=634.0,-26.0 scale=1.00,1.00,1.00 size=400.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Section active=1 text=Localization（実際に使う） col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/10 任意パッケージ/ScrollView/Viewport/Content/Section active=1 text=備考 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/11 その他/Description active=1 text=GeneralBinder と ComponentSetter。任意コンポーネントのプロパティを更新する。 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/11 その他/Header active=1 text=11 その他 col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Label active=1 text=対象 Text.text へ直接反映 col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Target active=1 text=GeneralBinder col=F0F2F7FF pos=594.0,-22.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_DataSource/DataSourceView active=1 text=グローバル状態 col=F0F2F7FF pos=594.0,-28.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_DataSource/Label active=1 text=ユーザー定義 DataSourceProvider col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown active=1 col=333845FF spr=- fill=1.000 inter=1 val=1 pos=564.0,-28.0 scale=1.00,1.00,1.00 size=260.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Label active=1 text=Beta col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template/Viewport/Content/Item active=1 inter=1 val=0
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template/Viewport/Content/Item/Item Background active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template/Viewport/Content/Item/Item Label active=1 text=Option col=F0F2F7FF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Label active=1 text=ユーザー定義 Binder（Enum） col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Value active=1 text=Beta col=F0F2F7FF pos=788.0,-28.0 scale=1.00,1.00,1.00 size=160.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move/Text active=1 text=Move col=FFFFFFFF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover active=1 col=4C8CE6FF spr=- fill=1.000 pos=40.0,0.0 scale=1.00,1.00,1.00 size=48.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label active=1 text=AnchoredPositionBinder (AnchoredPosition) col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_VmSource/Label active=1 text=ユーザー定義 ViewModelSourceProvider col=A6ADBDFF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_VmSource/SourceView active=1 text=Provider が差し込んだ値 col=F0F2F7FF pos=594.0,-28.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=AnchoredPositionBinder + 操作 col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=GeneralBinder（任意のプロパティ） col=4C8CE6FF
+[SelfCheck] state before Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=利用側の拡張 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/11 その他/Description active=1 text=GeneralBinder と ComponentSetter。任意コンポーネントのプロパティを更新する。 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/11 その他/Header active=1 text=11 その他 col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Label active=1 text=対象 Text.text へ直接反映 col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row/Target active=1 text=GeneralBinder col=F0F2F7FF pos=594.0,-22.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_DataSource/DataSourceView active=1 text=グローバル状態 col=F0F2F7FF pos=594.0,-28.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_DataSource/Label active=1 text=ユーザー定義 DataSourceProvider col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown active=1 col=333845FF spr=- fill=1.000 inter=1 val=1 pos=564.0,-28.0 scale=1.00,1.00,1.00 size=260.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Label active=1 text=Beta col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template active=0 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template/Viewport active=1 col=FFFFFF01 spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template/Viewport/Content/Item active=1 inter=1 val=0
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template/Viewport/Content/Item/Item Background active=1 col=333845FF spr=- fill=1.000
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Dropdown/Template/Viewport/Content/Item/Item Label active=1 text=Option col=F0F2F7FF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Label active=1 text=ユーザー定義 Binder（Enum） col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_EnumBinder/Value active=1 text=Beta col=F0F2F7FF pos=788.0,-28.0 scale=1.00,1.00,1.00 size=160.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move active=1 col=4C8CE6FF spr=- fill=1.000 inter=1
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Button_Move/Text active=1 text=Move col=FFFFFFFF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Host/Mover active=1 col=4C8CE6FF spr=- fill=1.000 pos=240.0,0.0 scale=1.00,1.00,1.00 size=48.0,48.0 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_Move/Label active=1 text=AnchoredPositionBinder (AnchoredPosition) col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_VmSource/Label active=1 text=ユーザー定義 ViewModelSourceProvider col=A6ADBDFF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Row_VmSource/SourceView active=1 text=Provider が差し込んだ値 col=F0F2F7FF pos=594.0,-28.0 scale=1.00,1.00,1.00 size=320.0,25.5 rot=0.0,0.0,0.0
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=AnchoredPositionBinder + 操作 col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=GeneralBinder（任意のプロパティ） col=4C8CE6FF
+[SelfCheck] state after Canvas/Body/11 その他/ScrollView/Viewport/Content/Section active=1 text=利用側の拡張 col=4C8CE6FF
+[SelfCheck] END slots=44 nulls=19 types=12 errors=0 states=526 layout=61
