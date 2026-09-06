@@ -5,6 +5,10 @@ ViewModelを介してViewの更新を行います。
 この手のデータバインディングを行うパッケージはリフレクションを利用するケースが多いですがUVMBindingでは利用しません。  
 また基本的な値の更新においてボックス化が発生しないようになっています。  
 
+## 動作環境
+
+Unity 6.3 (6000.3) 以降。  
+
 ## インストール
 
 upmで以下のURLでパッケージのインストールが出来ます。  
@@ -27,7 +31,7 @@ public class SampleViewModel : ViewModel
 	public string Message
 	{
 		get => GetImpl<string>("Message");
-		set => GetImpl<string>("Message", value);
+		set => SetImpl("Message", value);
 	}
 
 	public event System.Action OnClick
@@ -94,3 +98,22 @@ public class SampleViewModelTest : MonoBehaviour
 
 実行中にアタッチされているViewModelの情報などはViewComponentから確認できます。
 ![](Documents/images/ViewComponent2.png)
+
+## 検査
+
+ViewとViewModelの結線を静的に検査します。  
+存在しないパスへのバインドや、変換できない型の組み合わせなどを実行前に見つけられます。  
+`UVMBinding/Lint/Run` から実行します。  
+
+## 出力パッケージ（任意）
+
+Viewの構造をHTML・JSON・C#ソースとして書き出す別パッケージです。  
+本体には含まれないため、必要な場合のみインストールしてください。  
+
+```
+https://github.com/yazawa-ichio/UVMBinding.git?path=Unity/Assets/UVMBinding.Export
+```
+
+`UVMBinding/Export HTML/Active Scene` で開いているシーンを書き出します。  
+既定ではエディタ専用で、プレイヤーのビルドには含まれません。  
+実行中の画面を書き出す場合は `UVMBINDING_EXPORT` を定義してください。  
