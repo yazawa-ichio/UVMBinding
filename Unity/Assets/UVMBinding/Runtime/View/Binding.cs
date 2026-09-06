@@ -9,18 +9,25 @@ namespace UVMBinding.Core
 	public class Binding : IDisposable, IViewEventDispatcher
 	{
 		List<IBinder> m_Binding = new();
+		List<IBinder> m_Animated = new();
+		Dictionary<string, List<IBinder>> m_ByPath = new();
 		IViewModel m_ViewModel;
 		bool m_Disposed;
+
+		readonly List<PropertyContainer> m_Sources = new List<PropertyContainer>();
+		readonly List<int> m_Versions = new List<int>();
+		int m_PathVersion = -1;
 
 		public void Init(IViewElement[] elements)
 		{
 			m_Binding = new List<IBinder>(elements.Length);
+			m_Animated.Clear();
+			m_ByPath.Clear();
 			foreach (var elm in elements)
 			{
 				AddImpl(elm);
 			}
 		}
-
 
 		void AddImpl(IViewElement elm)
 		{
@@ -29,15 +36,60 @@ namespace UVMBinding.Core
 			if (elm is IBinder binder)
 			{
 				m_Binding.Add(binder);
+				if (elm is IBinderInfo info && info.HasConverter)
+				{
+					m_Animated.Add(binder);
+				}
+				if (!string.IsNullOrEmpty(binder.Path))
+				{
+					if (!m_ByPath.TryGetValue(binder.Path, out var list))
+					{
+						m_ByPath[binder.Path] = list = new List<IBinder>();
+					}
+					list.Add(binder);
+				}
 				Debug.AssertFormat(!string.IsNullOrEmpty(binder.Path), binder as UnityEngine.Object, "{0} Path Empty", binder);
 			}
 		}
 
+		internal void AddPropertySource(PropertyContainer container)
+		{
+			if (container == null || m_Sources.Contains(container))
+			{
+				return;
+			}
+			m_Sources.Add(container);
+			m_Versions.Add(int.MinValue);
+		}
+
+		bool HasChange()
+		{
+			bool changed = false;
+			for (int i = 0; i < m_Sources.Count; i++)
+			{
+				var version = m_Sources[i].Version;
+				if (m_Versions[i] != version)
+				{
+					m_Versions[i] = version;
+					changed = true;
+				}
+			}
+			return changed;
+		}
+
+		void InvalidateVersions()
+		{
+			for (int i = 0; i < m_Versions.Count; i++)
+			{
+				m_Versions[i] = int.MinValue;
+			}
+		}
 
 		public void Add(IViewElement elm)
 		{
 			if (m_Disposed) return;
 			AddImpl(elm);
+			InvalidateVersions();
 			if (m_ViewModel != null && elm is IBinder binder && binder.IsActive)
 			{
 				if (m_ViewModel.Property.TryGet(binder.Path, out var prop))
@@ -53,7 +105,12 @@ namespace UVMBinding.Core
 			if (elm is IBinder binder)
 			{
 				m_Binding.Remove(binder);
-				if (binder != null && binder.IsActive)
+				m_Animated.Remove(binder);
+				if (!string.IsNullOrEmpty(binder.Path) && m_ByPath.TryGetValue(binder.Path, out var list))
+				{
+					list.Remove(binder);
+				}
+				if (binder.IsActive)
 				{
 					binder.Unbind();
 				}
@@ -73,6 +130,17 @@ namespace UVMBinding.Core
 
 		void TryBinderUpdate()
 		{
+			if (!HasChange())
+			{
+				foreach (var binder in m_Animated)
+				{
+					if (binder.IsActive && binder.NeedsUpdate)
+					{
+						binder.TryUpdate();
+					}
+				}
+				return;
+			}
 			bool remove = false;
 			foreach (var binder in m_Binding)
 			{
@@ -88,21 +156,31 @@ namespace UVMBinding.Core
 			if (remove)
 			{
 				m_Binding.RemoveAll(s_RemoveAll);
+				m_Animated.RemoveAll(s_RemoveAll);
+				foreach (var list in m_ByPath.Values)
+				{
+					list.RemoveAll(s_RemoveAll);
+				}
 			}
 		}
 
 		void TryRebind()
 		{
+			if (m_PathVersion == BinderPathVersion.Value)
+			{
+				return;
+			}
+			m_PathVersion = BinderPathVersion.Value;
 			List<IBinder> rebind = default;
 			for (int i = m_Binding.Count - 1; i >= 0; i--)
 			{
 				var binder = m_Binding[i];
-				if (!binder.IsActive)
+				if (binder.IsRebind) // 軽いので先にチェックする
 				{
-					continue;
-				}
-				if (binder.IsRebind)
-				{
+					if (!binder.IsActive)
+					{
+						continue;
+					}
 					if (rebind == null)
 					{
 						rebind = ListPool<IBinder>.Pop();
@@ -132,22 +210,26 @@ namespace UVMBinding.Core
 			}
 			Log.Trace("bind {0}", model);
 			m_ViewModel = model;
+			m_Sources.Clear();
+			m_Versions.Clear();
+			AddPropertySource(m_ViewModel.Property);
+			m_PathVersion = -1;
 			m_ViewModel.OnBind();
 			using (ListPool<IBindingProperty>.Use(out var list))
 			{
 				foreach (var prop in m_ViewModel.Property.GetAllImpl(list))
 				{
-					Bind(prop);
+					BindToBinder(prop);
 				}
 			}
-			m_ViewModel.Property.OnNewProperty += Bind;
+			m_ViewModel.Property.OnNewProperty += BindToBinder;
 			if (m_ViewModel.Property.ShouldCreateProperty)
 			{
 				foreach (var binder in m_Binding)
 				{
 					if (binder.IsActive)
 					{
-						m_ViewModel.Property.TryGet(binder.Path, out var prop);
+						m_ViewModel.Property.TryGet(binder.Path, out var _);
 					}
 				}
 			}
@@ -165,16 +247,21 @@ namespace UVMBinding.Core
 				}
 			}
 			m_ViewModel.OnUnbind();
-			m_ViewModel.Property.OnNewProperty -= Bind;
+			m_ViewModel.Property.OnNewProperty -= BindToBinder;
 			m_ViewModel = null;
 		}
 
-		void Bind(IBindingProperty prop)
+		internal void BindToBinder(IBindingProperty prop)
 		{
 			if (m_Disposed) return;
-			foreach (var binder in m_Binding)
+			if (!m_ByPath.TryGetValue(prop.Path, out var binders))
 			{
-				if (binder.Path == prop.Path && binder.IsActive)
+				return;
+			}
+			InvalidateVersions();
+			foreach (var binder in binders)
+			{
+				if (binder.IsActive)
 				{
 					Log.Trace("Bind {0} {1}", prop.Path, binder);
 					binder.Bind(prop);

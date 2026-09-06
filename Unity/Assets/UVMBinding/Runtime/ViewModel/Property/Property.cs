@@ -6,12 +6,17 @@ namespace UVMBinding
 	public class Property<T>
 	{
 		public readonly string Path;
-		IBindingProperty<T> m_Property;
+		BindingProperty m_Property;
+		SubscribeHandle<T> m_Handle;
 
 		public T Value
 		{
-			get { return m_Property.Value; }
-			set { m_Property.Value = value; }
+			get
+			{
+				m_Property.TryGetValue<T>(out var value);
+				return value;
+			}
+			set { m_Property.TrySetValue(value); }
 		}
 
 		public event System.Action<T> OnChanged;
@@ -19,8 +24,8 @@ namespace UVMBinding
 		public Property(string path, IViewModel vm)
 		{
 			Path = path;
-			m_Property = vm.Property.Get<T>(Path);
-			m_Property.OnChanged += OnNotifyChanged;
+			m_Property = vm.Property.GetOrCreate<T>(Path);
+			m_Handle = vm.Property.SubscribeStrict<T>(Path, OnNotifyChanged, notifyCurrent: false);
 		}
 
 		public Property(string path, IViewModel vm, T val) : this(path, vm)

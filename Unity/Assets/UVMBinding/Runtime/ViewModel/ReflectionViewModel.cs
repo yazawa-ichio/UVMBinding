@@ -18,6 +18,8 @@ namespace UVMBinding
 
 		Type m_Type;
 		object m_DataSource;
+
+		public object DataSource => m_DataSource;
 		INotifyDirtyEvent m_DitryEvent;
 
 		public ReflectionViewModel(object dataSource)
@@ -56,7 +58,7 @@ namespace UVMBinding
 			Event.OnPublishEvent -= OnPublishEvent;
 			foreach (var prop in Property.GetAll())
 			{
-				prop.OnChangedObject -= OnChangedObject;
+				prop.OnChangedValue -= OnChangedValue;
 			}
 		}
 
@@ -69,23 +71,18 @@ namespace UVMBinding
 			}
 		}
 
-
 		private void OnDitryEvent(NotifyDirtyEvent e)
 		{
-			if (string.IsNullOrEmpty(e.Path))
+			using (ListPool<IBindingProperty>.Use(out var list))
 			{
-				using (ListPool<IBindingProperty>.Use(out var list))
+				foreach (var property in Property.GetAllImpl(list))
 				{
-					foreach (var property in Property.GetAllImpl(list))
+					if (!string.IsNullOrEmpty(e.Path) && property.Path != e.Path)
 					{
-						SetPropertyValue(property);
+						continue;
 					}
+					SetPropertyValue(property);
 				}
-			}
-			else
-			{
-				var property = Property.Get<object>(e.Path);
-				SetPropertyValue(property);
 			}
 		}
 
@@ -101,7 +98,7 @@ namespace UVMBinding
 
 		void OnNewProperty(IBindingProperty property)
 		{
-			property.OnChangedObject += OnChangedObject;
+			property.OnChangedValue += OnChangedValue;
 			var resolver = ReflectionPropertyValueResolver.Get(m_DataSource.GetType(), property.Path);
 			if (resolver != null && resolver.CanRead)
 			{
@@ -109,7 +106,7 @@ namespace UVMBinding
 			}
 		}
 
-		void OnChangedObject(string path, object value)
+		void OnChangedValue(string path, IValueHolder value)
 		{
 			var resolver = ReflectionPropertyValueResolver.Get(m_DataSource.GetType(), path);
 			if (resolver != null && resolver.CanRead)

@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class AnimatorIntBinder : Binder<int, Animator>
 	{
 		[SerializeField]

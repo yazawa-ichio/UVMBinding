@@ -134,17 +134,16 @@ namespace UVMBinding
 		public void CopyTo(T[] array, int arrayIndex)
 		{
 			GetList().CopyTo(array, arrayIndex);
-			SetDirty();
 		}
 
 		IEnumerator<T> IEnumerable<T>.GetEnumerator()
 		{
-			return GetList() as IEnumerator<T>;
+			return GetList().GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return GetList() as IEnumerator;
+			return GetList().GetEnumerator();
 		}
 
 	}

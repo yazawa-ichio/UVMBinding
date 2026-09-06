@@ -25,13 +25,13 @@ namespace UVMBinding
 
 		public bool IsReadOnly => false;
 
-		public event System.Action<List<T>> OnChanged;
+		public event System.Action<Collection<T>> OnChanged;
 
 		public Collection(string path, IViewModel vm)
 		{
 			Path = path;
 			m_VM = vm;
-			m_VM.Property.Subscribe<List<T>>(Path, OnNotifyChanged);
+			m_VM.Property.Subscribe<List<IViewModel>>(Path, OnNotifyChanged);
 		}
 
 		public Collection(string path, IViewModel vm, List<T> val) : this(path, vm)
@@ -39,9 +39,9 @@ namespace UVMBinding
 			GetList().AddRange(val.Cast<IViewModel>());
 		}
 
-		void OnNotifyChanged(List<T> val)
+		void OnNotifyChanged(List<IViewModel> val)
 		{
-			OnChanged?.Invoke(val);
+			OnChanged?.Invoke(this);
 		}
 
 		public void SetDirty()
@@ -129,8 +129,11 @@ namespace UVMBinding
 
 		public void CopyTo(T[] array, int arrayIndex)
 		{
-			GetList().CopyTo(array, arrayIndex);
-			SetDirty();
+			var list = GetList();
+			for (int i = 0; i < list.Count; i++)
+			{
+				array[arrayIndex + i] = list[i] as T;
+			}
 		}
 
 		IEnumerator<T> IEnumerable<T>.GetEnumerator()
@@ -140,10 +143,9 @@ namespace UVMBinding
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return GetList() as IEnumerator;
+			return ((IEnumerable<T>)this).GetEnumerator();
 		}
 
 	}
-
 
 }

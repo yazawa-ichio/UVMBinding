@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace UVMBinding.Core
 {
@@ -12,18 +13,28 @@ namespace UVMBinding.Core
 
 		public bool CanWrite => m_PropertyValue.CanWrite;
 
+		public Type ValueType => m_PropertyValue.ValueType;
+
 		private ReflectionPropertyValueResolver(IPropertyValue propertyValue)
 		{
 			m_PropertyValue = propertyValue;
 		}
 
-		public void SetValue(object dataSource, object value)
+		public void SetValue(object dataSource, IValueHolder value)
 		{
+			if (!CanWrite)
+			{
+				throw new InvalidOperationException($"Cannot write to property {dataSource}");
+			}
 			m_PropertyValue.SetValue(dataSource, value);
 		}
 
 		public object GetValue(object dataSource)
 		{
+			if (!CanRead)
+			{
+				throw new InvalidOperationException($"Cannot read from property {dataSource}");
+			}
 			return m_PropertyValue.GetValue(dataSource);
 		}
 
@@ -48,7 +59,8 @@ namespace UVMBinding.Core
 		{
 			bool CanWrite { get; }
 			bool CanRead { get; }
-			void SetValue(object component, object value);
+			Type ValueType { get; }
+			void SetValue(object component, IValueHolder value);
 			object GetValue(object component);
 		}
 
@@ -67,15 +79,24 @@ namespace UVMBinding.Core
 
 			public bool CanRead => m_Getter != null;
 
+			public Type ValueType => typeof(TValue);
+
 			public ActionValueSetter(Action<TDataSource, TValue> setter, Func<TDataSource, TValue> getter)
 			{
 				m_Setter = setter;
 				m_Getter = getter;
 			}
 
-			public void SetValue(object data, object value)
+			public void SetValue(object data, IValueHolder valueHolder)
 			{
-				m_Setter((TDataSource)(object)data, (TValue)value);
+				if (valueHolder.TryGetValue<TValue>(out var value))
+				{
+					m_Setter((TDataSource)(object)data, value);
+				}
+				else
+				{
+					m_Setter((TDataSource)(object)data, (TValue)valueHolder.GetObject());
+				}
 			}
 
 			public object GetValue(object data)
@@ -97,7 +118,6 @@ namespace UVMBinding.Core
 
 		class ReflectionValueSetter : IPropertyValue
 		{
-			readonly string m_Path;
 			readonly FieldInfo m_Field;
 			readonly PropertyInfo m_Property;
 
@@ -105,19 +125,20 @@ namespace UVMBinding.Core
 
 			public bool CanRead => m_Field != null || (m_Property != null && m_Property.CanRead);
 
+			public Type ValueType => m_Field != null ? m_Field.FieldType : m_Property?.PropertyType;
+
 			public ReflectionValueSetter(Type type, string path)
 			{
 				const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-				m_Path = path;
 				while (type != null)
 				{
-					m_Field = type.GetField(m_Path, flags);
+					m_Field = type.GetField(path, flags);
 					if (m_Field != null)
 					{
 						return;
 					}
-					m_Property = type.GetProperty(m_Path, flags);
+					m_Property = type.GetProperty(path, flags);
 					if (m_Property != null)
 					{
 						return;
@@ -126,8 +147,9 @@ namespace UVMBinding.Core
 				}
 			}
 
-			public void SetValue(object data, object value)
+			public void SetValue(object data, IValueHolder valueHolder)
 			{
+				var value = valueHolder.GetObject();
 				m_Field?.SetValue(data, value);
 				m_Property?.SetValue(data, value);
 			}
