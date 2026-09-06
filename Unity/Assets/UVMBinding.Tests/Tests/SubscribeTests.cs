@@ -71,8 +71,6 @@ namespace UVMBinding.Tests
 
 		}
 
-
-
 		[Test]
 		public void PropertyのUnsubscribeで解除出来る()
 		{
@@ -86,9 +84,9 @@ namespace UVMBinding.Tests
 				value1 = x;
 			};
 
-			container.Subscribe("P1", action);
+			container.Subscribe("P1", action, notifyCurrent: false);
 
-			container.Get<int>("P1").Value = 10;
+			container.TrySetValue<int>("P1", 10);
 
 			Assert.AreEqual(1, count1);
 			Assert.AreEqual(10, value1);
@@ -102,7 +100,7 @@ namespace UVMBinding.Tests
 
 			container.Unsubscribe("P1", action);
 
-			container.Get<int>("P1").Value = 20;
+			container.TrySetValue<int>("P1", 20);
 			container.SetAllDirty();
 
 			// 解除済みなので増えない
@@ -117,26 +115,26 @@ namespace UVMBinding.Tests
 			PropertyContainer container = new PropertyContainer();
 			int count1 = 0;
 			int value1 = 0;
-			int count2 = 0;
-			string value2 = "";
+			int count3 = 0;
+			object value3 = null;
+
 			var handel1 = container.Subscribe<int>("P1", (x) =>
 			{
 				count1++;
 				value1 = x;
-			});
-			var handel2 = container.Subscribe<string>("P1", (x) =>
+			}, notifyCurrent: false);
+			var handle3 = container.Subscribe<object>("P1", (x) =>
 			{
-				count2++;
-				value2 = x;
-			});
+				count3++;
+				value3 = x;
+			}, notifyCurrent: false);
 
-			container.Get<int>("P1").Value = 10;
-			container.Get<string>("P1").Value = "Test";
+			container.TrySetValue<int>("P1", 10);
 
 			Assert.AreEqual(1, count1);
 			Assert.AreEqual(10, value1);
-			Assert.AreEqual(1, count2);
-			Assert.AreEqual("Test", value2);
+			Assert.AreEqual(1, count3);
+			Assert.AreEqual(10, value3);
 
 			container.SetAllDirty();
 			container.SetDirty("P1");
@@ -144,29 +142,25 @@ namespace UVMBinding.Tests
 			//カウントだけ増える
 			Assert.AreEqual(3, count1);
 			Assert.AreEqual(10, value1);
-			Assert.AreEqual(3, count2);
-			Assert.AreEqual("Test", value2);
-
+			Assert.AreEqual(3, count3);
 
 			handel1.Dispose();
-			handel2.Dispose();
+			handle3.Dispose();
 
-			container.Get<int>("P1").Value = 20;
-			container.Get<string>("P1").Value = "Test2";
+			container.TrySetValue<int>("P1", 20);
 			container.SetAllDirty();
 
 			// 解除済みなので増えない
 			Assert.AreEqual(3, count1);
 			Assert.AreEqual(10, value1);
-			Assert.AreEqual(3, count2);
-			Assert.AreEqual("Test", value2);
+			Assert.AreEqual(3, count3);
+			Assert.AreEqual(10, value3);
 
 #if UNITY_EDITOR
-			Assert.AreEqual(2, container.GetAll().Count());
+			Assert.AreEqual(1, container.GetAll().Count());
 #endif
 
 		}
-
 
 	}
 }
