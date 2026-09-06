@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.Slider)]
 	public class SliderBinder : Binder<float, Slider>
 	{
 		protected override void OnInit(Slider target)

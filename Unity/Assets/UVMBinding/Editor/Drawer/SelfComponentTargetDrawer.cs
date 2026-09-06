@@ -18,6 +18,11 @@ namespace UVMBinding.Drawer
 			EditorGUI.PropertyField(left, property, label);
 			if (EditorGUI.DropdownButton(right, GUIContent.none, FocusType.Passive))
 			{
+				if (property.serializedObject.targetObjects.Length != 1)
+				{
+					DrawerMultiSelect.ShowReason(right, DrawerMultiSelect.SingleOnly);
+					return;
+				}
 				if (property.serializedObject.targetObject is Component component)
 				{
 					var targets = component.GetComponents(fieldInfo.FieldType)
@@ -33,17 +38,15 @@ namespace UVMBinding.Drawer
 						property.objectReferenceValue = targets[0];
 						return;
 					}
-					var menu = new GenericMenu();
-					foreach (var target in targets)
+					var names = targets.Select(x => x.GetType().Name).ToList();
+					var serialized = property.serializedObject;
+					var propertyPath = property.propertyPath;
+					SearchableDropdown.Show(right, "Component", names, index =>
 					{
-						menu.AddItem(new GUIContent(target.GetType().Name), false, () =>
-						{
-							property.serializedObject.Update();
-							property.objectReferenceValue = target;
-							property.serializedObject.ApplyModifiedProperties();
-						});
-					}
-					menu.ShowAsContext();
+						serialized.Update();
+						serialized.FindProperty(propertyPath).objectReferenceValue = targets[index];
+						serialized.ApplyModifiedProperties();
+					});
 				}
 			}
 		}

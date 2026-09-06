@@ -11,6 +11,7 @@ namespace UVMBinding.Drawer
 	{
 		static string s_SelectElementPrefKey = "UVMBinding.Drawer-SelectElement";
 		static string s_ViewModelPrefKey = "UVMBinding.Drawer-ViewModel";
+		static string s_FailurePrefKey = "UVMBinding.Drawer-BindingFailure";
 
 		[SerializeField]
 		int m_Index;
@@ -95,9 +96,60 @@ namespace UVMBinding.Drawer
 			}
 
 			DrawViewModel();
+			DrawFailures();
 			DrawElementInspector();
 
 			m_Serialized.ApplyModifiedProperties();
+		}
+
+		void DrawFailures()
+		{
+			if (!Application.isPlaying)
+			{
+				return;
+			}
+			var foldout = EditorPrefs.GetBool(s_FailurePrefKey, true);
+			var ret = EditorGUILayout.Foldout(foldout, "Binding Failures", true);
+			if (ret != foldout)
+			{
+				EditorPrefs.SetBool(s_FailurePrefKey, ret);
+			}
+			if (!ret)
+			{
+				return;
+			}
+			var report = new Lint.LintReport();
+			Lint.ViewLinter.LintRuntime(m_View, report);
+			using (new GUILayout.VerticalScope("box"))
+			{
+				if (m_View.ViewModel == null)
+				{
+					GUILayout.Label("not attach ViewModel");
+					return;
+				}
+				if (report.Violations.Count == 0)
+				{
+					GUILayout.Label(report.Partial.Count > 0
+						? "No failures (paths are dynamic)"
+						: "No failures");
+					return;
+				}
+				foreach (var violation in report.Violations)
+				{
+					using (new GUILayout.HorizontalScope())
+					{
+						EditorGUILayout.LabelField($"[{violation.Rule}] {violation.Detail}");
+						using (new EditorGUI.DisabledScope(violation.Source == null))
+						{
+							if (GUILayout.Button("Select", GUILayout.ExpandWidth(false)))
+							{
+								Selection.activeObject = violation.Source;
+								EditorGUIUtility.PingObject(violation.Source);
+							}
+						}
+					}
+				}
+			}
 		}
 
 		void DrawElementInspector()
@@ -117,7 +169,11 @@ namespace UVMBinding.Drawer
 				using (new GUILayout.HorizontalScope())
 				{
 					GUILayout.Label("Select Element", GUILayout.ExpandWidth(false));
-					m_Index = EditorGUILayout.Popup(m_Index, m_ElementNames);
+					var current = m_Index >= 0 && m_Index < m_ElementNames.Length ? m_ElementNames[m_Index] : "None";
+					if (EditorGUILayout.DropdownButton(new GUIContent(current), FocusType.Passive))
+					{
+						SearchableDropdown.Show(GUILayoutUtility.GetLastRect(), "Element", m_ElementNames, index => m_Index = index);
+					}
 				}
 				GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
 				if (m_Index >= 0 && m_Index < m_ElementViewers.Count)
@@ -149,29 +205,31 @@ namespace UVMBinding.Drawer
 
 		void DrawReservationViewModel()
 		{
-			var property = m_Serialized.FindProperty("m_ReservationViewModel");
+			var property = m_Serialized.FindProperty(View.ReservationViewModelFieldName);
 			using (new EditorGUILayout.HorizontalScope())
 			{
 				EditorGUILayout.PropertyField(property, new GUIContent("Name"), true);
 				if (EditorGUILayout.DropdownButton(GUIContent.none, FocusType.Passive, GUILayout.ExpandWidth(false)))
 				{
-					var menu = new GenericMenu();
+					var values = new List<string>();
+					var names = new List<string>();
 					foreach (var name in ViewModelList.GetNames())
 					{
 						if (name == "None" || name == "UVMBinding.GeneralViewModel")
 						{
 							continue;
 						}
-						menu.AddItem(new GUIContent(ViewModelList.GetDispName(name)), false, () =>
-						{
-							var so = new SerializedObject(m_View);
-							so.Update();
-							var property = so.FindProperty("m_ReservationViewModel");
-							property.stringValue = name;
-							so.ApplyModifiedProperties();
-						});
+						values.Add(name);
+						names.Add(ViewModelList.GetDispName(name));
 					}
-					menu.ShowAsContext();
+					var view = m_View;
+					SearchableDropdown.Show(GUILayoutUtility.GetLastRect(), "ViewModel", names, index =>
+					{
+						var so = new SerializedObject(view);
+						so.Update();
+						so.FindProperty(View.ReservationViewModelFieldName).stringValue = values[index];
+						so.ApplyModifiedProperties();
+					});
 				}
 			}
 			if (GUILayout.Button("Attach"))
@@ -193,6 +251,8 @@ namespace UVMBinding.Drawer
 			}
 			using (new GUILayout.VerticalScope("box"))
 			{
+				EditorGUILayout.LabelField("Attached Type", vm.GetType().FullName);
+				GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
 				EditorGUILayout.LabelField("Property Path(Type)", "Value");
 				GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
 				using (ListPool<IBindingProperty>.Use(out var list))
@@ -225,47 +285,67 @@ namespace UVMBinding.Drawer
 		void DrawProperty(IBindingProperty prop)
 		{
 			var name = $"{prop.Path}({prop.GetBindType().Name})";
-			switch (prop)
+			var type = prop.GetBindType();
+			if (type == typeof(string))
 			{
-				case IBindingProperty<string> property:
-					property.Value = EditorGUILayout.TextField(name, property.Value);
-					break;
-				case IBindingProperty<byte> property:
-					property.Value = (byte)EditorGUILayout.IntField(name, property.Value);
-					break;
-				case IBindingProperty<ushort> property:
-					property.Value = (ushort)EditorGUILayout.IntField(name, property.Value);
-					break;
-				case IBindingProperty<uint> property:
-					property.Value = (uint)EditorGUILayout.LongField(name, property.Value);
-					break;
-				case IBindingProperty<sbyte> property:
-					property.Value = (sbyte)EditorGUILayout.IntField(name, property.Value);
-					break;
-				case IBindingProperty<short> property:
-					property.Value = (short)EditorGUILayout.IntField(name, property.Value);
-					break;
-				case IBindingProperty<int> property:
-					property.Value = EditorGUILayout.IntField(name, property.Value);
-					break;
-				case IBindingProperty<long> property:
-					property.Value = EditorGUILayout.LongField(name, property.Value);
-					break;
-				case IBindingProperty<float> property:
-					property.Value = EditorGUILayout.FloatField(name, property.Value);
-					break;
-				case IBindingProperty<double> property:
-					property.Value = EditorGUILayout.DoubleField(name, property.Value);
-					break;
-				case IBindingProperty<bool> property:
-					property.Value = EditorGUILayout.Toggle(name, property.Value);
-					break;
-				default:
-					EditorGUILayout.LabelField(name, prop.ToString());
-					break;
+				prop.TryGetValue<string>(out var value);
+				prop.TrySetValue(EditorGUILayout.TextField(name, value));
+			}
+			else if (type == typeof(byte))
+			{
+				prop.TryGetValue<byte>(out var value);
+				prop.TrySetValue((byte)EditorGUILayout.IntField(name, value));
+			}
+			else if (type == typeof(ushort))
+			{
+				prop.TryGetValue<ushort>(out var value);
+				prop.TrySetValue((ushort)EditorGUILayout.IntField(name, value));
+			}
+			else if (type == typeof(uint))
+			{
+				prop.TryGetValue<uint>(out var value);
+				prop.TrySetValue((uint)EditorGUILayout.LongField(name, value));
+			}
+			else if (type == typeof(sbyte))
+			{
+				prop.TryGetValue<sbyte>(out var value);
+				prop.TrySetValue((sbyte)EditorGUILayout.IntField(name, value));
+			}
+			else if (type == typeof(short))
+			{
+				prop.TryGetValue<short>(out var value);
+				prop.TrySetValue((short)EditorGUILayout.IntField(name, value));
+			}
+			else if (type == typeof(int))
+			{
+				prop.TryGetValue<int>(out var value);
+				prop.TrySetValue(EditorGUILayout.IntField(name, value));
+			}
+			else if (type == typeof(long))
+			{
+				prop.TryGetValue<long>(out var value);
+				prop.TrySetValue(EditorGUILayout.LongField(name, value));
+			}
+			else if (type == typeof(float))
+			{
+				prop.TryGetValue<float>(out var value);
+				prop.TrySetValue(EditorGUILayout.FloatField(name, value));
+			}
+			else if (type == typeof(double))
+			{
+				prop.TryGetValue<double>(out var value);
+				prop.TrySetValue(EditorGUILayout.DoubleField(name, value));
+			}
+			else if (type == typeof(bool))
+			{
+				prop.TryGetValue<bool>(out var value);
+				prop.TrySetValue(EditorGUILayout.Toggle(name, value));
+			}
+			else
+			{
+				EditorGUILayout.LabelField(name, prop.ToString());
 			}
 		}
-
 
 	}
 

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class DropdownLocalizeStringDataBinder : Binder<IList<LocalizeTextKey>, Dropdown>
 	{
 		IList<LocalizeTextKey> m_Cache;

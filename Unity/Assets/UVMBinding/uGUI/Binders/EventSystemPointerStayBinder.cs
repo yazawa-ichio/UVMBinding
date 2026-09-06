@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Events
 {
+	[SemanticRole(SemanticRole.None)]
 	public class EventSystemPointerStayBinder : Binder<bool>, IPointerEnterHandler, IPointerExitHandler
 	{
 		public void OnPointerEnter(PointerEventData eventData)

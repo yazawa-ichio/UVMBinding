@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.ComboBox)]
 	public class DropdownSelectBinder : Binder<int, Dropdown>
 	{
 		protected override void OnInit(Dropdown target)

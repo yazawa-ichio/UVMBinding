@@ -5,6 +5,7 @@ using UnityEngine;
 namespace UVMBinding.Drawer
 {
 	[CustomEditor(typeof(View), true)]
+	[CanEditMultipleObjects]
 	public class ViewDrawer : Editor
 	{
 		static Dictionary<int, BindingViewer> m_Viewers = new Dictionary<int, BindingViewer>();
@@ -35,13 +36,21 @@ namespace UVMBinding.Drawer
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
 			}
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_UpdateOnAttach"));
-			m_BindingViewer.Draw();
-			if (!Application.isPlaying)
+			if (targets.Length == 1)
 			{
-				if (target is View view && view != null)
+				m_BindingViewer.Draw();
+				if (!Application.isPlaying)
 				{
-					view.TryUpdate();
+					if (target is View view && view != null)
+					{
+						view.TryUpdate();
+					}
 				}
+			}
+			else
+			{
+				EditorGUILayout.PropertyField(serializedObject.FindProperty(View.ReservationViewModelFieldName));
+				EditorGUILayout.HelpBox("Binding list is hidden for multiple selection", MessageType.Info);
 			}
 			serializedObject.ApplyModifiedProperties();
 		}

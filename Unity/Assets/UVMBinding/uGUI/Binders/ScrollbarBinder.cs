@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.Scrollbar)]
 	public class ScrollbarBinder : Binder<float, Scrollbar>
 	{
 		protected override void OnInit(Scrollbar target)

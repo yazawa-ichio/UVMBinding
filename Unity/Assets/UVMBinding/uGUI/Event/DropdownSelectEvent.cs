@@ -4,6 +4,7 @@ using UVMBinding.Core;
 
 namespace UVMBinding.Events
 {
+	[SemanticRole(SemanticRole.ComboBox)]
 	public class DropdownSelectEvent : ViewEventBase
 	{
 		void Awake()

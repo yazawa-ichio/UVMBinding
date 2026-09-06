@@ -19,12 +19,12 @@ namespace UVMBinding.Converters
 
 		public override bool TryInverseConvert(T value, ref bool ret)
 		{
-			if (s_EqualityComparer.Equals(m_On))
+			if (s_EqualityComparer.Equals(value, m_On))
 			{
 				ret = true;
 				return true;
 			}
-			if (s_EqualityComparer.Equals(m_Off))
+			if (s_EqualityComparer.Equals(value, m_Off))
 			{
 				ret = false;
 				return true;

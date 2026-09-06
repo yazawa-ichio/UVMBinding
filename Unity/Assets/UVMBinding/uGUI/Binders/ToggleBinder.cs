@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.Switch)]
 	public class ToggleBinder : Binder<bool, Toggle>
 	{
 		protected override void OnInit(Toggle target)

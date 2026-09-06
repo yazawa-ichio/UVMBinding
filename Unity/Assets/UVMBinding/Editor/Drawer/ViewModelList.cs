@@ -103,11 +103,14 @@ namespace UVMBinding.Drawer
 		{
 			public readonly string Path;
 			public readonly PropertyInfo Info;
+			public readonly string[] SourcePaths;
 
 			public PropertyEntry(string path, PropertyInfo property)
 			{
 				Path = path;
 				Info = property;
+				var depends = property.GetCustomAttribute<DependsOnAttribute>();
+				SourcePaths = depends != null ? depends.Paths : Array.Empty<string>();
 			}
 		}
 
@@ -116,17 +119,26 @@ namespace UVMBinding.Drawer
 			public readonly string Path;
 			public readonly MethodInfo Info;
 			public readonly PropertyInfo Property;
+			public readonly ConsequenceKind Consequence;
 
 			public EventEntry(string path, MethodInfo method)
 			{
 				Path = path;
 				Info = method;
+				Consequence = Read(method);
 			}
 
 			public EventEntry(string path, PropertyInfo property)
 			{
 				Path = path;
 				Property = property;
+				Consequence = Read(property);
+			}
+
+			static ConsequenceKind Read(MemberInfo member)
+			{
+				var attr = member?.GetCustomAttribute<ConsequenceAttribute>();
+				return attr != null ? attr.Kind : ConsequenceKind.Unknown;
 			}
 		}
 

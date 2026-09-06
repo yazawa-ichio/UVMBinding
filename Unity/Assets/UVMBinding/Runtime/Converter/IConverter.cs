@@ -1,11 +1,14 @@
-﻿namespace UVMBinding
+﻿namespace UVMBinding.Core
 {
 	internal interface IConverter
 	{
-		System.Type GetInputType();
-		System.Type GetOutputType();
+		System.Type InputType { get; }
+		System.Type OutputType { get; }
+
+		bool NeedsUpdate { get; }
 		void TryUpdate();
-		bool TryConvert(IBindingProperty input, ref IBindingProperty output);
+
+		bool TryConvert(IBindingProperty input, bool allowCast, ref IBindingProperty output);
 		void Unbind();
 	}
 }

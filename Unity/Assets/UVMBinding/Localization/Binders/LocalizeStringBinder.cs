@@ -4,6 +4,7 @@ using UnityEngine.Localization.Components;
 namespace UVMBinding.Binders
 {
 	[RequireComponent(typeof(LocalizeStringEvent))]
+	[SemanticRole(SemanticRole.Text)]
 	public class LocalizeStringBinder : Binder<LocalizeTextKey, LocalizeStringEvent>
 	{
 		LocalizeTextKey m_Value;
