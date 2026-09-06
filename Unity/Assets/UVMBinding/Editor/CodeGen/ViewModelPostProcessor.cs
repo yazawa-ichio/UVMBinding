@@ -12,6 +12,7 @@ namespace UVMBinding.CodeGen
 		static readonly string s_BindAttribute = "UVMBinding.BindAttribute";
 		static readonly string s_EventAttribute = "UVMBinding.EventAttribute";
 		static readonly string s_IgnoreAttribute = "UVMBinding.IgnoreCodeGenAttribute";
+		static readonly string s_DependsOnAttribute = "UVMBinding.DependsOnAttribute";
 		static readonly string s_ReactiveType = "UVMBinding.Property`1<";
 		static readonly string s_CollectionType = "UVMBinding.Collection`1<";
 		static readonly string s_ValueCollectionType = "UVMBinding.ValueCollection`1<";
@@ -30,6 +31,16 @@ namespace UVMBinding.CodeGen
 			public FieldDefinition BackingField;
 			public PropertyDefinition Property;
 		}
+
+		class ComputedProperty
+		{
+			public string Path;
+			public PropertyDefinition Property;
+			public List<string> Sources = new List<string>();
+		}
+
+		Dictionary<string, List<ComputedProperty>> m_Dependents = new Dictionary<string, List<ComputedProperty>>();
+		List<ComputedProperty> m_Computed = new List<ComputedProperty>();
 
 		TypeDefinition m_TypeDefinition;
 		ViewModelReference m_ViewModelReference;
@@ -76,6 +87,7 @@ namespace UVMBinding.CodeGen
 
 		public void Process()
 		{
+			CollectComputed();
 			foreach (var property in m_TypeDefinition.Properties)
 			{
 				if (TryGetPropertyPath(property, out var path))
@@ -99,6 +111,146 @@ namespace UVMBinding.CodeGen
 				ProcessConstructor(method);
 			}
 
+		}
+
+		void CollectComputed()
+		{
+			var paths = new Dictionary<string, PropertyDefinition>();
+			foreach (var property in m_TypeDefinition.Properties)
+			{
+				if (TryGetPropertyPath(property, out var path))
+				{
+					paths[path] = property;
+				}
+			}
+			foreach (var property in m_TypeDefinition.Properties)
+			{
+				if (!TryGetPropertyPath(property, out var path))
+				{
+					continue;
+				}
+				var attr = property.CustomAttributes.FirstOrDefault(x => x.AttributeType.FullName == s_DependsOnAttribute);
+				if (attr == null)
+				{
+					continue;
+				}
+				if (GetBackingField(property) != null)
+				{
+					Error($"[DependsOn] is only for computed properties. {property.FullName}");
+					continue;
+				}
+				if (property.GetMethod == null)
+				{
+					Error($"[DependsOn] requires a getter. {property.FullName}");
+					continue;
+				}
+				var computed = new ComputedProperty { Path = path, Property = property };
+				foreach (var arg in attr.ConstructorArguments)
+				{
+					if (!(arg.Value is CustomAttributeArgument[] values))
+					{
+						continue;
+					}
+					foreach (var value in values)
+					{
+						var source = value.Value as string;
+						if (string.IsNullOrEmpty(source))
+						{
+							continue;
+						}
+						if (!paths.ContainsKey(source))
+						{
+							Error($"[DependsOn] unknown path \"{source}\". {property.FullName}");
+							continue;
+						}
+						computed.Sources.Add(source);
+					}
+				}
+				m_Computed.Add(computed);
+			}
+			if (m_Computed.Count == 0)
+			{
+				return;
+			}
+			if (HasCycle())
+			{
+				m_Computed.Clear();
+				return;
+			}
+			foreach (var computed in m_Computed)
+			{
+				foreach (var source in computed.Sources)
+				{
+					if (!m_Dependents.TryGetValue(source, out var list))
+					{
+						m_Dependents[source] = list = new List<ComputedProperty>();
+					}
+					list.Add(computed);
+				}
+			}
+		}
+
+		bool HasCycle()
+		{
+			var byPath = m_Computed.ToDictionary(x => x.Path);
+			var state = new Dictionary<string, int>();
+			foreach (var computed in m_Computed)
+			{
+				if (Visit(computed.Path, byPath, state))
+				{
+					Error($"[DependsOn] circular dependency. {m_TypeDefinition.FullName}::{computed.Path}");
+					return true;
+				}
+			}
+			return false;
+		}
+
+		bool Visit(string path, Dictionary<string, ComputedProperty> byPath, Dictionary<string, int> state)
+		{
+			if (state.TryGetValue(path, out var s))
+			{
+				return s == 1;
+			}
+			if (!byPath.TryGetValue(path, out var computed))
+			{
+				return false;
+			}
+			state[path] = 1;
+			foreach (var source in computed.Sources)
+			{
+				if (Visit(source, byPath, state))
+				{
+					return true;
+				}
+			}
+			state[path] = 2;
+			return false;
+		}
+
+		void CollectTransitive(string path, List<ComputedProperty> result)
+		{
+			if (!m_Dependents.TryGetValue(path, out var list))
+			{
+				return;
+			}
+			foreach (var computed in list)
+			{
+				if (result.Contains(computed))
+				{
+					continue;
+				}
+				result.Add(computed);
+				CollectTransitive(computed.Path, result);
+			}
+		}
+
+		void Error(string message)
+		{
+			m_Diagnostics.Add(new DiagnosticMessage
+			{
+				DiagnosticType = DiagnosticType.Error,
+				MessageData = message,
+			});
 		}
 
 		FieldDefinition GetBackingField(PropertyDefinition property)
@@ -150,6 +302,12 @@ namespace UVMBinding.CodeGen
 				processor.Emit(OpCodes.Ldstr, path);
 				processor.Emit(OpCodes.Ldarg_1);
 				processor.Emit(OpCodes.Call, m_ViewModelReference.SetMethod(property.PropertyType));
+				var dependents = new List<ComputedProperty>();
+				CollectTransitive(path, dependents);
+				foreach (var computed in dependents)
+				{
+					EmitPush(processor, computed);
+				}
 				processor.Emit(OpCodes.Nop);
 				processor.Emit(OpCodes.Ret);
 			}
@@ -164,6 +322,15 @@ namespace UVMBinding.CodeGen
 				processor.Emit(OpCodes.Nop);
 				processor.Emit(OpCodes.Ret);
 			}
+		}
+
+		void EmitPush(ILProcessor processor, ComputedProperty computed)
+		{
+			processor.Emit(OpCodes.Ldarg_0);
+			processor.Emit(OpCodes.Ldstr, computed.Path);
+			processor.Emit(OpCodes.Ldarg_0);
+			processor.Emit(OpCodes.Call, computed.Property.GetMethod);
+			processor.Emit(OpCodes.Call, m_ViewModelReference.SetMethod(computed.Property.PropertyType));
 		}
 
 		void ProcessEvent(EventDefinition _event, string path)
@@ -245,6 +412,15 @@ namespace UVMBinding.CodeGen
 						break;
 				}
 			}
+			foreach (var computed in SortByDepth())
+			{
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Ldarg_0));
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Ldstr, computed.Path));
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Ldarg_0));
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Call, computed.Property.GetMethod));
+				processor.InsertBefore(end, Instruction.Create(OpCodes.Call,
+					m_ViewModelReference.SetMethod(computed.Property.PropertyType)));
+			}
 			foreach (var property in m_TypeDefinition.Properties)
 			{
 				if (TryGetEventPath(property, out var path) && IsEventProperty(property))
@@ -259,6 +435,40 @@ namespace UVMBinding.CodeGen
 					ProcessRegisterMethod(end, processor, eventMethod, path);
 				}
 			}
+		}
+
+		List<ComputedProperty> SortByDepth()
+		{
+			var byPath = m_Computed.ToDictionary(x => x.Path);
+			var result = new List<ComputedProperty>();
+			foreach (var computed in m_Computed)
+			{
+				AddSorted(computed, byPath, result);
+			}
+			return result;
+		}
+
+		void AddSorted(ComputedProperty computed, Dictionary<string, ComputedProperty> byPath,
+			List<ComputedProperty> result, HashSet<string> visiting = null)
+		{
+			if (result.Contains(computed))
+			{
+				return;
+			}
+			visiting ??= new HashSet<string>();
+			if (!visiting.Add(computed.Path))
+			{
+				return;
+			}
+			foreach (var source in computed.Sources)
+			{
+				if (byPath.TryGetValue(source, out var parent))
+				{
+					AddSorted(parent, byPath, result, visiting);
+				}
+			}
+			visiting.Remove(computed.Path);
+			result.Add(computed);
 		}
 
 		bool IsEventProperty(PropertyDefinition property)
