@@ -99,6 +99,45 @@ public class SampleViewModelTest : MonoBehaviour
 実行中にアタッチされているViewModelの情報などはViewComponentから確認できます。
 ![](Documents/images/ViewComponent2.png)
 
+## 行の回収を待たせる
+
+`CollectionBinder`は削除された行を即座に非activeにしてプールへ戻します。  
+退場アニメーションなどを挟む場合は`OnBeforeReleaseAsync`を継承先で実装します。  
+
+```cs
+protected virtual Task OnBeforeReleaseAsync(GameObject instance, IViewModel model, CancellationToken cancellationToken)
+```
+
+既定の実装は`Task.CompletedTask`を返すため、実装しない限り従来どおり即座に回収します。  
+同期的に完了したTaskを返した場合もフレームを跨がずに回収します。  
+
+- 呼ばれるのは行が削除された時だけです。並べ替えや同じ行の更新では呼ばれません。同じViewModelが複数行にある場合は、削除された実体ごとに呼ばれます。
+- 兄弟順の詰め直しより前に呼ばれるため、`instance.transform.GetSiblingIndex()`で削除前の位置を同期的に取得できます。
+- 待機中の行は非activeにならず、他のViewModelへ再利用されません。有効行としても扱われないため、コレクションへの追加・並べ替えは待たずに進みます。複数行の削除は同時に待機します。
+- 待機に入った時点で行のViewは`ViewModel`から切り離されます（`IViewModel.OnUnbind`まで通ります）。待機中の行は以後更新されないため、**削除が画面へ反映された後であれば、待機の有無にかかわらず利用側はViewModelをDisposeできます**。即時回収の場合と同じ時点です。ViewModelの所有権は従来どおり利用側にあり、Binderが破棄することはありません。フックの引数`model`は削除された行が参照していたViewModelで、どの行が消えたかを識別するために渡しています。待機中に参照し続ける前提では使わないでください。
+- Bindingの解除・GameObjectの非active化・破棄の際は`cancellationToken`へ取消を通知し、待たずにその場で回収します。取消に応じない処理が残っていても終了は待ちません。遅れて完了しても回収は一度だけです。
+- フックが例外を投げた場合・Taskが失敗した場合はエラーログを出したうえで回収します。行が残留することはありません。
+
+```cs
+using System.Threading;
+using System.Threading.Tasks;
+using UnityEngine;
+using UVMBinding;
+using UVMBinding.Binders;
+
+public class AnimatedCollectionBinder : CollectionBinder
+{
+	protected override Task OnBeforeReleaseAsync(GameObject instance, IViewModel model, CancellationToken cancellationToken)
+	{
+		if (!instance.TryGetComponent<IHideAnimation>(out var animation))
+		{
+			return Task.CompletedTask;
+		}
+		return animation.Hide(instance.transform.GetSiblingIndex(), cancellationToken);
+	}
+}
+```
+
 ## 検査
 
 ViewとViewModelの結線を静的に検査します。  

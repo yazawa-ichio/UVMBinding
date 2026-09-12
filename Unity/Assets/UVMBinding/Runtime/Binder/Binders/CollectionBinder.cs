@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UVMBinding.Arguments;
 using UVMBinding.Core;
@@ -30,8 +33,19 @@ namespace UVMBinding.Binders
 		readonly List<List<Entry>> m_EntryPool = new();
 		readonly List<GameObject> m_Detached = new();
 		readonly Dictionary<GameObject, IView> m_Views = new();
+		readonly List<PendingRelease> m_Pending = new();
 
 		public int PooledCount => m_Pool.Count;
+
+		public int PendingReleaseCount => m_Pending.Count;
+
+		sealed class PendingRelease
+		{
+			public GameObject Instance;
+			public IViewModel Model;
+			public CancellationTokenSource Cancellation;
+			public bool Finished;
+		}
 
 		readonly struct Entry
 		{
@@ -95,12 +109,12 @@ namespace UVMBinding.Binders
 				{
 					foreach (var entry in pair.Value)
 					{
-						Release(entry.Instance);
+						BeginRelease(entry.Instance, pair.Key);
 					}
 				}
 				foreach (var detached in m_Detached)
 				{
-					Release(detached);
+					BeginRelease(detached, null);
 				}
 			}
 			finally
@@ -138,6 +152,13 @@ namespace UVMBinding.Binders
 				if (m_Pool[i] == null)
 				{
 					m_Pool.RemoveAt(i);
+				}
+			}
+			for (int i = m_Pending.Count - 1; i >= 0; i--)
+			{
+				if (m_Pending[i].Instance == null)
+				{
+					CancelAndFinish(m_Pending[i]);
 				}
 			}
 		}
@@ -207,6 +228,131 @@ namespace UVMBinding.Binders
 				return pooled;
 			}
 			return Instantiate(m_Preafb, transform);
+		}
+
+		protected virtual Task OnBeforeReleaseAsync(GameObject instance, IViewModel model,
+			CancellationToken cancellationToken)
+		{
+			return Task.CompletedTask;
+		}
+
+		void BeginRelease(GameObject instance, IViewModel model)
+		{
+			if (instance == null)
+			{
+				return;
+			}
+			var pending = new PendingRelease
+			{
+				Instance = instance,
+				Model = model,
+				Cancellation = new CancellationTokenSource(),
+			};
+			Task task;
+			try
+			{
+				task = OnBeforeReleaseAsync(instance, model, pending.Cancellation.Token);
+			}
+			catch (Exception e)
+			{
+				Log.Error(this, "{0} OnBeforeReleaseAsync failed. {1}", this, e);
+				Finish(pending);
+				pending.Cancellation.Dispose();
+				return;
+			}
+			if (task == null || task.IsCompleted)
+			{
+				ReportFault(task);
+				Finish(pending);
+				pending.Cancellation.Dispose();
+				return;
+			}
+			m_Pending.Add(pending);
+			Detach(instance);
+			AwaitRelease(pending, task);
+		}
+
+		void Detach(GameObject instance)
+		{
+			var view = FindView(instance);
+			if (view != null)
+			{
+				view.ViewModel = null;
+			}
+		}
+
+		async void AwaitRelease(PendingRelease pending, Task task)
+		{
+			try
+			{
+				await task;
+			}
+			catch (OperationCanceledException)
+			{
+			}
+			catch (Exception e)
+			{
+				Log.Error(this, "{0} OnBeforeReleaseAsync failed. {1}", this, e);
+			}
+			Finish(pending);
+			pending.Cancellation.Dispose();
+		}
+
+		void ReportFault(Task task)
+		{
+			if (task != null && task.IsFaulted && task.Exception != null)
+			{
+				Log.Error(this, "{0} OnBeforeReleaseAsync failed. {1}", this, task.Exception);
+			}
+		}
+
+		void Finish(PendingRelease pending)
+		{
+			if (pending.Finished)
+			{
+				return;
+			}
+			pending.Finished = true;
+			m_Pending.Remove(pending);
+			pending.Model = null;
+			Release(pending.Instance);
+		}
+
+		void CancelPendingRelease()
+		{
+			for (int i = m_Pending.Count - 1; i >= 0; i--)
+			{
+				CancelAndFinish(m_Pending[i]);
+			}
+		}
+
+		void CancelAndFinish(PendingRelease pending)
+		{
+			try
+			{
+				pending.Cancellation.Cancel();
+			}
+			catch (Exception e)
+			{
+				Log.Error(this, "{0} OnBeforeReleaseAsync cancel failed. {1}", this, e);
+			}
+			Finish(pending);
+		}
+
+		protected override void OnUnbind()
+		{
+			CancelPendingRelease();
+			base.OnUnbind();
+		}
+
+		protected virtual void OnDisable()
+		{
+			CancelPendingRelease();
+		}
+
+		protected virtual void OnDestroy()
+		{
+			CancelPendingRelease();
 		}
 
 		void Release(GameObject instance)
