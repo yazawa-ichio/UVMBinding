@@ -108,7 +108,22 @@ namespace UVMBinding.CodeGen
 					vmReference = type;
 					return true;
 				}
-				type = type.BaseType?.Resolve();
+				var baseType = type.BaseType;
+				if (baseType == null)
+				{
+					break;
+				}
+				var resolved = baseType.Resolve();
+				if (resolved == null)
+				{
+					m_Diagnostics.Add(new DiagnosticMessage
+					{
+						DiagnosticType = DiagnosticType.Warning,
+						MessageData = $"Not Resolved Base Type. {baseType.FullName} of {typeDefinition.FullName}. [Bind] and [Event] are skipped.",
+					});
+					break;
+				}
+				type = resolved;
 			}
 			vmReference = null;
 			return false;
