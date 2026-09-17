@@ -29,7 +29,7 @@ namespace UVMBinding.CodeGen
 		{
 			lock (_cache)
 			{
-				var fileName = _references.FirstOrDefault(r => r.EndsWith(name.Name + ".dll"));
+				var fileName = AssemblyNameMatch.Find(_references, name.Name);
 				if (fileName == null)
 					return null;
 

@@ -8,7 +8,8 @@
         "UVMBinding.Editor",
         "UVMBinding.Semantics",
         "UVMBinding.Export",
-        "UVMBinding.Export.Editor"
+        "UVMBinding.Export.Editor",
+        "Unity.UVMBinding.Editor.CodeGen"
     ],
     "includePlatforms": [
         "Editor"

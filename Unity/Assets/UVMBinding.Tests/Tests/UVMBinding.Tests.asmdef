@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
+        "Collision.UVMBinding",
         "UVMBinding",
         "UVMBinding.UI",
         "UVMBinding.Semantics",
