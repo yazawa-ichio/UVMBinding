@@ -8,7 +8,7 @@ namespace UVMBinding.Drawer
 	[CanEditMultipleObjects]
 	public class ViewDrawer : Editor
 	{
-		static Dictionary<int, BindingViewer> m_Viewers = new Dictionary<int, BindingViewer>();
+		static Dictionary<EntityId, BindingViewer> m_Viewers = new Dictionary<EntityId, BindingViewer>();
 
 		[SerializeField]
 		protected BindingViewer m_BindingViewer;
@@ -20,13 +20,13 @@ namespace UVMBinding.Drawer
 			m_View = target as View;
 			if (m_BindingViewer == null)
 			{
-				if (!m_Viewers.TryGetValue(m_View.GetInstanceID(), out m_BindingViewer))
+				if (!m_Viewers.TryGetValue(m_View.GetEntityId(), out m_BindingViewer))
 				{
 					m_BindingViewer = new BindingViewer();
 				}
 			}
 			m_BindingViewer.Setup(target as View);
-			m_Viewers[m_View.GetInstanceID()] = m_BindingViewer;
+			m_Viewers[m_View.GetEntityId()] = m_BindingViewer;
 		}
 
 		public override void OnInspectorGUI()
