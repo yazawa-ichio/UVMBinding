@@ -50,10 +50,13 @@ namespace UVMBinding.Lint
 			if (searchInFolders == null)
 			{
 				ViewLinter.LintUnusedEvents(report);
+				ViewLinter.LintUnusedBinds(report);
 				return;
 			}
 			report.Partial.Add(new LintSkipped(string.Empty, string.Empty,
 				$"{LintRule.UnusedEventName} skipped because the sweep is limited to specific folders"));
+			report.Partial.Add(new LintSkipped(string.Empty, string.Empty,
+				$"{LintRule.UnusedBindPath} skipped because the sweep is limited to specific folders"));
 		}
 
 		static int LintPrefabs(LintReport report, string[] searchInFolders)

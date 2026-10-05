@@ -119,6 +119,7 @@ namespace UVMBinding.Lint
 				report.CheckedViewCount++;
 			}
 			CollectDispatchedEvents(elements, type, report);
+			CollectBoundPaths(elements, extensions, type, report);
 			LintElements(elements, view.transform, assetPath, source, report);
 			LintExtensions(extensions, assetPath, source, report);
 			LintDependsOn(type, assetPath, objectPath, source, report);
@@ -161,6 +162,92 @@ namespace UVMBinding.Lint
 						$"Event is not dispatched by any view: {entry.Path}"));
 				}
 			}
+		}
+
+		static void CollectBoundPaths(List<IViewElement> elements, ViewModelPropertyExtension[] extensions,
+			System.Type type, LintReport report)
+		{
+			if (!typeof(IViewModel).IsAssignableFrom(type))
+			{
+				return;
+			}
+			report.AddBoundPath(type, null);
+			foreach (var element in elements)
+			{
+				if (element is IBinderInfo binder)
+				{
+					report.AddBoundPath(type, binder.Path);
+				}
+			}
+			if (extensions == null)
+			{
+				return;
+			}
+			foreach (var extension in extensions)
+			{
+				foreach (var info in extension.GetPropertyInfos())
+				{
+					foreach (var sourcePath in info.SourcePaths)
+					{
+						report.AddBoundPath(type, sourcePath);
+					}
+				}
+			}
+		}
+
+		public static void LintUnusedBinds(LintReport report)
+		{
+			foreach (var pair in report.BoundPaths)
+			{
+				var type = pair.Key;
+				if (type == null || FindTypeIgnore(type) != null
+					|| type.GetCustomAttributes(typeof(DynamicPathAttribute), true).Length > 0)
+				{
+					continue;
+				}
+				var properties = ViewModelData.Get(type).Properties;
+				var used = ExpandSourcePaths(properties, pair.Value);
+				foreach (var entry in properties)
+				{
+					if (used.Contains(entry.Path))
+					{
+						continue;
+					}
+					var ignore = FindMemberIgnore(entry.Info);
+					if (ignore != null)
+					{
+						report.Ignored.Add(new LintSkipped(string.Empty, $"{type.FullName}.{entry.Path}", ignore));
+						continue;
+					}
+					report.Add(new LintViolation(string.Empty, type.FullName, LintRule.UnusedBindPath,
+						$"Bind is not bound by any view: {entry.Path}"));
+				}
+			}
+		}
+
+		static HashSet<string> ExpandSourcePaths(ViewModelData.PropertyEntry[] properties, HashSet<string> bound)
+		{
+			var used = new HashSet<string>(bound);
+			bool added = true;
+			while (added)
+			{
+				added = false;
+				foreach (var entry in properties)
+				{
+					if (!used.Contains(entry.Path))
+					{
+						continue;
+					}
+					foreach (var sourcePath in entry.SourcePaths)
+					{
+						if (!string.IsNullOrEmpty(sourcePath) && used.Add(sourcePath))
+						{
+							added = true;
+						}
+					}
+				}
+			}
+			return used;
 		}
 
 		static readonly string[] s_ConsequenceWords =
@@ -213,7 +300,11 @@ namespace UVMBinding.Lint
 
 		static string FindMemberIgnore(ViewModelData.EventEntry entry)
 		{
-			var member = (System.Reflection.MemberInfo)entry.Info ?? entry.Property;
+			return FindMemberIgnore((System.Reflection.MemberInfo)entry.Info ?? entry.Property);
+		}
+
+		static string FindMemberIgnore(System.Reflection.MemberInfo member)
+		{
 			if (member == null)
 			{
 				return null;
@@ -270,6 +361,7 @@ namespace UVMBinding.Lint
 				report.CheckedProviderCount++;
 			}
 			CollectDispatchedEvents(elements, declared, report);
+			CollectBoundPaths(elements, null, declared, report);
 			LintElements(elements, provider.transform, assetPath, source, report);
 		}
 

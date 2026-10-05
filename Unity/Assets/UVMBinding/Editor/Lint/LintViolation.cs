@@ -17,6 +17,7 @@ namespace UVMBinding.Lint
 		TooShortName,
 		MissingLabel,
 		MissingConsequence,
+		UnusedBindPath,
 	}
 
 	public readonly struct LintViolation
@@ -70,6 +71,9 @@ namespace UVMBinding.Lint
 		public readonly Dictionary<System.Type, HashSet<string>> DispatchedEvents
 			= new Dictionary<System.Type, HashSet<string>>();
 
+		public readonly Dictionary<System.Type, HashSet<string>> BoundPaths
+			= new Dictionary<System.Type, HashSet<string>>();
+
 		public readonly List<LintViolation> Violations = new List<LintViolation>();
 		public readonly List<LintSkipped> Skipped = new List<LintSkipped>();
 		public readonly List<LintSkipped> Ignored = new List<LintSkipped>();
@@ -106,7 +110,24 @@ namespace UVMBinding.Lint
 			LintRule.TooShortName,
 			LintRule.MissingLabel,
 			LintRule.MissingConsequence,
+			LintRule.UnusedBindPath,
 		};
+
+		public void AddBoundPath(System.Type sourceType, string path)
+		{
+			if (sourceType == null)
+			{
+				return;
+			}
+			if (!BoundPaths.TryGetValue(sourceType, out var paths))
+			{
+				BoundPaths[sourceType] = paths = new HashSet<string>();
+			}
+			if (!string.IsNullOrEmpty(path))
+			{
+				paths.Add(path);
+			}
+		}
 
 		public void AddDispatchedEvent(System.Type sourceType, string name)
 		{
@@ -153,7 +174,7 @@ namespace UVMBinding.Lint
 				+ $" / disabled {Disabled.Count} / baselined {Baselined.Count}"
 				+ $" / excluded {ExcludedAssetCount}"
 				+ $" / checked View {CheckedViewCount} / Provider {CheckedProviderCount}"
-				+ $" / event sources {DispatchedEvents.Count}"
+				+ $" / event sources {DispatchedEvents.Count} / bind sources {BoundPaths.Count}"
 				+ $" / names {CheckedNameCount} ({Rate(CountNamingWarnings(), CheckedNameCount)})";
 		}
 	}
