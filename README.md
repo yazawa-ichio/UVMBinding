@@ -99,6 +99,15 @@ public class SampleViewModelTest : MonoBehaviour
 実行中にアタッチされているViewModelの情報などはViewComponentから確認できます。
 ![](Documents/images/ViewComponent2.png)
 
+### 表示の更新タイミング
+
+ViewModelの値を変更しても、その場では表示に反映されません。  
+Canvasの描画直前（`Canvas.preWillRenderCanvases`）に、有効なすべてのViewがまとめて更新されます。  
+その前に反映させたい場合は以下を使います。  
+
+- `view.TryUpdate()` : 呼んだ時点で変更を反映します。GameObjectが非activeの場合は何もしません。
+- `UpdateOnAttach` : ViewのInspectorかプロパティで有効にすると、アタッチした時点で反映します。
+
 ## 行の回収を待たせる
 
 `CollectionBinder`は削除された行を即座に非activeにしてプールへ戻します。  
@@ -143,6 +152,23 @@ public class AnimatedCollectionBinder : CollectionBinder
 ViewとViewModelの結線を静的に検査します。  
 存在しないパスへのバインドや、変換できない型の組み合わせなどを実行前に見つけられます。  
 `UVMBinding/Lint/Run` から実行します。  
+
+## ログ
+
+ログの呼び出しには`[Conditional]`が付いており、Scripting Define Symbolsに`UVMB_LOG_*`を定義しない限り呼び出しごと取り除かれます。  
+**警告・エラーも同様です。** 未定義のままでは「Not Found BindingProperty」のような結線ミスの警告も出ません。  
+開発中は`UVMB_LOG_WARNING_OR_HIGHER`以上を定義することを推奨します。  
+
+| シンボル | 出力されるログ |
+| --- | --- |
+| `UVMB_LOG_ERROR_OR_HIGHER` | Error |
+| `UVMB_LOG_WARNING_OR_HIGHER` | Warning 以上 |
+| `UVMB_LOG_INFO_OR_HIGHER` | Info 以上 |
+| `UVMB_LOG_DEBUG_OR_HIGHER` | Debug 以上 |
+| `UVMB_LOG_TRACE_OR_HIGHER` / `UVMB_LOG_ALL` | すべて |
+
+定義したうえで、実行時に`UVMBinding.Logger.Log.Level`でさらに絞り込めます（既定は`DEBUG`定義時に`Debug`、それ以外は`Warning`）。  
+出力先は`Log.Handler`で差し替えられます。  
 
 ## 出力パッケージ（任意）
 
