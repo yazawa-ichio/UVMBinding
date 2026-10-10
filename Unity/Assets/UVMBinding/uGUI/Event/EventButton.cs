@@ -5,6 +5,7 @@ using UVMBinding.Core;
 
 namespace UVMBinding.Events
 {
+	[SemanticRole(SemanticRole.Button)]
 	public class EventButton : ViewEventBase, IHasEventArgument
 	{
 		[SerializeReference, UnityEngine.Serialization.FormerlySerializedAs("m_Aargument")]

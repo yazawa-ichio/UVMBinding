@@ -16,18 +16,20 @@ namespace UVMBinding.Drawer
 				return;
 			}
 			var index = EventArgumentList.GetIndex(property.managedReferenceFullTypename);
-			var select = EditorGUI.Popup(GetPopupPosition(position), index, EventArgumentList.GetDispNames());
-			if (index != select)
+			var names = EventArgumentList.GetDispNames();
+			var popupPosition = GetPopupPosition(position);
+			if (EditorGUI.DropdownButton(popupPosition, new GUIContent(names[index]), FocusType.Passive))
 			{
-				var type = EventArgumentList.GetType(select);
-				if (type != null)
+				var serialized = property.serializedObject;
+				var propertyPath = property.propertyPath;
+				SearchableDropdown.Show(popupPosition, "Event Argument", names, select =>
 				{
-					property.managedReferenceValue = Activator.CreateInstance(type);
-				}
-				else
-				{
-					property.managedReferenceValue = null;
-				}
+					serialized.Update();
+					var target = serialized.FindProperty(propertyPath);
+					var type = EventArgumentList.GetType(select);
+					target.managedReferenceValue = type != null ? Activator.CreateInstance(type) : null;
+					serialized.ApplyModifiedProperties();
+				});
 			}
 			if (property.hasMultipleDifferentValues)
 			{

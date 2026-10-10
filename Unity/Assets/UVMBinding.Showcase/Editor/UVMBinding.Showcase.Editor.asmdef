@@ -1,0 +1,29 @@
+{
+    "name": "UVMBinding.Showcase.Editor",
+    "rootNamespace": "",
+    "references": [
+        "UVMBinding",
+        "UVMBinding.UI",
+        "UVMBinding.Showcase",
+        "UVMBinding.Localization",
+        "GUID:eec0964c48f6f4e40bc3ec2257ccf8c5",
+        "GUID:2e77701fe0ceda44fb763f03ee704c37"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.localization",
+            "expression": "",
+            "define": "UVMB_LOCALIZATION"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 
 namespace UVMBinding.Events
 {
+	[SemanticRole(SemanticRole.None)]
 	public class EventSystemSelectBinder : Binder<bool>, ISelectHandler, IDeselectHandler
 	{
 		[SerializeField]

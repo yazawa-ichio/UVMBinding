@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 
 namespace UVMBinding.Events
 {
+	[SemanticRole(SemanticRole.None)]
 	public class PointerMovePositionBinder : Binder<Vector2>, IPointerMoveHandler
 	{
 		protected override void UpdateValue(Vector2 value)

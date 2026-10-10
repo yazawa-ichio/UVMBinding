@@ -14,7 +14,14 @@ namespace UVMBinding.Core
 
 		public abstract System.Type EventType();
 
-		bool IViewElement.CanUse(IView view) => CanUse(view);
+		bool IViewElement.CanUse(IView view)
+		{
+			if (BindSourceProvider.IsOwnedByProvider(this))
+			{
+				return false;
+			}
+			return CanUse(view);
+		}
 
 		protected virtual bool CanUse(IView view) => true;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using UVMBinding.Logger;
+using UVMBinding.Core;
 
 namespace UVMBinding
 {
@@ -31,20 +32,19 @@ namespace UVMBinding
 	public struct SubscribeHandle<T> : IDisposable
 	{
 		Event<T> m_Event;
-		IBindingProperty<T> m_Property;
 		Action<T> m_Action;
+		BindingProperty m_Property;
+		PropertySubscriber m_Subscriber;
 
-		internal SubscribeHandle(IBindingProperty<T> owner, Action<T> action)
+		internal SubscribeHandle(BindingProperty owner, PropertySubscriber subscriber) : this()
 		{
 			m_Property = owner;
-			m_Event = null;
-			m_Action = action;
+			m_Subscriber = subscriber;
 			Log.Trace("Create Property SubscribeHandle<{0}> Path:{1}", typeof(T), owner.Path);
 		}
 
-		internal SubscribeHandle(Event<T> owner, Action<T> action)
+		internal SubscribeHandle(Event<T> owner, Action<T> action) : this()
 		{
-			m_Property = null;
 			m_Event = owner;
 			m_Action = action;
 			Log.Trace("Create Event SubscribeHandle<{0}> Name:{1}", typeof(T), owner.Name);
@@ -55,9 +55,9 @@ namespace UVMBinding
 			if (m_Property != null)
 			{
 				Log.Trace("Dispose Property SubscribeHandle<{0}> Path:{1}", typeof(T), m_Property.Path);
-				m_Property.OnChanged -= m_Action;
+				m_Property.RemoveSubscriber(m_Subscriber);
 				m_Property = null;
-				m_Action = null;
+				m_Subscriber = null;
 			}
 			if (m_Event != null)
 			{

@@ -3,6 +3,7 @@ using UVMBinding.Core;
 
 namespace UVMBinding.Events
 {
+	[SemanticRole(SemanticRole.TextBox)]
 	public class InputFieldSubmitEvent : ViewEventBase
 	{
 		protected virtual void Awake()

@@ -20,20 +20,36 @@ namespace UVMBinding.Drawer
 			EditorGUI.PropertyField(left, property, label);
 			if (EditorGUI.DropdownButton(right, GUIContent.none, FocusType.Passive))
 			{
-				if (property.serializedObject.targetObject is GeneralBinder component)
+				if (!DrawerMultiSelect.TryResolveShared(property.serializedObject.targetObjects,
+					FindTargetType, out var targetType, out var reason))
 				{
-					var target = component.GetTarget();
-					if (target == null) return;
-					var menu = new GenericMenu();
-					ReflectionCache.Get(target.GetType()).AddMenu(true, menu, (targetName) =>
+					DrawerMultiSelect.ShowReason(right, reason);
+					return;
+				}
+				{
+					var names = new List<string>();
+					var targets = new List<string>();
+					ReflectionCache.Get(targetType).Collect(true, names, targets);
+					var serialized = property.serializedObject;
+					var propertyPath = property.propertyPath;
+					SearchableDropdown.Show(right, "Target", names, index =>
 					{
-						property.serializedObject.Update();
-						property.stringValue = targetName;
-						property.serializedObject.ApplyModifiedProperties();
+						serialized.Update();
+						serialized.FindProperty(propertyPath).stringValue = targets[index];
+						serialized.ApplyModifiedProperties();
 					});
-					menu.ShowAsContext();
 				}
 			}
+		}
+
+		static Type FindTargetType(UnityEngine.Object obj)
+		{
+			if (!(obj is GeneralBinder binder))
+			{
+				return null;
+			}
+			var target = binder.GetTarget();
+			return target != null ? target.GetType() : null;
 		}
 
 		class ReflectionCache
@@ -89,20 +105,15 @@ namespace UVMBinding.Drawer
 				TargetNames.AddRange(Methods.Select(x => x.Name));
 			}
 
-			public void AddMenu(bool root, GenericMenu menu, Action<string> select)
+			public void Collect(bool root, List<string> names, List<string> targets)
 			{
 				foreach (var name in TargetNames)
 				{
-					var target = name;
-					var path = root ? name : $"{Type.Name}/{name}";
-					menu.AddItem(new GUIContent(path), false, () =>
-					{
-						select(target);
-					});
+					names.Add(root ? name : $"{Type.Name}/{name}");
+					targets.Add(name);
 				}
-				BaseData?.AddMenu(false, menu, select);
+				BaseData?.Collect(false, names, targets);
 			}
-
 
 		}
 	}

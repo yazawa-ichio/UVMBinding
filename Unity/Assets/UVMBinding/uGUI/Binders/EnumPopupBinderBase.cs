@@ -6,6 +6,7 @@ using UnityEngine.UI;
 namespace UVMBinding.Binders
 {
 
+	[SemanticRole(SemanticRole.ComboBox)]
 	public abstract class EnumPopupBinderBase<T> : Binder<T, Dropdown> where T : Enum
 	{
 		static readonly T[] s_Values = (T[])Enum.GetValues(typeof(T));

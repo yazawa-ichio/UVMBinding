@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UVMBinding.Core;
+using UnityEngine;
 
 namespace UVMBinding
 {
@@ -11,6 +12,22 @@ namespace UVMBinding
 		public virtual bool IsTarget(Component component)
 		{
 			return m_Target.IsTarget(component);
+		}
+
+		public static bool IsOwnedByProvider(Component element)
+		{
+			using (ListPool<BindSourceProvider>.Use(out var providers))
+			{
+				element.GetComponents(providers);
+				foreach (var provider in providers)
+				{
+					if (provider.IsTarget(element))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 	}
 }

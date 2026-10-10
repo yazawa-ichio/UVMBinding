@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" shape-rendering="geometricPrecision">
+<rect x="0" y="0" width="1024" height="1024" fill="#E8DCC0"/>
+<g stroke="#2A2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+  <!-- rear shoulder stones -->
+  <polygon points="312,306 246,348 194,444 202,552 274,548 330,472 372,360" fill="#35543F"/>
+  <polygon points="712,306 778,348 830,444 822,552 750,548 694,472 652,360" fill="#35543F"/>
+
+  <!-- left arm, boulder segments -->
+  <polygon points="270,386 198,432 156,536 184,636 260,610 300,520 336,430" fill="#5B6B78"/>
+  <polygon points="186,604 128,666 114,764 164,844 244,816 274,720 252,642" fill="#5B6B78"/>
+  <polygon points="124,764 94,822 144,878 214,860 244,816 164,844" fill="#5B6B78"/>
+
+  <!-- right arm, boulder segments -->
+  <polygon points="754,386 826,432 868,536 840,636 764,610 724,520 688,430" fill="#5B6B78"/>
+  <polygon points="838,604 896,666 910,764 860,844 780,816 750,720 772,642" fill="#5B6B78"/>
+  <polygon points="900,764 930,822 880,878 810,860 780,816 860,844" fill="#5B6B78"/>
+
+  <!-- legs behind the torso -->
+  <polygon points="370,716 444,704 484,842 456,936 374,934 340,846" fill="#5B6B78"/>
+  <polygon points="654,716 580,704 540,842 568,936 650,934 684,846" fill="#5B6B78"/>
+  <polygon points="366,914 310,944 326,986 442,982 456,936 374,934" fill="#5B6B78"/>
+  <polygon points="658,914 714,944 698,986 582,982 568,936 650,934" fill="#5B6B78"/>
+
+  <!-- main torso -->
+  <polygon points="392,268 308,360 284,520 322,674 394,792 512,842 630,792 702,674 740,520 716,360 632,268 512,232" fill="#5B6B78"/>
+
+  <!-- faceted plates -->
+  <polygon points="392,268 344,386 440,368 512,232" fill="#35543F"/>
+  <polygon points="632,268 584,368 680,386 512,232" fill="#35543F"/>
+  <polygon points="344,386 322,528 430,488 440,368" fill="#5B6B78"/>
+  <polygon points="680,386 702,528 594,488 584,368" fill="#5B6B78"/>
+  <polygon points="430,488 322,528 360,658 486,622" fill="#35543F"/>
+  <polygon points="594,488 702,528 664,658 538,622" fill="#35543F"/>
+  <polygon points="360,658 394,792 512,842 486,622" fill="#5B6B78"/>
+  <polygon points="664,658 630,792 512,842 538,622" fill="#5B6B78"/>
+
+  <!-- head -->
+  <polygon points="388,242 426,160 494,120 552,142 616,118 666,178 642,272 578,332 492,340 420,316" fill="#5B6B78"/>
+  <polygon points="426,160 472,230 494,120" fill="#35543F"/>
+  <polygon points="552,142 574,236 616,118" fill="#35543F"/>
+  <polygon points="388,242 420,316 472,230 426,160" fill="#5B6B78"/>
+  <polygon points="666,178 642,272 574,236 616,118" fill="#5B6B78"/>
+
+  <!-- dark rock cavities -->
+  <polygon points="448,248 486,232 506,256 486,286 446,282 432,262" fill="#2A2622"/>
+  <polygon points="576,248 538,232 518,256 538,286 578,282 592,262" fill="#2A2622"/>
+  <polygon points="462,308 512,292 562,308 548,360 512,382 476,360" fill="#2A2622"/>
+
+  <!-- flat dull-gold fissures, not glow -->
+  <polygon points="506,236 524,236 518,292 536,326 518,328 500,292" fill="#C8A24A"/>
+  <polygon points="476,336 492,346 482,392 510,414 492,424 462,392" fill="#C8A24A"/>
+  <polygon points="548,336 532,346 542,392 514,414 532,424 562,392" fill="#C8A24A"/>
+  <polygon points="512,430 534,450 522,520 558,564 538,582 506,526" fill="#C8A24A"/>
+  <polygon points="430,506 454,514 438,576 472,624 452,638 412,586" fill="#C8A24A"/>
+  <polygon points="596,506 570,514 586,576 552,624 572,638 612,586" fill="#C8A24A"/>
+  <polygon points="492,668 514,678 504,750 536,804 514,816 476,754" fill="#C8A24A"/>
+  <polygon points="232,502 254,520 238,592 260,640 238,650 210,592" fill="#C8A24A"/>
+  <polygon points="792,502 770,520 786,592 764,640 786,650 814,592" fill="#C8A24A"/>
+  <polygon points="404,804 426,814 416,882 438,932 418,942 386,884" fill="#C8A24A"/>
+  <polygon points="620,804 598,814 608,882 586,932 606,942 638,884" fill="#C8A24A"/>
+
+  <!-- jagged chips and darker facets -->
+  <polygon points="302,360 246,348 282,414" fill="#2A2622"/>
+  <polygon points="722,360 778,348 742,414" fill="#2A2622"/>
+  <polygon points="336,430 300,520 372,492" fill="#35543F"/>
+  <polygon points="688,430 724,520 652,492" fill="#35543F"/>
+  <polygon points="194,444 156,536 224,518" fill="#35543F"/>
+  <polygon points="830,444 868,536 800,518" fill="#35543F"/>
+  <polygon points="394,792 444,704 512,842" fill="#35543F"/>
+  <polygon points="630,792 580,704 512,842" fill="#35543F"/>
+  <polygon points="310,944 326,986 366,914" fill="#2A2622"/>
+  <polygon points="714,944 698,986 658,914" fill="#2A2622"/>
+
+  <!-- woodcut-like incised lines on the rock body -->
+  <line x1="356" y1="404" x2="420" y2="384"/>
+  <line x1="604" y1="384" x2="668" y2="404"/>
+  <line x1="338" y1="560" x2="410" y2="540"/>
+  <line x1="686" y1="560" x2="614" y2="540"/>
+  <line x1="382" y1="704" x2="458" y2="674"/>
+  <line x1="642" y1="704" x2="566" y2="674"/>
+  <line x1="218" y1="454" x2="280" y2="420"/>
+  <line x1="806" y1="454" x2="744" y2="420"/>
+  <line x1="172" y1="700" x2="236" y2="674"/>
+  <line x1="852" y1="700" x2="788" y2="674"/>
+  <line x1="392" y1="852" x2="444" y2="832"/>
+  <line x1="632" y1="852" x2="580" y2="832"/>
+  <line x1="442" y1="190" x2="482" y2="154"/>
+  <line x1="582" y1="184" x2="622" y2="150"/>
+  <line x1="424" y1="292" x2="486" y2="318"/>
+  <line x1="600" y1="292" x2="538" y2="318"/>
+
+  <!-- small angular chips around silhouette, still part of the single creature -->
+  <polygon points="282,288 326,318 300,342" fill="#5B6B78"/>
+  <polygon points="742,288 698,318 724,342" fill="#5B6B78"/>
+  <polygon points="308,646 272,690 324,692" fill="#5B6B78"/>
+  <polygon points="716,646 752,690 700,692" fill="#5B6B78"/>
+  <polygon points="456,118 480,70 502,126" fill="#5B6B78"/>
+  <polygon points="590,118 622,72 622,140" fill="#5B6B78"/>
+</g>
+</svg>

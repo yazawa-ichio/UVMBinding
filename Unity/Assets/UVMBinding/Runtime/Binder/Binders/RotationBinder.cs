@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class RotationBinder : Binder<Quaternion>
 	{
 		[SerializeField]

@@ -1,4 +1,5 @@
-﻿using UVMBinding.Core;
+﻿using UnityEngine;
+using UVMBinding.Core;
 
 namespace UVMBinding
 {
@@ -39,9 +40,26 @@ namespace UVMBinding
 				return;
 			}
 			m_Binding = new Binding();
-			m_Elements = GetComponents<IViewElement>();
+			m_Elements = GetTargetElements();
 			m_Binding.Init(m_Elements);
 			m_Binding.Bind(viewModel);
+		}
+
+		IViewElement[] GetTargetElements()
+		{
+			using (ListPool<IViewElement>.Use(out var elements))
+			using (ListPool<IViewElement>.Use(out var targets))
+			{
+				GetComponents(elements);
+				foreach (var element in elements)
+				{
+					if (element is Component component && IsTarget(component))
+					{
+						targets.Add(element);
+					}
+				}
+				return targets.ToArray();
+			}
 		}
 
 		protected void Unbind()

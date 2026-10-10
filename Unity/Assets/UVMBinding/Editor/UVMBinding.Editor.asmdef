@@ -2,7 +2,8 @@
     "name": "UVMBinding.Editor",
     "rootNamespace": "",
     "references": [
-        "UVMBinding"
+        "UVMBinding",
+        "UVMBinding.Semantics"
     ],
     "includePlatforms": [
         "Editor"

@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class ViewBinder : Binder<object, IView>
 	{
 		protected override void UpdateValue(object value)

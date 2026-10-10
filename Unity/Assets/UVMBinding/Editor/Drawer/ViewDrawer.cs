@@ -5,9 +5,10 @@ using UnityEngine;
 namespace UVMBinding.Drawer
 {
 	[CustomEditor(typeof(View), true)]
+	[CanEditMultipleObjects]
 	public class ViewDrawer : Editor
 	{
-		static Dictionary<int, BindingViewer> m_Viewers = new Dictionary<int, BindingViewer>();
+		static Dictionary<EntityId, BindingViewer> m_Viewers = new Dictionary<EntityId, BindingViewer>();
 
 		[SerializeField]
 		protected BindingViewer m_BindingViewer;
@@ -19,13 +20,13 @@ namespace UVMBinding.Drawer
 			m_View = target as View;
 			if (m_BindingViewer == null)
 			{
-				if (!m_Viewers.TryGetValue(m_View.GetInstanceID(), out m_BindingViewer))
+				if (!m_Viewers.TryGetValue(m_View.GetEntityId(), out m_BindingViewer))
 				{
 					m_BindingViewer = new BindingViewer();
 				}
 			}
 			m_BindingViewer.Setup(target as View);
-			m_Viewers[m_View.GetInstanceID()] = m_BindingViewer;
+			m_Viewers[m_View.GetEntityId()] = m_BindingViewer;
 		}
 
 		public override void OnInspectorGUI()
@@ -35,13 +36,21 @@ namespace UVMBinding.Drawer
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
 			}
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_UpdateOnAttach"));
-			m_BindingViewer.Draw();
-			if (!Application.isPlaying)
+			if (targets.Length == 1)
 			{
-				if (target is View view && view != null)
+				m_BindingViewer.Draw();
+				if (!Application.isPlaying)
 				{
-					view.TryUpdate();
+					if (target is View view && view != null)
+					{
+						view.TryUpdate();
+					}
 				}
+			}
+			else
+			{
+				EditorGUILayout.PropertyField(serializedObject.FindProperty(View.ReservationViewModelFieldName));
+				EditorGUILayout.HelpBox("Binding list is hidden for multiple selection", MessageType.Info);
 			}
 			serializedObject.ApplyModifiedProperties();
 		}

@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class OnOffActiveBinder : Binder<bool, GameObject>
 	{
 		[SerializeField]

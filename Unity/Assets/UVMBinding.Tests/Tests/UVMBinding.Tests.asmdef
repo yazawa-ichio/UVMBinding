@@ -3,9 +3,11 @@
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
+        "Collision.UVMBinding",
         "UVMBinding",
-        "UVMBinding.UI"
+        "UVMBinding.UI",
+        "UVMBinding.Semantics",
+        "UVMBinding.Export"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

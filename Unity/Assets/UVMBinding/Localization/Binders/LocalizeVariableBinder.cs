@@ -5,6 +5,7 @@ using UnityEngine.Localization.SmartFormat.PersistentVariables;
 namespace UVMBinding.Binders
 {
 	[RequireComponent(typeof(LocalizeStringEvent))]
+	[SemanticRole(SemanticRole.None)]
 	public class LocalizeVariableBinder : Binder<IVariable, LocalizeStringEvent>
 	{
 		[SerializeField]

@@ -1,8 +1,8 @@
 {
   "name": "jp.ilib.uvmb",
   "displayName": "UVMBinding",
-  "version": "0.0.3",
-  "unity": "2020.3",
+  "version": "0.1.0",
+  "unity": "6000.3",
   "description": "Unity DataBinding Package",
   "author": {
     "name": "yazawa-ichio",
@@ -10,6 +10,6 @@
   },
   "license": "zlib",
   "dependencies": {
-    "com.unity.nuget.mono-cecil": "1.10.1"
+    "com.unity.nuget.mono-cecil": "1.11.6"
   }
 }

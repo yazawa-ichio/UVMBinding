@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class DropdownStringDataBinder : Binder<IList<string>, Dropdown>
 	{
 		protected override void OnInit(Dropdown target)

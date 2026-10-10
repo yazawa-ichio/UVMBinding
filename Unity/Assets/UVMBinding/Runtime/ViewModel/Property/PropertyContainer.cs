@@ -11,51 +11,100 @@ namespace UVMBinding.Core
 
 		Dictionary<string, BindingProperty> m_Properties = new();
 
+		readonly PropertyVersion m_Version = new PropertyVersion();
+
+		internal int Version => m_Version.Value;
+
 		internal event Action<IBindingProperty> OnNewProperty;
+
+		internal event Action<string, IValueHolder> OnChangedValue;
 
 		internal bool ShouldCreateProperty;
 
-		public SubscribeHandle<T> Subscribe<T>(string path, Action<T> notify)
+		HashSet<string> m_SubscribePaths;
+
+		Action<string, IValueHolder> m_InvokeChangedValueCache;
+		Action<string, IValueHolder> InvokeChangedValueCache
 		{
-			Log.Debug("Property Subscribe<{0}> Path:{1}", typeof(T), path);
-			var porp = Get<T>(path);
-			porp.OnChanged += notify;
-			return new SubscribeHandle<T>(porp, notify);
+			get
+			{
+				if (m_InvokeChangedValueCache == null)
+				{
+					m_InvokeChangedValueCache = InvokeChangedValue;
+				}
+				return m_InvokeChangedValueCache;
+			}
+		}
+
+		void InvokeChangedValue(string path, IValueHolder holder)
+		{
+			OnChangedValue?.Invoke(path, holder);
+		}
+
+		public SubscribeHandle<T> Subscribe<T>(string path, Action<T> notify, bool notifyCurrent = false)
+		{
+			return SubscribeImpl(path, notify, false, notifyCurrent);
+		}
+
+		internal SubscribeHandle<T> SubscribeStrict<T>(string path, Action<T> notify, bool notifyCurrent = false)
+		{
+			return SubscribeImpl(path, notify, true, notifyCurrent);
+		}
+
+		SubscribeHandle<T> SubscribeImpl<T>(string path, Action<T> notify, bool strict, bool notifyCurrent)
+		{
+			Log.Debug("Property Subscribe<{0}> Path:{1} Strict:{2}", typeof(T), path, strict);
+			var property = GetOrCreate<T>(path);
+			if (property.Holder != null && !CanReceive<T>(property, strict))
+			{
+				throw CreateMismatchException<T>(path);
+			}
+			var subscriber = new PropertySubscriber<T> { Action = notify, Strict = strict };
+			property.AddSubscriber(subscriber);
+			if (notifyCurrent)
+			{
+				subscriber.Invoke(property.Holder);
+			}
+			return new SubscribeHandle<T>(property, subscriber);
 		}
 
 		public void Unsubscribe<T>(string path, Action<T> notify)
 		{
 			Log.Debug("Property Unsubscribe<{0}> Path:{1}", typeof(T), path);
-			Get<T>(path).OnChanged -= notify;
+			if (!m_Properties.TryGetValue(path, out var property))
+			{
+				return;
+			}
+			property.RemoveSubscriber(notify);
 		}
 
-		internal IBindingProperty<T> Get<T>(string path)
+		static bool CanReceive<T>(BindingProperty property, bool strict)
 		{
-			if (m_Properties.TryGetValue(path, out BindingProperty property))
+			if (property.GetBindType() == typeof(T))
 			{
-				var last = property;
-				while (property != null)
-				{
-					if (property is BindingProperty<T> ret)
-					{
-						//データがすでにある
-						return ret;
-					}
-					last = property;
-					property = property.Next;
-				}
-				{
-					var ret = NewProperty<T>(path);
-					last.Next = ret;
-					return ret;
-				}
+				return true;
 			}
-			else
+			return !strict && property.IsAssignable<T>();
+		}
+
+		internal InvalidCastException CreateMismatchException<T>(string path)
+		{
+			var registered = m_Properties.TryGetValue(path, out var property) ? property.GetBindType() : null;
+			return new InvalidCastException(
+				$"Property Type Mismatch Path:{path} Registered:{registered} Requested:{typeof(T)}");
+		}
+
+		internal BindingProperty GetOrCreate<T>(string path)
+		{
+			if (m_Properties.TryGetValue(path, out var property))
 			{
-				var ret = NewProperty<T>(path);
-				m_Properties[path] = ret;
-				return ret;
+				if (property.Holder == null)
+				{
+					property.SwapHolder(new ValueHolder<T>());
+				}
+				return property;
 			}
+			return NewProperty<T>(path);
 		}
 
 		internal bool TryGet(string path, out IBindingProperty property)
@@ -67,29 +116,62 @@ namespace UVMBinding.Core
 			}
 			if (ShouldCreateProperty)
 			{
-				var ret = NewProperty<object>(path);
-				property = m_Properties[path] = ret;
+				property = NewProperty<object>(path);
 				return true;
 			}
 			property = null;
 			return false;
 		}
 
-		BindingProperty<T> NewProperty<T>(string path)
+		BindingProperty NewProperty<T>(string path)
 		{
 			Log.Trace("Register New Property<{0}> Path:{1}", typeof(T), path);
-			if (typeof(T) == typeof(object))
+			var ret = new BindingProperty(path, new ValueHolder<T>());
+			ret.SetVersion(m_Version);
+			m_Properties[path] = ret;
+			OnNewProperty?.Invoke(ret);
+			if (m_SubscribePaths != null && m_SubscribePaths.Contains(path))
 			{
-				var ret = new ObjectBindingProperty(path);
-				OnNewProperty?.Invoke(ret);
-				return (BindingProperty<T>)(object)ret;
+				ret.OnChangedValue += InvokeChangedValueCache;
 			}
-			else
+			return ret;
+		}
+
+		internal bool UnSet(string path)
+		{
+			if (!m_Properties.TryGetValue(path, out var property) || property.Holder == null)
 			{
-				var ret = new BindingProperty<T>(path);
-				OnNewProperty?.Invoke(ret);
-				return ret;
+				return false;
 			}
+			Log.Debug("UnSet Property Path:{0} Type:{1}", path, property.GetBindType());
+			property.SwapHolder(null);
+			return true;
+		}
+
+		internal bool TryGetValue<T>(string path, out T value)
+		{
+			if (m_Properties.TryGetValue(path, out var property))
+			{
+				return property.TryGetValue(out value);
+			}
+			GetOrCreate<T>(path);
+			value = default;
+			return true;
+		}
+
+		internal bool TryGetValueAs<T>(string path, out T value)
+		{
+			if (m_Properties.TryGetValue(path, out var property))
+			{
+				return property.TryGetValueAs(out value);
+			}
+			value = default;
+			return false;
+		}
+
+		internal bool TrySetValue<T>(string path, T value)
+		{
+			return GetOrCreate<T>(path).TrySetValue(value);
 		}
 
 		public void SetDirty(string path)
@@ -97,25 +179,16 @@ namespace UVMBinding.Core
 			Log.Trace("SetDirty {0}", path);
 			if (m_Properties.TryGetValue(path, out BindingProperty property))
 			{
-				while (property != null)
-				{
-					property.SetDirty();
-					property = property.Next;
-				}
+				property.SetDirty();
 			}
 		}
 
 		public void SetAllDirty()
 		{
 			Log.Trace("SetAllDirty");
-			foreach (var _property in m_Properties.Values)
+			foreach (var property in m_Properties.Values)
 			{
-				var property = _property;
-				while (property != null)
-				{
-					property.SetDirty();
-					property = property.Next;
-				}
+				property.SetDirty();
 			}
 		}
 
@@ -129,16 +202,23 @@ namespace UVMBinding.Core
 
 		internal List<IBindingProperty> GetAllImpl(List<IBindingProperty> ret)
 		{
-			foreach (var _property in m_Properties.Values)
+			foreach (var property in m_Properties.Values)
 			{
-				var property = _property;
-				while (property != null)
-				{
-					ret.Add(property);
-					property = property.Next;
-				}
+				ret.Add(property);
 			}
 			return ret;
+		}
+
+		internal void RegisterErasedPath(string path)
+		{
+			if (m_SubscribePaths == null)
+			{
+				m_SubscribePaths = new HashSet<string>();
+			}
+			if (m_SubscribePaths.Add(path) && m_Properties.TryGetValue(path, out var property))
+			{
+				property.OnChangedValue += InvokeChangedValueCache;
+			}
 		}
 
 	}

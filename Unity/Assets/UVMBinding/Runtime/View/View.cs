@@ -2,6 +2,7 @@
 using UnityEngine;
 using UVMBinding.Core;
 using UVMBinding.Logger;
+using UVMBinding.PropertyProvider;
 
 namespace UVMBinding
 {
@@ -9,9 +10,11 @@ namespace UVMBinding
 	public class View : MonoBehaviour, IView, IAutoViewUpdate
 	{
 		[SerializeField]
-#pragma warning disable CS0414
 		string m_ReservationViewModel = default;
-#pragma warning restore CS0414
+
+		public string ReservationViewModelName => m_ReservationViewModel;
+
+		public const string ReservationViewModelFieldName = nameof(m_ReservationViewModel);
 		[SerializeField]
 		bool m_UpdateOnAttach = false;
 
@@ -60,7 +63,6 @@ namespace UVMBinding
 			}
 			m_Prepare = true;
 
-
 			using (ListPool<IViewElement>.Use(out var elements))
 			using (ListPool<IView>.Use(out var viewList))
 			{
@@ -97,6 +99,10 @@ namespace UVMBinding
 
 		public virtual void TryUpdate()
 		{
+			if (!gameObject.activeInHierarchy)
+			{
+				return;
+			}
 			m_Binding?.TryUpdate();
 		}
 
@@ -129,6 +135,10 @@ namespace UVMBinding
 			Log.Trace(this, "{0} Attach {1}", this, vm);
 			m_ViewModel = vm;
 			m_Binding.Bind(vm);
+			if (TryGetComponent<ViewModelPropertyExtension>(out var extension))
+			{
+				extension.Init(vm, m_Binding);
+			}
 			if (m_UpdateOnAttach || ViewUpdater.IsUpdating)
 			{
 				Log.Trace(this, "{0} Attach And Update", this);
@@ -172,6 +182,5 @@ namespace UVMBinding
 		}
 
 	}
-
 
 }

@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class EnabledBinder : Binder<bool>
 	{
 		[SerializeField, SelfComponentTarget]

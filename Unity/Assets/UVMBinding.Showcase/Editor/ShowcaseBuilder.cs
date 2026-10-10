@@ -1,0 +1,270 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using UnityEditor;
+using UVMBinding;
+using UVMBinding.Arguments;
+using UVMBinding.Binders;
+using UVMBinding.Converters;
+using UVMBinding.Events;
+using UVMBinding.PropertyProvider;
+using UVMBinding.Showcase;
+
+public static partial class ShowcaseBuilder
+{
+	public const int Width = 1920;
+	public const int Height = 1080;
+
+	public static readonly Color Bg = new Color(0.13f, 0.14f, 0.17f, 1f);
+	public static readonly Color Panel = new Color(0.20f, 0.22f, 0.27f, 1f);
+	public static readonly Color Accent = new Color(0.30f, 0.55f, 0.90f, 1f);
+	public static readonly Color TabIdle = new Color(0.22f, 0.24f, 0.29f, 1f);
+	public static readonly Color Ink = new Color(0.94f, 0.95f, 0.97f, 1f);
+	public static readonly Color Sub = new Color(0.65f, 0.68f, 0.74f, 1f);
+
+	public const float LabelWidth = 420f;
+
+	public static void BuildPlayer()
+	{
+		const string ScenePath = "Assets/UVMBinding.Showcase/Scenes/Showcase.unity";
+		var projectRoot = System.IO.Path.GetDirectoryName(Application.dataPath);
+		var outputPath = System.IO.Path.GetFullPath(
+			System.IO.Path.Combine(projectRoot, "Build/Showcase/Showcase.exe"));
+		var options = new BuildPlayerOptions
+		{
+			scenes = new[] { ScenePath },
+			locationPathName = outputPath,
+			target = BuildTarget.StandaloneWindows64,
+			targetGroup = BuildTargetGroup.Standalone,
+			options = BuildOptions.None,
+		};
+		var report = BuildPipeline.BuildPlayer(options);
+		var summary = report.summary;
+		Debug.Log($"Showcase player built. result={summary.result} errors={summary.totalErrors} path={outputPath}");
+		if (summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+		{
+			EditorApplication.Exit(1);
+		}
+	}
+
+	public static GameObject New(string name, Transform parent)
+	{
+		var go = new GameObject(name, typeof(RectTransform));
+		go.transform.SetParent(parent, false);
+		return go;
+	}
+
+	public static RectTransform Rect(GameObject go) => (RectTransform)go.transform;
+
+	public static void Stretch(GameObject go)
+	{
+		var r = Rect(go);
+		r.anchorMin = Vector2.zero;
+		r.anchorMax = Vector2.one;
+		r.pivot = new Vector2(0.5f, 0.5f);
+		r.offsetMin = Vector2.zero;
+		r.offsetMax = Vector2.zero;
+	}
+
+	public static UnityEngine.UI.Image AddImage(GameObject go, Color color, bool raycast)
+	{
+		var img = go.AddComponent<UnityEngine.UI.Image>();
+		img.color = color;
+		img.raycastTarget = raycast;
+		return img;
+	}
+
+	public static UnityEngine.UI.Text AddText(GameObject go, string content, int size, Color color, TextAnchor anchor)
+	{
+		var t = go.AddComponent<UnityEngine.UI.Text>();
+		t.font = UnityEngine.Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+		t.text = content;
+		t.fontSize = size;
+		t.color = color;
+		t.alignment = anchor;
+		t.raycastTarget = false;
+		t.horizontalOverflow = HorizontalWrapMode.Overflow;
+		t.verticalOverflow = VerticalWrapMode.Overflow;
+		return t;
+	}
+
+	public static LayoutElement Size(GameObject go, float w, float h)
+	{
+		var le = go.GetComponent<LayoutElement>();
+		if (le == null) le = go.AddComponent<LayoutElement>();
+		if (w > 0) { le.minWidth = w; le.preferredWidth = w; }
+		if (h > 0) { le.minHeight = h; le.preferredHeight = h; }
+		return le;
+	}
+
+	public static GameObject Row(Transform parent, string name = "Row", float height = 44f)
+	{
+		var go = New(name, parent);
+		Size(go, 0, height);
+		var h = go.AddComponent<HorizontalLayoutGroup>();
+		h.childAlignment = TextAnchor.MiddleLeft;
+		h.spacing = 14;
+		h.childControlWidth = true;
+		h.childControlHeight = true;
+		h.childForceExpandWidth = false;
+		h.childForceExpandHeight = false;
+		return go;
+	}
+
+	public static GameObject Label(Transform parent, string text, float width = LabelWidth)
+	{
+		var go = New("Label", parent);
+		AddText(go, text, 21, Sub, TextAnchor.MiddleLeft);
+		Size(go, width, 0);
+		return go;
+	}
+
+	public static GameObject Value(Transform parent, string path, float width = 300f, string initial = "-")
+	{
+		var go = New("Value", parent);
+		AddText(go, initial, 23, Ink, TextAnchor.MiddleLeft);
+		Size(go, width, 0);
+		if (!string.IsNullOrEmpty(path)) SetPath(go.AddComponent<TextBinder>(), path);
+		return go;
+	}
+
+	public static GameObject Button(Transform parent, string caption, string eventName, float width = 200f)
+	{
+		var go = New("Button_" + caption, parent);
+		AddImage(go, Accent, true);
+		go.AddComponent<UnityEngine.UI.Button>();
+		Size(go, width, 44);
+
+		var label = New("Text", go.transform);
+		Stretch(label);
+		AddText(label, caption, 20, Color.white, TextAnchor.MiddleCenter);
+
+		if (!string.IsNullOrEmpty(eventName))
+		{
+			var ev = go.AddComponent<EventButton>();
+			SetProp(ev, "m_EventName", eventName);
+		}
+		return go;
+	}
+
+	public static void SetProp(Component c, string prop, string value)
+	{
+		var so = new SerializedObject(c);
+		so.FindProperty(prop).stringValue = value;
+		so.ApplyModifiedPropertiesWithoutUndo();
+	}
+
+	public static void SetPath(Component binder, string path)
+	{
+		SetProp(binder, "m_Path", path);
+	}
+
+	public static void SetRef(Component c, string prop, Object value)
+	{
+		var so = new SerializedObject(c);
+		so.FindProperty(prop).objectReferenceValue = value;
+		so.ApplyModifiedPropertiesWithoutUndo();
+	}
+
+	public static void SetManagedRef(Component c, string prop, object value)
+	{
+		var so = new SerializedObject(c);
+		so.FindProperty(prop).managedReferenceValue = value;
+		so.ApplyModifiedPropertiesWithoutUndo();
+	}
+
+	public static void SetConverters(Component c, params object[] converters)
+	{
+		var so = new SerializedObject(c);
+		var list = so.FindProperty("m_Converters");
+		list.arraySize = converters.Length;
+		for (int i = 0; i < converters.Length; i++)
+		{
+			list.GetArrayElementAtIndex(i).managedReferenceValue = converters[i];
+		}
+		so.ApplyModifiedPropertiesWithoutUndo();
+	}
+
+	public static void SetAllowCast(Component c, bool allow)
+	{
+		var so = new SerializedObject(c);
+		so.FindProperty("m_AllowCast").boolValue = allow;
+		so.ApplyModifiedPropertiesWithoutUndo();
+	}
+
+	public static GameObject ScrollView(Transform parent, out GameObject content)
+	{
+		var root = New("ScrollView", parent);
+		var scroll = root.AddComponent<ScrollRect>();
+		scroll.horizontal = false;
+		scroll.vertical = true;
+		scroll.movementType = ScrollRect.MovementType.Clamped;
+		scroll.scrollSensitivity = 40f;
+
+		var viewport = New("Viewport", root.transform);
+		Stretch(viewport);
+		AddImage(viewport, new Color(1, 1, 1, 0.004f), true);
+		viewport.AddComponent<RectMask2D>();
+
+		content = New("Content", viewport.transform);
+		var cr = Rect(content);
+		cr.anchorMin = new Vector2(0f, 1f);
+		cr.anchorMax = new Vector2(1f, 1f);
+		cr.pivot = new Vector2(0.5f, 1f);
+		cr.offsetMin = new Vector2(0f, 0f);
+		cr.offsetMax = new Vector2(0f, 0f);
+
+		var vlg = content.AddComponent<VerticalLayoutGroup>();
+		vlg.padding = new RectOffset(0, 24, 0, 24);
+		vlg.spacing = 8;
+		vlg.childAlignment = TextAnchor.UpperLeft;
+		vlg.childControlWidth = true;
+		vlg.childControlHeight = true;
+		vlg.childForceExpandWidth = true;
+		vlg.childForceExpandHeight = false;
+
+		var fitter = content.AddComponent<ContentSizeFitter>();
+		fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+		fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+		scroll.viewport = Rect(viewport);
+		scroll.content = cr;
+		return root;
+	}
+
+	public static GameObject Screen(Transform parent, string title, string description, out GameObject content)
+	{
+		var screen = New(title, parent);
+		Stretch(screen);
+		var vlg = screen.AddComponent<VerticalLayoutGroup>();
+		vlg.padding = new RectOffset(56, 24, 24, 24);
+		vlg.spacing = 6;
+		vlg.childAlignment = TextAnchor.UpperLeft;
+		vlg.childControlWidth = true;
+		vlg.childControlHeight = true;
+		vlg.childForceExpandWidth = true;
+		vlg.childForceExpandHeight = false;
+
+		var header = New("Header", screen.transform);
+		AddText(header, title, 34, Ink, TextAnchor.MiddleLeft);
+		Size(header, 0, 46);
+
+		var desc = New("Description", screen.transform);
+		AddText(desc, description, 20, Sub, TextAnchor.MiddleLeft);
+		Size(desc, 0, 28);
+
+		var scroll = ScrollView(screen.transform, out content);
+		var le = scroll.AddComponent<LayoutElement>();
+		le.flexibleHeight = 1;
+		le.minHeight = 700;
+		return screen;
+	}
+
+	public static void Section(Transform parent, string text)
+	{
+		var go = New("Section", parent);
+		AddText(go, text, 20, Accent, TextAnchor.LowerLeft);
+		Size(go, 0, 40);
+	}
+}

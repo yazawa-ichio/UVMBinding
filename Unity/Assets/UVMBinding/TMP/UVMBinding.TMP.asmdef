@@ -20,6 +20,11 @@
             "name": "com.unity.textmeshpro",
             "expression": "",
             "define": "UVMB_TMP"
+        },
+        {
+            "name": "com.unity.ugui",
+            "expression": "2.0.0",
+            "define": "UVMB_TMP"
         }
     ],
     "noEngineReferences": false

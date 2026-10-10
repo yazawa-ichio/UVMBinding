@@ -4,6 +4,7 @@ using TMPro;
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class TMP_DropdownStringDataBinder : Binder<IList<string>, TMP_Dropdown>
 	{
 		protected override void OnInit(TMP_Dropdown target)

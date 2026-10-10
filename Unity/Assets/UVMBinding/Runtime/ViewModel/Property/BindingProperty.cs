@@ -5,108 +5,275 @@ using UVMBinding.Logger;
 
 namespace UVMBinding
 {
-	[UnityEngine.Scripting.Preserve]
-	internal abstract class BindingProperty : IBindingProperty
+	internal sealed class PropertyVersion
 	{
-		public string Path { get; private set; }
-		public int Hash { get; protected set; }
-		internal BindingProperty Next;
-		protected Action<string, object> m_OnChangedObject;
+		public int Value;
+	}
 
-		public event Action<string, object> OnChangedObject
+	internal abstract class PropertySubscriber
+	{
+		public abstract void Invoke(IValueHolder holder);
+		public abstract bool Match(object action);
+	}
+
+	internal sealed class PropertySubscriber<T> : PropertySubscriber
+	{
+		public Action<T> Action;
+		public bool Strict;
+
+		public override void Invoke(IValueHolder holder)
 		{
-			add => m_OnChangedObject += value;
-			remove => m_OnChangedObject -= value;
+			if (holder == null)
+			{
+				return;
+			}
+			if (holder is ValueHolder<T> typed)
+			{
+				Action(typed.Value);
+				return;
+			}
+			if (Strict)
+			{
+				return;
+			}
+			if (holder.TryGetValue<T>(out var value))
+			{
+				Action(value);
+			}
 		}
 
-		public BindingProperty(string path)
+		public override bool Match(object action)
+		{
+			return (object)Action == action;
+		}
+	}
+
+	[UnityEngine.Scripting.Preserve]
+	internal class BindingProperty : IBindingProperty
+	{
+		public string Path { get; private set; }
+		public int Hash { get; private set; }
+
+		IValueHolder m_Holder;
+		List<PropertySubscriber> m_Subscribers;
+		Action<string, IValueHolder> m_OnChangedValue;
+
+		internal IValueHolder Holder => m_Holder;
+
+		public event Action<string, IValueHolder> OnChangedValue
+		{
+			add => m_OnChangedValue += value;
+			remove => m_OnChangedValue -= value;
+		}
+
+		PropertyVersion m_Version;
+
+		public BindingProperty(string path, IValueHolder holder)
 		{
 			Path = path;
 			Hash = GetHashCode();
+			m_Holder = holder;
 		}
 
-		public abstract Type GetBindType();
-		public abstract bool IsAssignable<T>();
-		public abstract object GetObject();
-		public abstract void SetObject(object val);
-		public abstract void SetDirty();
-
-	}
-
-	internal class ObjectBindingProperty : BindingProperty<object>
-	{
-		public ObjectBindingProperty(string path) : base(path) { }
-
-		public override bool IsAssignable<T>()
+		internal void SetVersion(PropertyVersion version)
 		{
-			if (m_Value == null)
-			{
-				return AssignableNull<T>.IsNullable;
-			}
-			return Assignable.Is(m_Value.GetType(), typeof(T));
+			m_Version = version;
 		}
-	}
 
-	internal class BindingProperty<TValue> : BindingProperty, IBindingProperty<TValue>
-	{
-		static EqualityComparer<TValue> s_EqualityComparer = EqualityComparer<TValue>.Default;
-
-		protected TValue m_Value;
-		public TValue Value
+		void Changed()
 		{
-			get
+			Hash++;
+			if (m_Version != null)
 			{
-				return m_Value;
+				m_Version.Value++;
 			}
-			set
+			Notify();
+		}
+
+		internal void SwapHolder(IValueHolder holder)
+		{
+			m_Holder = holder;
+			SetDirty();
+		}
+
+		public Type GetBindType()
+		{
+			return m_Holder != null ? m_Holder.GetValueType() : typeof(void);
+		}
+
+		public bool IsAssignable<T>()
+		{
+			return m_Holder != null && m_Holder.IsAssignable<T>();
+		}
+
+		public bool CanReceive<T>(bool allowCast)
+		{
+			return m_Holder != null && m_Holder.CanReceive<T>(allowCast);
+		}
+
+		public BindKind GetBindKind<T>(bool allowCast)
+		{
+			return m_Holder != null ? m_Holder.GetBindKind<T>(allowCast) : BindKind.None;
+		}
+
+		public object GetObject()
+		{
+			return m_Holder?.GetObject();
+		}
+
+		public void SetObject(object val)
+		{
+			m_Holder?.SetObjectValue(val);
+			Changed();
+		}
+
+		public bool TrySetObject(object val)
+		{
+			if (m_Holder == null || !m_Holder.TrySetValueAs(val))
 			{
-				if (s_EqualityComparer.Equals(m_Value, value))
+				return false;
+			}
+			Changed();
+			return true;
+		}
+
+		public bool TryGetValue<T>(out T value)
+		{
+			if (m_Holder is ValueHolder<T> typed)
+			{
+				value = typed.Value;
+				return true;
+			}
+			if (m_Holder != null)
+			{
+				return m_Holder.TryGetValue(out value);
+			}
+			value = default;
+			return false;
+		}
+
+		public bool TryGetValueCast<T>(out T value)
+		{
+			if (m_Holder is ValueHolder<T> typed)
+			{
+				value = typed.Value;
+				return true;
+			}
+			if (m_Holder != null)
+			{
+				return m_Holder.TryGetValueCast(out value);
+			}
+			value = default;
+			return false;
+		}
+
+		internal T GetValue<T>()
+		{
+			TryGetValue<T>(out var value);
+			return value;
+		}
+
+		public bool TryGetValueAs<T>(out T value)
+		{
+			if (m_Holder != null)
+			{
+				return m_Holder.TryGetValueAs(out value);
+			}
+			value = default;
+			return false;
+		}
+
+		public bool TrySetValue<T>(T value)
+		{
+			bool changed;
+			if (m_Holder is ValueHolder<T> typed)
+			{
+				changed = !EqualityComparer<T>.Default.Equals(typed.Value, value);
+				typed.Value = value;
+			}
+			else if (m_Holder == null || !m_Holder.TrySetValue(value, out changed))
+			{
+				return false;
+			}
+			if (changed)
+			{
+				Log.Trace("BindingProperty Update Path:{0} Value {1}", Path, value);
+				Changed();
+			}
+			return true;
+		}
+
+		public bool TrySetValueCast<T>(T value)
+		{
+			bool changed;
+			if (m_Holder is ValueHolder<T> typed)
+			{
+				changed = !EqualityComparer<T>.Default.Equals(typed.Value, value);
+				typed.Value = value;
+			}
+			else if (m_Holder == null || !m_Holder.TrySetValueCast(value, out changed))
+			{
+				return false;
+			}
+			if (changed)
+			{
+				Log.Trace("BindingProperty Update Path:{0} Value {1}", Path, value);
+				Changed();
+			}
+			return true;
+		}
+
+		public void SetDirty()
+		{
+			Log.Trace("BindingProperty SetDirty Path:{0}", Path);
+			Changed();
+		}
+
+		void Notify()
+		{
+			if (m_Subscribers != null)
+			{
+				for (int i = 0; i < m_Subscribers.Count; i++)
 				{
+					m_Subscribers[i].Invoke(m_Holder);
+				}
+			}
+			m_OnChangedValue?.Invoke(Path, m_Holder);
+		}
+
+		internal void AddSubscriber(PropertySubscriber subscriber)
+		{
+			if (m_Subscribers == null)
+			{
+				m_Subscribers = new List<PropertySubscriber>();
+			}
+			m_Subscribers.Add(subscriber);
+		}
+
+		internal void RemoveSubscriber(PropertySubscriber subscriber)
+		{
+			m_Subscribers?.Remove(subscriber);
+		}
+
+		internal void RemoveSubscriber(object action)
+		{
+			if (m_Subscribers == null)
+			{
+				return;
+			}
+			for (int i = m_Subscribers.Count - 1; i >= 0; i--)
+			{
+				if (m_Subscribers[i].Match(action))
+				{
+					m_Subscribers.RemoveAt(i);
 					return;
 				}
-				Log.Trace("BindingProperty<{0}> Update Path:{1} Value {2} to {3}", typeof(TValue), Path, m_Value, value);
-				m_Value = value;
-				Hash++;
-				OnChanged?.Invoke(value);
-				m_OnChangedObject?.Invoke(Path, value);
 			}
-		}
-
-		public BindingProperty(string path) : base(path) { m_Value = default; }
-
-		public event Action<TValue> OnChanged;
-
-		public override void SetDirty()
-		{
-			Log.Trace("BindingProperty<{0}> SetDitry Path:{1}", typeof(TValue), Path);
-			Hash++;
-			OnChanged?.Invoke(m_Value);
-			m_OnChangedObject?.Invoke(Path, m_Value);
-		}
-
-		public override Type GetBindType()
-		{
-			return typeof(TValue);
-		}
-
-		public override bool IsAssignable<T>()
-		{
-			return Assignable<TValue, T>.Is;
-		}
-
-		public override object GetObject()
-		{
-			return m_Value;
-		}
-
-		public override void SetObject(object val)
-		{
-			Value = (TValue)val;
 		}
 
 		public override string ToString()
 		{
-			return $"{m_Value}";
+			return $"{GetObject()}";
 		}
 
 	}

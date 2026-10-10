@@ -30,12 +30,12 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8410464891913083878}
   - {fileID: 1268251559788478193}
   - {fileID: 4241317001619653778}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -59,7 +59,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -115,7 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80fb5837420a4df429073ca067bbb595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ReservationViewModel: 
+  m_ReservationViewModel: UVMBinding.GeneralViewModel
   m_UpdateOnAttach: 0
 --- !u!1 &5639849471582538579
 GameObject:
@@ -144,9 +146,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6220290625517285366}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -166,23 +168,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Path: Value
+  m_Converters:
+  - rid: 1
+  - rid: 2
   m_Converter:
-    id: 0
+    rid: -2
   references:
-    version: 1
-    00000000:
-      type: {class: ConcatenateConverter, ns: UVMBinding, asm: UVMBinding}
-      data:
-        m_Converters:
-        - id: 1
-        - id: 2
-    00000001:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1
       type: {class: IntComparison, ns: UVMBinding.Converters, asm: UVMBinding}
       data:
         m_Type: 1
         m_Value: 1
-    00000002:
+    - rid: 2
       type: {class: BoolInverse, ns: UVMBinding.Converters, asm: UVMBinding}
+      data: 
 --- !u!1 &5848076456942545893
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,9 +213,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6220290625517285366}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -232,11 +235,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Path: Value
+  m_Converters:
+  - rid: 0
   m_Converter:
-    id: 0
+    rid: -2
   references:
-    version: 1
-    00000000:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 0
       type: {class: IntComparison, ns: UVMBinding.Converters, asm: UVMBinding}
       data:
         m_Type: 2
@@ -270,9 +278,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6220290625517285366}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -334,13 +342,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Path: Value
+  m_Converters:
+  - rid: 0
   m_Converter:
-    id: 0
+    rid: -2
   m_Target: {fileID: 4233405608776088038}
   m_ChangeGameObject: 0
   references:
-    version: 1
-    00000000:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 0
       type: {class: IntComparison, ns: UVMBinding.Converters, asm: UVMBinding}
       data:
         m_Type: 3

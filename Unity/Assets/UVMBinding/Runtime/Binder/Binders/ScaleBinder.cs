@@ -2,6 +2,7 @@
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.None)]
 	public class ScaleBinder : Binder<Vector3>
 	{
 		[SerializeField]

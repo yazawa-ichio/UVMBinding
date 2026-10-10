@@ -5,7 +5,21 @@ Library
 *.vs
 .vsconfig
 obj/
+.idea/
 Logs
 Build
 CodeCoverage
 UserSettings
+*.slnx
+# テストプレイヤー実行時の一時シーン。名前が GUID 固定で変更できず、
+# 実行を中断すると Assets 直下に残る
+Assets/InitTestScene*.unity
+Assets/InitTestScene*.unity.meta
+
+# Addressables のビルド生成物。プレイヤービルドのたびに作り直され、
+# link.xml は meta の guid まで変わるため差分が出続ける。
+# どちらもビルド時に再生成されるので追跡しない
+Assets/AddressableAssetsData/link.xml
+Assets/AddressableAssetsData/link.xml.meta
+Assets/AddressableAssetsData/*/addressables_content_state.bin
+Assets/AddressableAssetsData/*/addressables_content_state.bin.meta

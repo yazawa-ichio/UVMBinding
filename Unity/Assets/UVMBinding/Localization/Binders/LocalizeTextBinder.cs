@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace UVMBinding.Binders
 {
+	[SemanticRole(SemanticRole.Text)]
 	public class LocalizeTextBinder : Binder<LocalizeTextKey, Text>
 	{
 		[SerializeField]
@@ -27,6 +28,11 @@ namespace UVMBinding.Binders
 			{
 				Target.text = text;
 			}
+		}
+
+		protected override string GetDisplayText()
+		{
+			return TryGetTarget(out var target) ? target.text : null;
 		}
 
 		protected override void UpdateValue(LocalizeTextKey value)
@@ -55,6 +61,5 @@ namespace UVMBinding.Binders
 			}
 		}
 	}
-
 
 }

@@ -9,6 +9,8 @@ namespace UVMBinding.Arguments
 		public abstract Type GetEventType();
 
 		public abstract void Do(ViewEventBase viewEvent);
+
+		public abstract object GetBoxedValue();
 	}
 
 	public abstract class EventArgument<T> : EventArgument
@@ -21,5 +23,7 @@ namespace UVMBinding.Arguments
 		{
 			viewEvent.Dispatch(GetValue());
 		}
+
+		public override object GetBoxedValue() => GetValue();
 	}
 }

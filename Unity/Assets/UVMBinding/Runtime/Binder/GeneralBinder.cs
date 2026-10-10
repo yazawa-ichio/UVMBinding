@@ -4,6 +4,7 @@ namespace UVMBinding
 {
 	internal class GeneralBinderPropertyAttribute : PropertyAttribute { }
 
+	[SemanticRole(SemanticRole.None)]
 	public partial class GeneralBinder : Binder<object>
 	{
 		[SerializeField, SelfComponentTarget]

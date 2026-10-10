@@ -18,30 +18,35 @@ namespace UVMBinding.Drawer
 			EditorGUI.PropertyField(left, property, label);
 			if (EditorGUI.DropdownButton(right, GUIContent.none, FocusType.Passive))
 			{
-				if (property.serializedObject.targetObject is MonoBehaviour component)
+				var targets = property.serializedObject.targetObjects;
+				if (!DrawerMultiSelect.TryResolveShared(targets, FindSourceType, out var type, out var reason))
 				{
-					var view = component.GetComponentInParent<IView>();
-					if (view == null) return;
-					var so = new SerializedObject((MonoBehaviour)view);
-					var typeName = so.FindProperty("m_ReservationViewModel").stringValue;
-					var type = ViewModelList.GetType(typeName);
-					if (type == null) return;
-					var data = ViewModelData.Get(type);
-					var menu = new GenericMenu();
-					var propertyName = property.name;
-					foreach (var name in data.Events.Select(x => x.Path))
-					{
-						menu.AddItem(new GUIContent(name), false, () =>
-						{
-							var so = new SerializedObject(component);
-							var property = so.FindProperty(propertyName);
-							property.stringValue = name;
-							so.ApplyModifiedProperties();
-						});
-					}
-					menu.ShowAsContext();
+					DrawerMultiSelect.ShowReason(right, reason);
+					return;
 				}
+				var names = BindSourceData.GetEventPaths(type);
+				var serialized = property.serializedObject;
+				var propertyPath = property.propertyPath;
+				SearchableDropdown.Show(right, "Event Name", names, index =>
+				{
+					serialized.Update();
+					serialized.FindProperty(propertyPath).stringValue = names[index];
+					serialized.ApplyModifiedProperties();
+				});
 			}
+		}
+
+		static System.Type FindSourceType(UnityEngine.Object target)
+		{
+			if (!(target is MonoBehaviour component))
+			{
+				return null;
+			}
+			if (!(component.GetComponentInParent<IView>() is View concrete))
+			{
+				return null;
+			}
+			return BindSourceData.FindType(concrete.ReservationViewModelName);
 		}
 	}
 }
